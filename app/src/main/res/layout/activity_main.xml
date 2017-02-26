@@ -5,10 +5,10 @@
     android:layout_height="match_parent">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerview_posters"
+        android:id="@+id/recyclerview_movieposters"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
-    
+
     <ProgressBar
         android:id="@+id/pb_loading_indicator"
         android:layout_width="42dp"
