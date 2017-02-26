@@ -6,11 +6,13 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ProgressBar;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private RecyclerView mRecyclerView;
+
+    private MovieAdapter mMovieAdapter;
 
     private ProgressBar mLoadingIndicator;
 
@@ -40,6 +42,39 @@ public class MainActivity extends AppCompatActivity {
          * layout size in the RecyclerView.
          */
         mRecyclerView.setHasFixedSize(true);
+
+        /**
+         * The MovieAdapter is responsible for linking the movie posters data with the Views that
+         * will end up displaying the posters data.
+         */
+        mMovieAdapter = new MovieAdapter(this, this);
+
+        /**
+         * Setting the adapter attaches it to the RecyclerView in the layout.
+         */
+        mRecyclerView.setAdapter(mMovieAdapter);
+
+        /**
+         * The ProgressBar that will indicate to the user that we are loading data. It will be
+         * hidden when no data is loading.
+         */
+        mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
+
+        /**
+         * Once all of the views are setup, movie data can be load.
+         */
+        loadMovieData();
+    }
+
+    /**
+     *
+     */
+    private void loadMovieData() {
+
+    }
+
+    @Override
+    public void onClick(String moviePosterIdThatWasClicked) {
 
     }
 }
