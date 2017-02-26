@@ -1,15 +1,23 @@
 package se.sugarest.jane.popularmovies;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.squareup.picasso.Picasso;
+
 /**
  * Created by jane on 2/26/17.
  */
 
+/**
+ * {@link MovieAdapter} exposes a list of movie posters to a
+ * {@link android.support.v7.widget.RecyclerView}
+ */
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
 
     /**
@@ -17,7 +25,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
      * the RecyclerView
      */
     private final MovieAdapterOnClickHandler mClickHandler;
-    private int[] mMoviePostersResources;
+
+    private String[] mMoviePostersUrlStrings;
+
+    private Context mContext;
 
     /**
      * Creates a MovieAdapter.
@@ -25,25 +36,46 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
      * @param clickHandler The on-click handler for this adapter. This single handler is called
      *                     when an item is clicked.
      */
-    public MovieAdapter(MovieAdapterOnClickHandler clickHandler) {
+    public MovieAdapter(MovieAdapterOnClickHandler clickHandler, Context context) {
         mClickHandler = clickHandler;
+        mContext = context;
 
-    }
-
-    @Override
-    public MovieAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return null;
     }
 
     /**
+     * This gets called when each new ViewHolder is created. This happens when the RecyclerView
+     * is laid out. Enough ViewHolders will be created to fill the screen and allow for scrolling.
      *
-     * @param movieAdapterViewHolder
-     * @param position
+     * @param viewGroup The ViewGroup that these ViewHolders are contained within.
+     * @param viewType  If RecyclerView has more than one type of item (which this one don't)
+     *                  this viewType can be used to provide a different layout.
+     * @return A new MovieAdapterViewHolder that holds the View for each list item
+     */
+    @Override
+    public MovieAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        Context context = viewGroup.getContext();
+        int layoutIdForListItem = R.layout.list_item;
+        LayoutInflater inflater = LayoutInflater.from(context);
+        boolean shouldAttachToParentImmediately = false;
+
+        View view = inflater.inflate(layoutIdForListItem, viewGroup, shouldAttachToParentImmediately);
+        return new MovieAdapterViewHolder(view);
+    }
+
+    /**
+     * OnBindViewHolder is called by the RecyclerView to display the data at the specified
+     * position. In this method, update the contents of the ViewHolder to display the movie
+     * posters for each particular position, using the "position" argument that is conveniently
+     * passed in.
+     *
+     * @param movieAdapterViewHolder The ViewHolder which should be updated to represent the
+     *                               contents of the item at the given position in the data set.
+     * @param position               The position of the item within the adapter's data set.
      */
     @Override
     public void onBindViewHolder(MovieAdapterViewHolder movieAdapterViewHolder, int position) {
-        int moviePosterForOneMovie = mMoviePostersResources[position];
-        movieAdapterViewHolder.mMoviePosterImageView.setImageResource(moviePosterForOneMovie);
+        String moviePosterForOneMovie = mMoviePostersUrlStrings[position];
+        Picasso.with(mContext).load(moviePosterForOneMovie).into(movieAdapterViewHolder.mMoviePosterImageView);
     }
 
     /**
@@ -53,8 +85,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
      */
     @Override
     public int getItemCount() {
-        if (mMoviePostersResources == null) return 0;
-        return mMoviePostersResources.length;
+        if (mMoviePostersUrlStrings == null) return 0;
+        return mMoviePostersUrlStrings.length;
     }
 
     /**
@@ -64,8 +96,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
      *
      * @param moviePosterData The new movie poster data to be displayed.
      */
-    public void setMoviePosterData(int[] moviePosterData) {
-        mMoviePostersResources = moviePosterData;
+    public void setMoviePosterData(String[] moviePosterData) {
+        mMoviePostersUrlStrings = moviePosterData;
         notifyDataSetChanged();
     }
 
@@ -73,7 +105,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
      * The interface that receives onClick messages.
      */
     public interface MovieAdapterOnClickHandler {
-        void onClick(int moviePosterIdThatWasClicked);
+        void onClick(String moviePosterIdThatWasClicked);
     }
 
     /**
@@ -97,11 +129,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         @Override
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
-            int moviePosterIdThatWasClicked = mMoviePostersResources[adapterPosition];
+            String moviePosterIdThatWasClicked = mMoviePostersUrlStrings[adapterPosition];
             mClickHandler.onClick(moviePosterIdThatWasClicked);
         }
     }
-
 }
 
 
