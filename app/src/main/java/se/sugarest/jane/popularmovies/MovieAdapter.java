@@ -2,6 +2,7 @@ package se.sugarest.jane.popularmovies;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -19,6 +20,8 @@ import com.squareup.picasso.Picasso;
  * {@link android.support.v7.widget.RecyclerView}
  */
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
+
+    private static final String TAG = MovieAdapter.class.getSimpleName();
 
     /**
      * An On-click handler that we've defined to make it easy for an Activity to interface with
@@ -75,7 +78,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     @Override
     public void onBindViewHolder(MovieAdapterViewHolder movieAdapterViewHolder, int position) {
         String moviePosterForOneMovie = mMoviePostersUrlStrings[position];
-        Picasso.with(mContext).load(moviePosterForOneMovie).into(movieAdapterViewHolder.mMoviePosterImageView);
+        if (moviePosterForOneMovie != null && !moviePosterForOneMovie.isEmpty()) {
+            Log.i(TAG, "Loading ".concat(moviePosterForOneMovie));
+            Picasso.with(mContext).load(moviePosterForOneMovie).into(movieAdapterViewHolder.mMoviePosterImageView);
+        } else {
+            Log.w(TAG, "Picture is missing. Load empty pic instead.");
+            String nullStr = null;
+            Picasso.with(mContext).load(nullStr).into(movieAdapterViewHolder.mMoviePosterImageView);
+        }
     }
 
     /**
