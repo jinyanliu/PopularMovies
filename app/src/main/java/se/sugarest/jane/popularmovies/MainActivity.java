@@ -49,10 +49,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
          * false: When set to true, layouts from end to start.
          */
         GridLayoutManager layoutManager
-                = new GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false);
-
-//        LinearLayoutManager layoutManager
-//                = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+                = new GridLayoutManager(this, 4, GridLayoutManager.VERTICAL, false);
 
         mRecyclerView.setLayoutManager(layoutManager);
 
