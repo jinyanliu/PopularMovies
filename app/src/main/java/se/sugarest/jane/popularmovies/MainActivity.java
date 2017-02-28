@@ -12,8 +12,8 @@ import android.widget.TextView;
 import java.net.URL;
 
 import se.sugarest.jane.popularmovies.MovieAdapter.MovieAdapterOnClickHandler;
-import se.sugarest.jane.popularmovies.utilities.NetworkUtils;
 import se.sugarest.jane.popularmovies.utilities.MoviejsonUtils;
+import se.sugarest.jane.popularmovies.utilities.NetworkUtils;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapterOnClickHandler {
 
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
 
         /**
          * this: Current context, will be used to access resources.
-         * 2: The number of columns or rows in the grid
+         * 4: The number of columns in the grid
          * GridLayoutManager.VERTICAL: Layout orientation.
          * false: When set to true, layouts from end to start.
          */

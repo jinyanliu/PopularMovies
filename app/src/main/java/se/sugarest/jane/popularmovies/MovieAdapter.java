@@ -38,6 +38,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
      *
      * @param clickHandler The on-click handler for this adapter. This single handler is called
      *                     when an item is clicked.
+     * @param context      The context to pass down for {@link Picasso}.with(mContext)...
      */
     public MovieAdapter(MovieAdapterOnClickHandler clickHandler, Context context) {
         mClickHandler = clickHandler;
@@ -78,11 +79,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     @Override
     public void onBindViewHolder(MovieAdapterViewHolder movieAdapterViewHolder, int position) {
         String moviePosterForOneMovie = mMoviePostersUrlStrings[position];
-        if (moviePosterForOneMovie != null && !moviePosterForOneMovie.isEmpty()) {
+        if (moviePosterForOneMovie != null && !moviePosterForOneMovie.isEmpty() && !moviePosterForOneMovie.equals("null")) {
             Log.i(TAG, "Loading ".concat(moviePosterForOneMovie));
             Picasso.with(mContext).load(moviePosterForOneMovie).into(movieAdapterViewHolder.mMoviePosterImageView);
         } else {
-            Log.w(TAG, "Picture is missing. Load empty pic instead.");
+            Log.w(TAG, String.valueOf(R.string.poster_path_null) + position + " Load empty pic instead.");
             String nullStr = null;
             Picasso.with(mContext).load(nullStr).into(movieAdapterViewHolder.mMoviePosterImageView);
         }

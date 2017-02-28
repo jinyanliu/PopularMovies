@@ -52,7 +52,7 @@ public class MoviejsonUtils {
             if (poster_path != null && !poster_path.isEmpty() && !poster_path.equals("null")) {
                 parsedMoviePostersData[i] = BASE_IMAGE_URL.concat(IMAGE_RESOLUTION).concat(poster_path);
             } else {
-                Log.w(TAG, String.valueOf(R.string.poster_path_null));
+                Log.w(TAG, String.valueOf(R.string.poster_path_null) + i);
             }
         }
         return parsedMoviePostersData;
