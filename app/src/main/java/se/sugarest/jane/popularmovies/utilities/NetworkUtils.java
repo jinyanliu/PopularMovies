@@ -15,7 +15,9 @@ import java.net.URL;
 import java.util.Scanner;
 
 /**
- * These utilities will be used to communicate with the movie server.
+ * These utilities will be used to communicate with the movie server:
+ * https://developers.themoviedb.org/3/getting-started
+ * The Movie Database API
  */
 public class NetworkUtils {
 
@@ -25,15 +27,27 @@ public class NetworkUtils {
             "https://api.themoviedb.org/3/discover/movie";
 
     private static final String API_KEY =
-            "your_own_api_key";
+            "YOUR_API_KEY";
 
-    private static final String SORT_BY_PARAM = "sort_by";
+    // The format I want the API to return
+    private static final String FORMAT = "json";
+
+    //    private static final String SORT_BY_PARAM = "sort_by";
     private static final String API_KEY_PARAM = "api_key";
+    private static final String FORMAT_PARAM = "format";
 
+    /**
+     * Builds the URL used to talk to the movie server using a sorByMethod(popularity or top_rated).
+     * This sortByMethod is based on the query capabilities of the movie server.
+     *
+     * @param sortByMethod The sortByMethod that will be queried for.
+     * @return the URL to use to query the movie server.
+     */
     public static URL buildUrl(String sortByMethod) {
         Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
-                .appendQueryParameter(SORT_BY_PARAM, sortByMethod)
+                .query(sortByMethod)
                 .appendQueryParameter(API_KEY_PARAM, API_KEY)
+                .appendQueryParameter(FORMAT_PARAM, FORMAT)
                 .build();
 
         URL url = null;
@@ -41,9 +55,8 @@ public class NetworkUtils {
             url = new URL(builtUri.toString());
         } catch (MalformedURLException e) {
             e.printStackTrace();
-            ;
         }
-        Log.v(TAG, "Built URI" + url);
+        Log.v(TAG, "Built URI " + url);
         return url;
     }
 
