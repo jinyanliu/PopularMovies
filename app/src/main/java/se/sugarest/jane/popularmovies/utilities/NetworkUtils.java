@@ -32,13 +32,15 @@ public class NetworkUtils {
     // The format I want the API to return
     private static final String FORMAT = "json";
 
-    //    private static final String SORT_BY_PARAM = "sort_by";
     private static final String API_KEY_PARAM = "api_key";
     private static final String FORMAT_PARAM = "format";
 
     /**
      * Builds the URL used to talk to the movie server using a sorByMethod(popularity or top_rated).
      * This sortByMethod is based on the query capabilities of the movie server.
+     * <p>
+     * Note: The right URL to query movie data looks like:
+     * https://api.themoviedb.org/3/discover/movie?popularity&api_key=[YOUR_API_KEY]&format=json
      *
      * @param sortByMethod The sortByMethod that will be queried for.
      * @return the URL to use to query the movie server.
@@ -60,6 +62,13 @@ public class NetworkUtils {
         return url;
     }
 
+    /**
+     * This method returns the entire result from the HTTP response.
+     *
+     * @param url The URL to fetch the HTTP response from.
+     * @return The contents of the HTTP response.
+     * @throws IOException Related to network and stream reading
+     */
     public static String getResponseFromHttpUrl(URL url) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         try {

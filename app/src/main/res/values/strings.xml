@@ -3,4 +3,7 @@
 
     <!--The text for the TextView to display error message.-->
     <string name="error_message">An error has occurred.</string>
+
+    <!--Log message if the "poster_path" value from JSON response of a movie is null.-->
+    <string name="poster_path_null">There is no poster information of movie </string>
 </resources>

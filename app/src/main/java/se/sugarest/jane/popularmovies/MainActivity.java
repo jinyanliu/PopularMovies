@@ -13,7 +13,7 @@ import java.net.URL;
 
 import se.sugarest.jane.popularmovies.MovieAdapter.MovieAdapterOnClickHandler;
 import se.sugarest.jane.popularmovies.utilities.NetworkUtils;
-import se.sugarest.jane.popularmovies.utilities.OpenMoviejsonUtils;
+import se.sugarest.jane.popularmovies.utilities.MoviejsonUtils;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapterOnClickHandler {
 
@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
             try {
                 String jsonMovieResponse = NetworkUtils
                         .getResponseFromHttpUrl(movieRequestUrl);
-                String[] simpleJsonMovieData = OpenMoviejsonUtils
+                String[] simpleJsonMovieData = MoviejsonUtils
                         .getSimpleMoviePostersStringsFromJson(MainActivity.this, jsonMovieResponse);
                 return simpleJsonMovieData;
 
