@@ -1,8 +1,10 @@
 package se.sugarest.jane.popularmovies;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -91,8 +93,14 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
      */
     private void loadMovieData() {
         showMovieDataView();
-        String sortByDefault = "popular";
-        new FetchMovieTask().execute(sortByDefault);
+
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String orderBy = sharedPrefs.getString(
+                getString(R.string.settings_order_by_key),
+                getString(R.string.settings_order_by_default)
+        );
+        orderBy = "movie/"+orderBy;
+        new FetchMovieTask().execute(orderBy);
     }
 
     @Override

@@ -23,33 +23,29 @@ public class NetworkUtils {
 
     private static final String TAG = NetworkUtils.class.getSimpleName();
 
+    //http://api.themoviedb.org/3/movie/popular?api_key=
     private static final String MOVIE_BASE_URL =
-            "https://api.themoviedb.org/3/discover/movie";
+            "http://api.themoviedb.org/3/";
 
     private static final String API_KEY =
             "YOUR_API_KEY";
 
-    // The format I want the API to return
-    private static final String FORMAT = "json";
-
     private static final String API_KEY_PARAM = "api_key";
-    private static final String FORMAT_PARAM = "format";
 
     /**
      * Builds the URL used to talk to the movie server using a sorByMethod(popularity or top_rated).
      * This sortByMethod is based on the query capabilities of the movie server.
      * <p>
      * Note: The right URL to query movie data looks like:
-     * https://api.themoviedb.org/3/discover/movie?popularity&api_key=[YOUR_API_KEY]&format=json
+     * http://api.themoviedb.org/3/movie/popularity&api_key=[YOUR_API_KEY]
      *
      * @param sortByMethod The sortByMethod that will be queried for.
      * @return the URL to use to query the movie server.
      */
     public static URL buildUrl(String sortByMethod) {
-        Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
-                .query(sortByMethod)
+        String baseUrl = MOVIE_BASE_URL + sortByMethod;
+        Uri builtUri = Uri.parse(baseUrl).buildUpon()
                 .appendQueryParameter(API_KEY_PARAM, API_KEY)
-                .appendQueryParameter(FORMAT_PARAM, FORMAT)
                 .build();
 
         URL url = null;
