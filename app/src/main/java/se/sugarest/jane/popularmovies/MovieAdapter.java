@@ -35,6 +35,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
     private Context mContext;
 
+    private List<Movie> mMoveData;
+
     /**
      * Creates a MovieAdapter.
      *
@@ -105,15 +107,13 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
      */
     public void setMoviePosterData(List<Movie> movieData) {
 
-        final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
-        final String IMAGE_SIZE = "w185/";
+        mMoveData = movieData;
 
         String[] array = new String[movieData.size()];
 
         for (int i = 0; i < movieData.size(); i++) {
             String currentMoviePostersData = movieData.get(i).getPosterPath();
-            String currentMoviePostersCompleteData = BASE_IMAGE_URL.concat(IMAGE_SIZE).concat(currentMoviePostersData);
-            array[i] = currentMoviePostersCompleteData;
+            array[i] = currentMoviePostersData;
         }
 
         mMoviePostersUrlStrings = array;
@@ -125,7 +125,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
      * The interface that receives onClick messages.
      */
     public interface MovieAdapterOnClickHandler {
-        void onClick(int movieIdThatWasClicked);
+        void onClick(Movie currentMovie);
     }
 
     /**
@@ -141,15 +141,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
             view.setOnClickListener(this);
         }
 
-        /**
-         * This gets called by the child views during a click.
-         *
-         * @param v The View that was clicked
-         */
         @Override
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
-            mClickHandler.onClick(adapterPosition);
+            Movie currentMovieData = mMoveData.get(adapterPosition);
+            mClickHandler.onClick(currentMovieData);
         }
     }
 }

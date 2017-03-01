@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 /**
  * Created by jane on 3/1/17.
  */
@@ -21,7 +23,9 @@ public class DetailActivity extends AppCompatActivity {
 
     private TextView mReleaseDateTextView;
 
-    private TextView mAPlotSynopsis;
+    private TextView mAPlotSynopsisTextView;
+
+    private Movie mCurrentMovie;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -32,14 +36,20 @@ public class DetailActivity extends AppCompatActivity {
         mOriginalTitleTextView = (TextView) findViewById(R.id.tv_original_title);
         mUserRatingTextView = (TextView) findViewById(R.id.tv_user_rating);
         mReleaseDateTextView = (TextView) findViewById(R.id.tv_release_date);
-        mAPlotSynopsis = (TextView) findViewById(R.id.tv_a_plot_synopsis);
+        mAPlotSynopsisTextView = (TextView) findViewById(R.id.tv_a_plot_synopsis);
 
         Intent intentThatStartedThisActivity = getIntent();
         if (intentThatStartedThisActivity != null) {
-            if (intentThatStartedThisActivity.hasExtra(Intent.EXTRA_TEXT)) {
-                String movieIdString = intentThatStartedThisActivity.getStringExtra(Intent.EXTRA_TEXT);
-                int movieIdInt = Integer.valueOf(movieIdString);
+            if (intentThatStartedThisActivity.hasExtra("movie")) {
+                mCurrentMovie = (Movie) getIntent().getExtras().getSerializable("movie");
             }
         }
+
+        Picasso.with(DetailActivity.this).load(mCurrentMovie.getMoviePosterImageThumbnail()).into(mMoviePosterImageThumbnailImageView);
+        mOriginalTitleTextView.setText(mCurrentMovie.getOriginalTitle());
+        mUserRatingTextView.setText(mCurrentMovie.getUserRating());
+        mReleaseDateTextView.setText(mCurrentMovie.getReleaseDate());
+        mAPlotSynopsisTextView.setText(mCurrentMovie.getAPlotSynopsis());
+
     }
 }

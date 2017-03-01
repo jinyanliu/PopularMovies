@@ -1,10 +1,12 @@
 package se.sugarest.jane.popularmovies;
 
+import java.io.Serializable;
+
 /**
  * Created by jane on 3/1/17.
  */
 
-public class Movie {
+public class Movie implements Serializable {
 
     /**
      * Poster Url String of the movie
@@ -36,6 +38,9 @@ public class Movie {
      */
     private String mReleaseDate;
 
+    final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
+    final String IMAGE_SIZE = "w185/";
+
     /**
      * Construct a new {@link Movie} object.
      *
@@ -59,7 +64,7 @@ public class Movie {
      * Get the poster path of the movie
      */
     public String getPosterPath() {
-        return mPosterPath;
+        return BASE_IMAGE_URL.concat(IMAGE_SIZE).concat(mPosterPath);
     }
 
     /**
@@ -73,7 +78,7 @@ public class Movie {
      * Get movie poster image thumbnail url string of the movie
      */
     public String getMoviePosterImageThumbnail() {
-        return mMoviePosterImageThumbnail;
+        return BASE_IMAGE_URL.concat(IMAGE_SIZE).concat(mMoviePosterImageThumbnail);
     }
 
     /**
@@ -108,5 +113,6 @@ public class Movie {
                 ", mReleaseDate='" + mReleaseDate + '\'' +
                 '}';
     }
+
 }
 
