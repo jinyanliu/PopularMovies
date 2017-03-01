@@ -106,10 +106,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     }
 
     @Override
-    public void onClick(String currentMovie) {
+    public void onClick(int position) {
         Context context = this;
         Class destinationClass = DetailActivity.class;
         Intent intentToStartDetailActivity = new Intent(context, destinationClass);
+        intentToStartDetailActivity.putExtra(Intent.EXTRA_TEXT, String.valueOf(position));
         startActivity(intentToStartDetailActivity);
     }
 

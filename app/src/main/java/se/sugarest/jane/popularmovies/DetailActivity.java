@@ -1,5 +1,6 @@
 package se.sugarest.jane.popularmovies;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -32,5 +33,13 @@ public class DetailActivity extends AppCompatActivity {
         mUserRatingTextView = (TextView) findViewById(R.id.tv_user_rating);
         mReleaseDateTextView = (TextView) findViewById(R.id.tv_release_date);
         mAPlotSynopsis = (TextView) findViewById(R.id.tv_a_plot_synopsis);
+
+        Intent intentThatStartedThisActivity = getIntent();
+        if (intentThatStartedThisActivity != null) {
+            if (intentThatStartedThisActivity.hasExtra(Intent.EXTRA_TEXT)) {
+                String movieIdString = intentThatStartedThisActivity.getStringExtra(Intent.EXTRA_TEXT);
+                int movieIdInt = Integer.valueOf(movieIdString);
+            }
+        }
     }
 }
