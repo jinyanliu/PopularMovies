@@ -105,6 +105,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         new FetchMovieTask().execute(orderBy);
     }
 
+    /**
+     * This method is overridden by the MainActivity class in order to handle RecyclerView item
+     * clicks.
+     *
+     * @param currentMovie The current Movie object that was clicked
+     */
     @Override
     public void onClick(Movie currentMovie) {
         Context context = this;
@@ -181,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                 String jsonMovieResponse = NetworkUtils
                         .getResponseFromHttpUrl(movieRequestUrl);
                 List<Movie> simpleJsonMovieData = MoviejsonUtils
-                        .extractResultsFromJson(MainActivity.this, jsonMovieResponse);
+                        .extractResultsFromJson(jsonMovieResponse);
                 return simpleJsonMovieData;
 
             } catch (Exception e) {

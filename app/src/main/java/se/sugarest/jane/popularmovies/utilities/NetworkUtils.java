@@ -18,12 +18,13 @@ import java.util.Scanner;
  * These utilities will be used to communicate with the movie server:
  * https://developers.themoviedb.org/3/getting-started
  * The Movie Database API
+ * <p>
+ * Note: You have to request your own api key.
  */
 public class NetworkUtils {
 
     private static final String TAG = NetworkUtils.class.getSimpleName();
 
-    //http://api.themoviedb.org/3/movie/popular?api_key=
     private static final String MOVIE_BASE_URL =
             "http://api.themoviedb.org/3/";
 

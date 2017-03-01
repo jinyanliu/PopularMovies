@@ -45,7 +45,8 @@ public class DetailActivity extends AppCompatActivity {
             }
         }
 
-        Picasso.with(DetailActivity.this).load(mCurrentMovie.getMoviePosterImageThumbnail()).into(mMoviePosterImageThumbnailImageView);
+        Picasso.with(DetailActivity.this).load(mCurrentMovie.getMoviePosterImageThumbnail())
+                .into(mMoviePosterImageThumbnailImageView);
         mOriginalTitleTextView.setText(mCurrentMovie.getOriginalTitle());
         mUserRatingTextView.setText(mCurrentMovie.getUserRating());
         mReleaseDateTextView.setText(mCurrentMovie.getReleaseDate());

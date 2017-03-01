@@ -1,6 +1,5 @@
 package se.sugarest.jane.popularmovies.utilities;
 
-import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -25,7 +24,11 @@ public class MoviejsonUtils {
 
     private static final String TAG = MoviejsonUtils.class.getSimpleName();
 
-    public static List<Movie> extractResultsFromJson(Context context, String movieJSON) {
+    /**
+     * @return a list of {@link Movie} objects that has been built up from
+     * parsing the given JSON response.
+     */
+    public static List<Movie> extractResultsFromJson(String movieJSON) {
 
         // If the JSON string is empty or null, then return early.
         if (TextUtils.isEmpty(movieJSON)) {
@@ -38,7 +41,7 @@ public class MoviejsonUtils {
         /**
          * Try to parse the JSON response string. If there's a problem with the way the JSON
          * is formatted, a JSONException object will be thrown.
-         * Catch the exception so the app doesn't crash, and printStackTrace.
+         * Catch the exception so the app doesn't crash, and print the error message to the logs.
          */
         try {
 

@@ -6,41 +6,41 @@ import java.io.Serializable;
  * Created by jane on 3/1/17.
  */
 
+/**
+ * Represents a Movie.
+ * It contains the poster url string, the original title, the poster image thumbnail url string,
+ * a plot synopsis, user rating and release date of a movie.
+ */
 public class Movie implements Serializable {
+
+    private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
+    private final String IMAGE_SIZE_W185 = "w185/";
+    private final String IMAGE_SIZE_W780 = "w780/";
 
     /**
      * Poster Url String of the movie
      */
     private String mPosterPath;
-
     /**
      * Original Title of the movie
      */
     private String mOriginalTitle;
-
     /**
      * Poster Image Thumbnail Url String of the movie
      */
     private String mMoviePosterImageThumbnail;
-
     /**
      * A Plot Synopsis of the movie
      */
     private String mAPlotSynopsis;
-
     /**
      * User rating of the movie
      */
     private String mUserRating;
-
     /**
      * Release Date of the movie
      */
     private String mReleaseDate;
-
-    final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
-    final String IMAGE_SIZE_W185 = "w185/";
-    final String IMAGE_SIZE_W780 = "w780/";
 
     /**
      * Construct a new {@link Movie} object.

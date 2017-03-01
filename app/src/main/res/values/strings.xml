@@ -5,7 +5,7 @@
     <string name="error_message">An error has occurred.</string>
 
     <!--The text for Log error message when passing JSON.-->
-    <string name="log_error_message_passing_JSON">Problem parsing the earthquake JSON results.</string>
+    <string name="log_error_message_passing_JSON">Problem parsing the movie JSON results.</string>
 
     <!-- Settings Menu Item [CHAR LIMIT=NONE] -->
     <string name="settings_menu_item">Settings</string>
