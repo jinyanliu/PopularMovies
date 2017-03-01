@@ -38,7 +38,7 @@ public class NetworkUtils {
      * This sortByMethod is based on the query capabilities of the movie server.
      * <p>
      * Note: The right URL to query movie data looks like:
-     * http://api.themoviedb.org/3/movie/popularity&api_key=[YOUR_API_KEY]
+     * http://api.themoviedb.org/3/movie/popular?api_key=[YOUR_API_KEY]
      *
      * @param sortByMethod The sortByMethod that will be queried for.
      * @return the URL to use to query the movie server.
