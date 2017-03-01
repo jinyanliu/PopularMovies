@@ -39,7 +39,8 @@ public class Movie implements Serializable {
     private String mReleaseDate;
 
     final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
-    final String IMAGE_SIZE = "w185/";
+    final String IMAGE_SIZE_W185 = "w185/";
+    final String IMAGE_SIZE_W780 = "w780/";
 
     /**
      * Construct a new {@link Movie} object.
@@ -64,7 +65,7 @@ public class Movie implements Serializable {
      * Get the poster path of the movie
      */
     public String getPosterPath() {
-        return BASE_IMAGE_URL.concat(IMAGE_SIZE).concat(mPosterPath);
+        return BASE_IMAGE_URL.concat(IMAGE_SIZE_W185).concat(mPosterPath);
     }
 
     /**
@@ -78,7 +79,7 @@ public class Movie implements Serializable {
      * Get movie poster image thumbnail url string of the movie
      */
     public String getMoviePosterImageThumbnail() {
-        return BASE_IMAGE_URL.concat(IMAGE_SIZE).concat(mMoviePosterImageThumbnail);
+        return BASE_IMAGE_URL.concat(IMAGE_SIZE_W780).concat(mMoviePosterImageThumbnail);
     }
 
     /**
