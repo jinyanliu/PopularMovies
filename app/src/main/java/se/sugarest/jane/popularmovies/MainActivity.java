@@ -1,10 +1,13 @@
 package se.sugarest.jane.popularmovies;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -88,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
      */
     private void loadMovieData() {
         showMovieDataView();
-        String sortByDefault = "popularity";
+        String sortByDefault = "popular";
         new FetchMovieTask().execute(sortByDefault);
     }
 
@@ -122,6 +125,23 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         mRecyclerView.setVisibility(View.INVISIBLE);
         // Then, show the error.
         mErrorMessageDisplay.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            Intent settingIntent = new Intent(this, SettingsActivity.class);
+            startActivity(settingIntent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public class FetchMovieTask extends AsyncTask<String, Void, String[]> {

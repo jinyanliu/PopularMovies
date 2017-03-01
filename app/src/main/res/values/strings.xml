@@ -6,4 +6,23 @@
 
     <!--Log message if the "poster_path" value from JSON response of a movie is null.-->
     <string name="poster_path_null">There is no poster information of movie id: </string>
+
+    <!-- Settings Menu Item [CHAR LIMIT=NONE] -->
+    <string name="settings_menu_item">Settings</string>
+
+    <!-- Settings Activity Title [CHAR LIMIT=NONE] -->
+    <string name="settings_title">Movie Settings</string>
+
+    <!-- Strings For Order-By Preference [CHAR LIMIT=30] -->
+    <string name="settings_order_by_label">Order By</string>
+    <string name="settings_order_by_key" translatable="false">order_by</string>
+    <string name="settings_order_by_default" translatable="false">@string/settings_order_by_most_popular_value</string>
+
+    <!-- Label for order-by most popular option [CHAR LIMIT=20] -->
+    <string name="settings_order_by_most_popular_label">Most Popular</string>
+    <string name="settings_order_by_most_popular_value" translatable="false">popular</string>
+
+    <!-- Label for order-by top rated option [CHAR LIMIT=20] -->
+    <string name="settings_order_by_top_rated_label">Top Rated</string>
+    <string name="settings_order_by_top_rated_value" translatable="false">top_rated</string>
 </resources>
