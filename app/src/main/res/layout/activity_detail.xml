@@ -19,8 +19,8 @@
             android:id="@+id/tv_original_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="24sp"
-            android:padding="8dp"/>
+            android:padding="8dp"
+            android:textSize="24sp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -47,8 +47,8 @@
             android:id="@+id/tv_a_plot_synopsis"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:padding="8dp"/>
+            android:padding="8dp"
+            android:textSize="16sp"/>
 
     </LinearLayout>
 
