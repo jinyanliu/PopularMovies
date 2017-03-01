@@ -1,5 +1,6 @@
 package se.sugarest.jane.popularmovies;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -99,13 +100,16 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                 getString(R.string.settings_order_by_key),
                 getString(R.string.settings_order_by_default)
         );
-        orderBy = "movie/"+orderBy;
+        orderBy = "movie/" + orderBy;
         new FetchMovieTask().execute(orderBy);
     }
 
     @Override
-    public void onClick(String moviePosterIdThatWasClicked) {
-
+    public void onClick(String currentMovie) {
+        Context context = this;
+        Class destinationClass = DetailActivity.class;
+        Intent intentToStartDetailActivity = new Intent(context, destinationClass);
+        startActivity(intentToStartDetailActivity);
     }
 
     /**
