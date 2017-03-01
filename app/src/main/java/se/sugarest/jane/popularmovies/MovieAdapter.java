@@ -11,6 +11,8 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
+
 /**
  * Created by jane on 2/26/17.
  */
@@ -79,14 +81,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     @Override
     public void onBindViewHolder(MovieAdapterViewHolder movieAdapterViewHolder, int position) {
         String moviePosterForOneMovie = mMoviePostersUrlStrings[position];
-        if (moviePosterForOneMovie != null && !moviePosterForOneMovie.isEmpty() && !moviePosterForOneMovie.equals("null")) {
-            Log.i(TAG, "Loading ".concat(moviePosterForOneMovie));
-            Picasso.with(mContext).load(moviePosterForOneMovie).into(movieAdapterViewHolder.mMoviePosterImageView);
-        } else {
-            Log.w(TAG, String.valueOf(R.string.poster_path_null) + position + " Load empty pic instead.");
-            String nullStr = null;
-            Picasso.with(mContext).load(nullStr).into(movieAdapterViewHolder.mMoviePosterImageView);
-        }
+        Log.i(TAG, "Loading ".concat(moviePosterForOneMovie));
+        Picasso.with(mContext).load(moviePosterForOneMovie).into(movieAdapterViewHolder.mMoviePosterImageView);
     }
 
     /**
@@ -105,11 +101,24 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
      * created one. This is handy when getting new data from the web but don't want to create a
      * new MovieAdapter to display it.
      *
-     * @param moviePosterData The new movie poster data to be displayed.
+     * @param movieData The new movie data to be displayed.
      */
-    public void setMoviePosterData(String[] moviePosterData) {
-        mMoviePostersUrlStrings = moviePosterData;
+    public void setMoviePosterData(List<Movie> movieData) {
+
+        final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
+        final String IMAGE_SIZE = "w185/";
+
+        String[] array = new String[movieData.size()];
+
+        for (int i = 0; i < movieData.size(); i++) {
+            String currentMoviePostersData = movieData.get(i).getPosterPath();
+            String currentMoviePostersCompleteData = BASE_IMAGE_URL.concat(IMAGE_SIZE).concat(currentMoviePostersData);
+            array[i] = currentMoviePostersCompleteData;
+        }
+
+        mMoviePostersUrlStrings = array;
         notifyDataSetChanged();
+
     }
 
     /**

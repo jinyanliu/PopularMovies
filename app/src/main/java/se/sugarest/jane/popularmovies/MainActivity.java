@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.net.URL;
+import java.util.List;
 
 import se.sugarest.jane.popularmovies.MovieAdapter.MovieAdapterOnClickHandler;
 import se.sugarest.jane.popularmovies.utilities.MoviejsonUtils;
@@ -156,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         return super.onOptionsItemSelected(item);
     }
 
-    public class FetchMovieTask extends AsyncTask<String, Void, String[]> {
+    public class FetchMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
         @Override
         protected void onPreExecute() {
@@ -165,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         }
 
         @Override
-        protected String[] doInBackground(String... params) {
+        protected List<Movie> doInBackground(String... params) {
 
             // If there's no sortBy method, there's no way of showing movies.
             if (params.length == 0) {
@@ -178,8 +179,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
             try {
                 String jsonMovieResponse = NetworkUtils
                         .getResponseFromHttpUrl(movieRequestUrl);
-                String[] simpleJsonMovieData = MoviejsonUtils
-                        .getSimpleMoviePostersStringsFromJson(MainActivity.this, jsonMovieResponse);
+                List<Movie> simpleJsonMovieData = MoviejsonUtils
+                        .extractResultsFromJson(MainActivity.this, jsonMovieResponse);
                 return simpleJsonMovieData;
 
             } catch (Exception e) {
@@ -189,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         }
 
         @Override
-        protected void onPostExecute(String[] movieData) {
+        protected void onPostExecute(List<Movie> movieData) {
             mLoadingIndicator.setVisibility(View.INVISIBLE);
             if (movieData != null) {
                 mMovieAdapter.setMoviePosterData(movieData);
