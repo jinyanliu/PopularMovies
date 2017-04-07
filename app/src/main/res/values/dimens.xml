@@ -1,5 +1,6 @@
 <resources>
-    <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
+    <!-- Height of movie image show in detail activity -->
+    <dimen name="image_height_detail">250dp</dimen>
+    <!-- Default Padding for text in detail activity -->
+    <dimen name="text_default_detail_padding">16dp</dimen>
 </resources>
