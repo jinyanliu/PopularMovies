@@ -1,9 +1,12 @@
 package se.sugarest.jane.popularmovies;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,6 +34,16 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+
+        // Setup FAB to add favorite movies into database and change FAB color to yellow
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int yellowColorValue = Color.parseColor("#FFEB3B");
+                fab.setColorFilter(yellowColorValue);
+            }
+        });
 
         mMoviePosterImageThumbnailImageView = (ImageView) findViewById(R.id.iv_movie_poster_image_thumbnail);
         mOriginalTitleTextView = (TextView) findViewById(R.id.tv_original_title);
