@@ -59,6 +59,15 @@ public class NetworkUtils {
         return url;
     }
 
+    /**
+     * Builds the URL used to talk to the movie server to fetch movie review data using a movie id.
+     * <p>
+     * Note: The right URL to query movie review data looks like:
+     * http://api.themoviedb.org/3/movie/263115/reviews?api_key=[YOUR_API_KEY]
+     *
+     * @param id The movie id that will be queried for.
+     * @return the URL to use to query the movie server to fetch movie review data.
+     */
     public static URL buildReviewUrl(String id) {
         String addToUrl = "movie/" + id + "/reviews";
         String baseUrl = MOVIE_BASE_URL + addToUrl;

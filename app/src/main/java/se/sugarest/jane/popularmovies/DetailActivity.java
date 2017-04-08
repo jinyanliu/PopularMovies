@@ -87,14 +87,30 @@ public class DetailActivity extends AppCompatActivity {
 
         mReviewRecyclerView.setLayoutManager(layoutManager);
 
+        /**
+         * The ReviewAdapter is responsible for linking the reviews data with the Views that
+         * will end up displaying the reviews data.
+         */
         mReviewAdapter = new ReviewAdapter();
 
+        /**
+         * Setting the adapter attaches it to the RecyclerView in the layout.
+         */
         mReviewRecyclerView.setAdapter(mReviewAdapter);
 
+        /**
+         * Once all of the views are setup, review data can be load.
+         */
         loadReviewData(mCurrentMovie.getId());
 
     }
 
+    /**
+     * This method will use the pass in movie id to tell the background method to get the
+     * movie review data in the background.
+     *
+     * @param id The id of the movie clicked.
+     */
     private void loadReviewData(String id) {
         new FetchReviewTask().execute(id);
     }

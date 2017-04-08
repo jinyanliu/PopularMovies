@@ -4,6 +4,10 @@ package se.sugarest.jane.popularmovies.review;
  * Created by jane on 17-4-8.
  */
 
+/**
+ * Represents a Review.
+ * It contains the author string and the review content string of a movie review.
+ */
 public class Review {
 
     /**
@@ -36,8 +40,6 @@ public class Review {
 
     /**
      * Get the content of the review
-     *
-     * @return
      */
     public String getReviewContent() {
         return mReviewContent;
