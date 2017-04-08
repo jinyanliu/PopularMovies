@@ -153,6 +153,8 @@ public class DetailActivity extends AppCompatActivity {
         protected void onPostExecute(List<Review> reviewData) {
             if (reviewData != null) {
                 mReviewAdapter.setReviewData(reviewData);
+                // Display total number of reviews in the detail activity, because some movies does
+                // not have reviews.
                 String numberOfReviewString = Integer.toString(mReviewAdapter.getItemCount());
                 mDetailBinding.tvNumberOfUserReview.setText(numberOfReviewString);
             }
