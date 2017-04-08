@@ -153,6 +153,8 @@ public class DetailActivity extends AppCompatActivity {
         protected void onPostExecute(List<Review> reviewData) {
             if (reviewData != null) {
                 mReviewAdapter.setReviewData(reviewData);
+                String numberOfReviewString = Integer.toString(mReviewAdapter.getItemCount());
+                mDetailBinding.tvNumberOfUserReview.setText(numberOfReviewString);
             }
         }
     }

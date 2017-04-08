@@ -27,9 +27,9 @@
     <string name="settings_order_by_top_rated_value" translatable="false">top_rated</string>
 
     <!-- Label of user rating textview in detail activity. -->
-    <string name="detail_activity_user_rating_label">User Rating:</string>
+    <string name="detail_activity_user_rating_label">Average User Rating:</string>
     <!-- Label of user review textview in detail activity. -->
-    <string name="detail_activity_user_review_label">User Reviews:</string>
+    <string name="detail_activity_user_review_label">Total User Reviews:</string>
 
     <!-- Label of user review author in list_item_user_review layout. -->
     <string name="list_item_user_review_author_label">Author:</string>
@@ -40,7 +40,8 @@
     <string name="fake_detail_movie_date">2016-11-23</string>
     <string name="fake_datail_movie_plot">A koala named Buster recruits his best friend to help him drum up business for
     his theater by hosting a singing competition.</string>
-    <string name ="fake_detail_movie_review_author_name">TopKek</string>
+    <string name="fake_detail_movie_number_of_review">4</string>
+    <string name="fake_detail_movie_review_author_name">TopKek</string>
     <string name="fake_detail_movie_review">Featuring appealing covers of hit songs and an all-star cast,
         this cute animated comedy capitalizes on the craze for both talking-animal adventures and talent competitions.
         The movie may not have the substance of Inside Out or the overt messages of Zootopia, but, like Trolls, it\'s simple,

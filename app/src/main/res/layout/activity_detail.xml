@@ -87,14 +87,23 @@
                 app:layout_constraintLeft_toLeftOf="@+id/tv_user_rating_label"
                 app:layout_constraintTop_toBottomOf="@+id/tv_user_rating_label" />
 
+            <TextView
+                android:id="@+id/tv_number_of_user_review"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                app:layout_constraintBaseline_toBaselineOf="@+id/tv_user_review_label"
+                app:layout_constraintRight_toRightOf="@+id/tv_user_rating"
+                tools:text="@string/fake_detail_movie_number_of_review" />
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerview_movie_reviews"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/text_default_detail_padding"
-                app:layout_constraintTop_toBottomOf="@+id/tv_user_review_label"
                 app:layout_constraintLeft_toLeftOf="@+id/tv_user_review_label"
-                app:layout_constraintRight_toRightOf="@+id/tv_user_rating" />
+                app:layout_constraintRight_toRightOf="@+id/tv_user_rating"
+                app:layout_constraintTop_toBottomOf="@+id/tv_user_review_label" />
 
         </android.support.constraint.ConstraintLayout>
 
