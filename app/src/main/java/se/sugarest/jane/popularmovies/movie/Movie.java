@@ -1,4 +1,4 @@
-package se.sugarest.jane.popularmovies;
+package se.sugarest.jane.popularmovies.movie;
 
 import java.io.Serializable;
 
@@ -9,7 +9,7 @@ import java.io.Serializable;
 /**
  * Represents a Movie.
  * It contains the poster url string, the original title, the poster image thumbnail url string,
- * a plot synopsis, user rating and release date of a movie.
+ * a plot synopsis, user rating, release date and id of a movie.
  */
 public class Movie implements Serializable {
 
@@ -41,6 +41,10 @@ public class Movie implements Serializable {
      * Release Date of the movie
      */
     private String mReleaseDate;
+    /**
+     * User id of the movie
+     */
+    private String mId;
 
     /**
      * Construct a new {@link Movie} object.
@@ -51,14 +55,17 @@ public class Movie implements Serializable {
      * @param aPlotSynopsis             is a plot synopsis of the movie
      * @param userRating                is the user rating of the movie
      * @param releaseDate               is the release date of the movie
+     * @param id                        is the id of the movie
      */
-    public Movie(String posterPath, String originalTitle, String moviePosterImageThumbnail, String aPlotSynopsis, String userRating, String releaseDate) {
+    public Movie(String posterPath, String originalTitle, String moviePosterImageThumbnail, String aPlotSynopsis,
+                 String userRating, String releaseDate, String id) {
         mPosterPath = posterPath;
         mOriginalTitle = originalTitle;
         mMoviePosterImageThumbnail = moviePosterImageThumbnail;
         mAPlotSynopsis = aPlotSynopsis;
         mUserRating = userRating;
         mReleaseDate = releaseDate;
+        mId = id;
     }
 
     /**
@@ -103,17 +110,27 @@ public class Movie implements Serializable {
         return mReleaseDate;
     }
 
+    /**
+     * Get id of the movie
+     */
+    public String getId() {
+        return mId;
+    }
+
     @Override
     public String toString() {
         return "Movie{" +
-                "mPosterPath='" + mPosterPath + '\'' +
+                "BASE_IMAGE_URL='" + BASE_IMAGE_URL + '\'' +
+                ", IMAGE_SIZE_W185='" + IMAGE_SIZE_W185 + '\'' +
+                ", IMAGE_SIZE_W780='" + IMAGE_SIZE_W780 + '\'' +
+                ", mPosterPath='" + mPosterPath + '\'' +
                 ", mOriginalTitle='" + mOriginalTitle + '\'' +
                 ", mMoviePosterImageThumbnail='" + mMoviePosterImageThumbnail + '\'' +
                 ", mAPlotSynopsis='" + mAPlotSynopsis + '\'' +
                 ", mUserRating='" + mUserRating + '\'' +
                 ", mReleaseDate='" + mReleaseDate + '\'' +
+                ", mId='" + mId + '\'' +
                 '}';
     }
-
 }
 

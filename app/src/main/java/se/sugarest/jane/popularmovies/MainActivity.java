@@ -18,8 +18,10 @@ import android.widget.TextView;
 import java.net.URL;
 import java.util.List;
 
-import se.sugarest.jane.popularmovies.MovieAdapter.MovieAdapterOnClickHandler;
-import se.sugarest.jane.popularmovies.utilities.MoviejsonUtils;
+import se.sugarest.jane.popularmovies.movie.Movie;
+import se.sugarest.jane.popularmovies.movie.MovieAdapter;
+import se.sugarest.jane.popularmovies.movie.MovieAdapter.MovieAdapterOnClickHandler;
+import se.sugarest.jane.popularmovies.utilities.MovieJsonUtils;
 import se.sugarest.jane.popularmovies.utilities.NetworkUtils;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapterOnClickHandler {
@@ -186,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
             try {
                 String jsonMovieResponse = NetworkUtils
                         .getResponseFromHttpUrl(movieRequestUrl);
-                List<Movie> simpleJsonMovieData = MoviejsonUtils
+                List<Movie> simpleJsonMovieData = MovieJsonUtils
                         .extractResultsFromJson(jsonMovieResponse);
                 return simpleJsonMovieData;
 

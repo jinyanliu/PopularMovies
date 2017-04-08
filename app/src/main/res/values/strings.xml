@@ -26,11 +26,26 @@
     <string name="settings_order_by_top_rated_label">Top Rated</string>
     <string name="settings_order_by_top_rated_value" translatable="false">top_rated</string>
 
-    <!-- Label for fake images and texts show on detail activity for design reason. -->
+    <!-- Label of user rating textview in detail activity. -->
+    <string name="detail_activity_user_rating_label">User Rating:</string>
+    <!-- Label of user review textview in detail activity. -->
+    <string name="detail_activity_user_review_label">User Reviews:</string>
+
+    <!-- Label of user review author in list_item_user_review layout. -->
+    <string name="list_item_user_review_author_label">Author:</string>
+
+    <!-- Fake texts show on detail activity for design reason. -->
     <string name="fake_detail_movie_name">Sing</string>
     <string name="fake_detail_movie_rate">6.7</string>
     <string name="fake_detail_movie_date">2016-11-23</string>
     <string name="fake_datail_movie_plot">A koala named Buster recruits his best friend to help him drum up business for
     his theater by hosting a singing competition.</string>
-
+    <string name ="fake_detail_movie_review_author_name">TopKek</string>
+    <string name="fake_detail_movie_review">Featuring appealing covers of hit songs and an all-star cast,
+        this cute animated comedy capitalizes on the craze for both talking-animal adventures and talent competitions.
+        The movie may not have the substance of Inside Out or the overt messages of Zootopia, but, like Trolls, it\'s simple,
+        with catchy pop music and jokes that are likely to make kids laugh. (Unlike Trolls, its take-aways aren\'t quite as
+        thoroughly positive \-\- see below.) The musical numbers are by far the best part of the movie, including Jennifer
+        Hudson-voiced renditions of \"Golden Slumbers/Carry That Weight\" to the piggy duet of \"Shake It Off\" (by Witherspoon
+        and comedian Nick Kroll as a German boar called Gunter) to Kelly\'s show-stopping version of "Hallelujah."</string>
 </resources>

@@ -3,15 +3,26 @@ package se.sugarest.jane.popularmovies;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.squareup.picasso.Picasso;
 
+import java.net.URL;
+import java.util.List;
+
 import se.sugarest.jane.popularmovies.databinding.ActivityDetailBinding;
+import se.sugarest.jane.popularmovies.movie.Movie;
+import se.sugarest.jane.popularmovies.review.Review;
+import se.sugarest.jane.popularmovies.review.ReviewAdapter;
+import se.sugarest.jane.popularmovies.utilities.ReviewJsonUtils;
+import se.sugarest.jane.popularmovies.utilities.NetworkUtils;
 
 /**
  * Created by jane on 3/1/17.
@@ -20,6 +31,10 @@ import se.sugarest.jane.popularmovies.databinding.ActivityDetailBinding;
 public class DetailActivity extends AppCompatActivity {
 
     private Movie mCurrentMovie;
+
+    private RecyclerView mReviewRecyclerView;
+
+    private ReviewAdapter mReviewAdapter;
 
     /**
      * This field is used for data binding. Normally, we would have to call findViewById many
@@ -53,15 +68,65 @@ public class DetailActivity extends AppCompatActivity {
             }
         }
 
+        // Set current movie original title on the detail activity menu bar as activity's title.
+        setTitle(mCurrentMovie.getOriginalTitle());
+
         // Set current movie poster image thumbnail
         Picasso.with(DetailActivity.this).load(mCurrentMovie.getMoviePosterImageThumbnail())
                 .into(mDetailBinding.ivMoviePosterImageThumbnail);
 
         // Set current movie textViews content
-        mDetailBinding.tvOriginalTitle.setText(mCurrentMovie.getOriginalTitle());
         mDetailBinding.tvUserRating.setText(mCurrentMovie.getUserRating());
         mDetailBinding.tvReleaseDate.setText(mCurrentMovie.getReleaseDate());
         mDetailBinding.tvAPlotSynopsis.setText(mCurrentMovie.getAPlotSynopsis());
 
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,
+                false);
+
+        mReviewRecyclerView = mDetailBinding.recyclerviewMovieReviews;
+
+        mReviewRecyclerView.setLayoutManager(layoutManager);
+
+        mReviewAdapter = new ReviewAdapter();
+
+        mReviewRecyclerView.setAdapter(mReviewAdapter);
+
+        loadReviewData(mCurrentMovie.getId());
+
+    }
+
+    private void loadReviewData(String id) {
+        new FetchReviewTask().execute(id);
+    }
+
+    public class FetchReviewTask extends AsyncTask<String, Void, List<Review>> {
+
+        @Override
+        protected List<Review> doInBackground(String... params) {
+            // If there's no movie id, there's no movie reviews to show.
+            if (params.length == 0) {
+                return null;
+            }
+            String id = params[0];
+            URL movieReviewRequestUrl = NetworkUtils.buildReviewUrl(id);
+
+            try {
+                String jsonMovieReviewResponse = NetworkUtils
+                        .getResponseFromHttpUrl(movieReviewRequestUrl);
+                List<Review> simpleJsonReviewData = ReviewJsonUtils
+                        .extractResultsFromMovieReviewJson(jsonMovieReviewResponse);
+                return simpleJsonReviewData;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(List<Review> reviewData) {
+            if (reviewData != null) {
+                mReviewAdapter.setReviewData(reviewData);
+            }
+        }
     }
 }

@@ -10,7 +10,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import se.sugarest.jane.popularmovies.Movie;
+import se.sugarest.jane.popularmovies.movie.Movie;
 import se.sugarest.jane.popularmovies.R;
 
 /**
@@ -20,9 +20,9 @@ import se.sugarest.jane.popularmovies.R;
 /**
  * Utility functions to handle MovieDB JSON data.
  */
-public class MoviejsonUtils {
+public class MovieJsonUtils {
 
-    private static final String TAG = MoviejsonUtils.class.getSimpleName();
+    private static final String TAG = MovieJsonUtils.class.getSimpleName();
 
     /**
      * @return a list of {@link Movie} objects that has been built up from
@@ -76,11 +76,14 @@ public class MoviejsonUtils {
                 // Get the "release_date" key value String and store it in release_date variable.
                 String release_date = currentMovie.getString("release_date");
 
+                // Get the "id" key value String and store it in id variable.
+                String id = currentMovie.getString("id");
+
                 // Create a new {@link Movie} object with the poster_path, original_title,
-                // movie_poster_image_thumbnail, a_plot_synopsis, user_rating, release_date
+                // movie_poster_image_thumbnail, a_plot_synopsis, user_rating, release_date,id
                 // from the JSON response.
                 Movie movie = new Movie(poster_path, original_title, movie_poster_image_thumbnail
-                        , a_plot_synopsis, user_rating, release_date);
+                        , a_plot_synopsis, user_rating, release_date,id);
 
                 // Add the new {@link Movie} to the list of movies.
                 movies.add(movie);

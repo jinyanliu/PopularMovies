@@ -59,6 +59,23 @@ public class NetworkUtils {
         return url;
     }
 
+    public static URL buildReviewUrl(String id) {
+        String addToUrl = "movie/" + id + "/reviews";
+        String baseUrl = MOVIE_BASE_URL + addToUrl;
+        Uri builtUri = Uri.parse(baseUrl).buildUpon()
+                .appendQueryParameter(API_KEY_PARAM, API_KEY)
+                .build();
+
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        Log.v(TAG, "Built Reviews URI " + url);
+        return url;
+    }
+
     /**
      * This method returns the entire result from the HTTP response.
      *

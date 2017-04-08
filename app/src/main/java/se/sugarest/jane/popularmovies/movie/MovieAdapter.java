@@ -1,4 +1,4 @@
-package se.sugarest.jane.popularmovies;
+package se.sugarest.jane.popularmovies.movie;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +12,8 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+
+import se.sugarest.jane.popularmovies.R;
 
 /**
  * Created by jane on 2/26/17.
