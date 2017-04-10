@@ -2,6 +2,7 @@ package se.sugarest.jane.popularmovies;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -23,6 +24,7 @@ import se.sugarest.jane.popularmovies.review.Review;
 import se.sugarest.jane.popularmovies.review.ReviewAdapter;
 import se.sugarest.jane.popularmovies.trailer.Trailer;
 import se.sugarest.jane.popularmovies.trailer.TrailerAdapter;
+import se.sugarest.jane.popularmovies.trailer.TrailerAdapter.TrailerAdapterOnClickHandler;
 import se.sugarest.jane.popularmovies.utilities.NetworkUtils;
 import se.sugarest.jane.popularmovies.utilities.ReviewJsonUtils;
 import se.sugarest.jane.popularmovies.utilities.TrailerJsonUtils;
@@ -31,7 +33,7 @@ import se.sugarest.jane.popularmovies.utilities.TrailerJsonUtils;
  * Created by jane on 3/1/17.
  */
 
-public class DetailActivity extends AppCompatActivity {
+public class DetailActivity extends AppCompatActivity implements TrailerAdapterOnClickHandler {
 
     private Movie mCurrentMovie;
 
@@ -66,18 +68,6 @@ public class DetailActivity extends AppCompatActivity {
                 fab_favorite.setColorFilter(ContextCompat.getColor(DetailActivity.this, R.color.colorYellowFavoriteStar));
             }
         });
-
-//        // Setup fav_trailer to open Youtube App to watch trailers.
-//        final FloatingActionButton fab_trailer = (FloatingActionButton) findViewById(R.id.fab_trailer);
-//        fab_trailer.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                String trailerKey = "Zvjmt4pwtdg";
-//                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + trailerKey));
-//                startActivity(intent);
-//            }
-//        });
-
 
         Intent intentThatStartedThisActivity = getIntent();
         if (intentThatStartedThisActivity != null) {
@@ -139,7 +129,7 @@ public class DetailActivity extends AppCompatActivity {
 
         mTrailerRecyclerView.setLayoutManager(layoutManagerTrailers);
 
-        mTrailerAdapter = new TrailerAdapter();
+        mTrailerAdapter = new TrailerAdapter(this);
 
         mTrailerRecyclerView.setAdapter(mTrailerAdapter);
 
@@ -165,6 +155,18 @@ public class DetailActivity extends AppCompatActivity {
      */
     private void loadTrailerData(String id) {
         new FetchTrailerTask().execute(id);
+    }
+
+    /**
+     * This method is overridden by the DetailActivity class in order to handle RecyclerView item
+     * clicks.
+     *
+     * @param trailerSourceKey The current trailerSourceKey that was clicked
+     */
+    @Override
+    public void onClick(String trailerSourceKey) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + trailerSourceKey));
+        startActivity(intent);
     }
 
     public class FetchReviewTask extends AsyncTask<String, Void, List<Review>> {

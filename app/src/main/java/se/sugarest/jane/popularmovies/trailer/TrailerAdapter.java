@@ -5,11 +5,12 @@ package se.sugarest.jane.popularmovies.trailer;
  */
 
 import android.content.Context;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import java.util.List;
 
@@ -27,7 +28,20 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
 
     private String[] mKeyStrings;
 
-    public TrailerAdapter() {
+    /**
+     * And On-click handler that defined tp make it easy for an Activity to interface with
+     * the RecyclerView
+     */
+    private final TrailerAdapterOnClickHandler mClickHandler;
+
+    /**
+     * Creates a TrailerAdapter.
+     *
+     * @param clickHandler The on-click handler for this adapter. This sinle handler is called
+     *                     when an item is clicked.
+     */
+    public TrailerAdapter(TrailerAdapterOnClickHandler clickHandler) {
+        mClickHandler = clickHandler;
     }
 
     @Override
@@ -43,7 +57,6 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
 
     @Override
     public void onBindViewHolder(TrailerAdapterViewHolder trailerAdapterViewHolder, int position) {
-        trailerAdapterViewHolder.mKeyTextView.setText(mKeyStrings[position]);
     }
 
     /**
@@ -69,15 +82,11 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
     public void setReviewData(List<Trailer> trailerData) {
         mTrailerData = trailerData;
         String[] arrayKeyString = new String[trailerData.size()];
-
         for (int i = 0; i < trailerData.size(); i++) {
             String currentKeyString = trailerData.get(i).getKeyString();
             arrayKeyString[i] = currentKeyString;
-
         }
-
         mKeyStrings = arrayKeyString;
-
         notifyDataSetChanged();
 
     }
@@ -85,15 +94,27 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
     /**
      * Cache of the children views for a trailer.
      */
-    public class TrailerAdapterViewHolder extends RecyclerView.ViewHolder {
-        public final TextView mKeyTextView;
+    public class TrailerAdapterViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
+        public final FloatingActionButton mPlayTrailerFab;
 
         public TrailerAdapterViewHolder(View view) {
             super(view);
-
-            mKeyTextView = (TextView)view.findViewById(R.id.key);
-
-
+            mPlayTrailerFab = (FloatingActionButton) view.findViewById(R.id.fab_trailer_icon);
+            view.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View v) {
+            int adapterPosition = getAdapterPosition();
+            String currentTrailerSourceKey = mKeyStrings[adapterPosition];
+            mClickHandler.onClick(currentTrailerSourceKey);
+        }
+    }
+
+    /**
+     * The interface that receives onClick messages.
+     */
+    public interface TrailerAdapterOnClickHandler {
+        void onClick(String trailerSourceKey);
     }
 }
