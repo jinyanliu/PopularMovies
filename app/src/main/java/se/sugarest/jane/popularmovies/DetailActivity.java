@@ -52,7 +52,7 @@ public class DetailActivity extends AppCompatActivity {
         mDetailBinding = DataBindingUtil.setContentView(this, R.layout.activity_detail);
 
         // Setup FAB to add favorite movies into database and change FAB color to yellow
-        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_favorite);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

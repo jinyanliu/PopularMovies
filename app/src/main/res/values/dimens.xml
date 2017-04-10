@@ -2,7 +2,7 @@
     <!-- Height of movie image show in detail activity -->
     <dimen name="image_height_detail">200dp</dimen>
 
-    <!-- The horizontal padding in activity_detail-->
+    <!-- The horizontal padding in activity_detail -->
     <dimen name="activity_detail_horizontal_padding">16dp</dimen>
     <!-- The vertical padding in activity_detail-->
     <dimen name="activity_detail_vertical_padding">8dp</dimen>
