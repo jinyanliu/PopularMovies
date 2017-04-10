@@ -17,7 +17,7 @@ import java.util.List;
 import se.sugarest.jane.popularmovies.R;
 
 /**
- * {@link TrailerAdapter} exposes a list of current movie reviews to a
+ * {@link TrailerAdapter} exposes a list of current movie trailers to a
  * {@link RecyclerView}
  */
 public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerAdapterViewHolder> {
@@ -37,7 +37,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
     /**
      * Creates a TrailerAdapter.
      *
-     * @param clickHandler The on-click handler for this adapter. This sinle handler is called
+     * @param clickHandler The on-click handler for this adapter. This single handler is called
      *                     when an item is clicked.
      */
     public TrailerAdapter(TrailerAdapterOnClickHandler clickHandler) {

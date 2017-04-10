@@ -113,7 +113,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         mReviewAdapter = new ReviewAdapter();
 
         /**
-         * Setting the adapter attaches it to the RecyclerView in the layout.
+         * Setting the adapter attaches it to the Review RecyclerView in the layout.
          */
         mReviewRecyclerView.setAdapter(mReviewAdapter);
 
@@ -129,10 +129,20 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
 
         mTrailerRecyclerView.setLayoutManager(layoutManagerTrailers);
 
+        /**
+         * The TrailerAdapter is responsible for linking the trailers data with the Views that
+         * will end up displaying the trailers data.
+         */
         mTrailerAdapter = new TrailerAdapter(this);
 
+        /**
+         * Setting the adapter attaches it to the Trailer RecyclerView in the layout.
+         */
         mTrailerRecyclerView.setAdapter(mTrailerAdapter);
 
+        /**
+         * Once all of the views are setup, trailer data can be load.
+         */
         loadTrailerData(mCurrentMovie.getId());
 
     }

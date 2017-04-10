@@ -12,6 +12,9 @@
     <!-- The vertical padding in list_item_review -->
     <dimen name="list_item_user_review_vertical_padding">8dp</dimen>
 
+    <!-- The horizontal padding in list_item_trailers -->
+    <dimen name="list_item_trailers_horizontal_padding">8dp</dimen>
+
     <!-- The height of the imageView to use as a dividing line -->
     <dimen name="image_height_dividing_line_single">1dp</dimen>
     <!-- The height of the imageView to use as a thicker line -->

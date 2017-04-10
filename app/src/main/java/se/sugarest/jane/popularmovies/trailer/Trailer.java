@@ -6,7 +6,7 @@ package se.sugarest.jane.popularmovies.trailer;
 
 /**
  * Represents a Trailer.
- * It contains the trailer key for Youtube Intent use.
+ * It contains the trailer source key for Youtube Intent use.
  */
 public class Trailer {
 
