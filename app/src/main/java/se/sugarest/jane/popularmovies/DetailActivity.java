@@ -2,7 +2,6 @@ package se.sugarest.jane.popularmovies;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,8 +21,11 @@ import se.sugarest.jane.popularmovies.databinding.ActivityDetailBinding;
 import se.sugarest.jane.popularmovies.movie.Movie;
 import se.sugarest.jane.popularmovies.review.Review;
 import se.sugarest.jane.popularmovies.review.ReviewAdapter;
+import se.sugarest.jane.popularmovies.trailer.Trailer;
+import se.sugarest.jane.popularmovies.trailer.TrailerAdapter;
 import se.sugarest.jane.popularmovies.utilities.NetworkUtils;
 import se.sugarest.jane.popularmovies.utilities.ReviewJsonUtils;
+import se.sugarest.jane.popularmovies.utilities.TrailerJsonUtils;
 
 /**
  * Created by jane on 3/1/17.
@@ -35,7 +37,11 @@ public class DetailActivity extends AppCompatActivity {
 
     private RecyclerView mReviewRecyclerView;
 
+    private RecyclerView mTrailerRecyclerView;
+
     private ReviewAdapter mReviewAdapter;
+
+    private TrailerAdapter mTrailerAdapter;
 
     /**
      * This field is used for data binding. Normally, we would have to call findViewById many
@@ -61,17 +67,16 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
 
-        // Setup fav_trailer to open Youtube App to watch trailers.
-        final FloatingActionButton fab_trailer = (FloatingActionButton) findViewById(R.id.fab_trailer);
-        fab_trailer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String trailerKey = "Zvjmt4pwtdg";
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + trailerKey));
-                startActivity(intent);
-            }
-        });
-
+//        // Setup fav_trailer to open Youtube App to watch trailers.
+//        final FloatingActionButton fab_trailer = (FloatingActionButton) findViewById(R.id.fab_trailer);
+//        fab_trailer.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                String trailerKey = "Zvjmt4pwtdg";
+//                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + trailerKey));
+//                startActivity(intent);
+//            }
+//        });
 
 
         Intent intentThatStartedThisActivity = getIntent();
@@ -104,12 +109,12 @@ public class DetailActivity extends AppCompatActivity {
          * layout. Generally, this is only true with horizontal lists that need to support a
          * right-to-left layout.
          */
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,
+        LinearLayoutManager layoutManagerReviews = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,
                 false);
 
         mReviewRecyclerView = mDetailBinding.recyclerviewMovieReviews;
 
-        mReviewRecyclerView.setLayoutManager(layoutManager);
+        mReviewRecyclerView.setLayoutManager(layoutManagerReviews);
 
         /**
          * The ReviewAdapter is responsible for linking the reviews data with the Views that
@@ -127,6 +132,19 @@ public class DetailActivity extends AppCompatActivity {
          */
         loadReviewData(mCurrentMovie.getId());
 
+        LinearLayoutManager layoutManagerTrailers = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,
+                false);
+
+        mTrailerRecyclerView = mDetailBinding.recyclerviewMovieTrailers;
+
+        mTrailerRecyclerView.setLayoutManager(layoutManagerTrailers);
+
+        mTrailerAdapter = new TrailerAdapter();
+
+        mTrailerRecyclerView.setAdapter(mTrailerAdapter);
+
+        loadTrailerData(mCurrentMovie.getId());
+
     }
 
     /**
@@ -137,6 +155,16 @@ public class DetailActivity extends AppCompatActivity {
      */
     private void loadReviewData(String id) {
         new FetchReviewTask().execute(id);
+    }
+
+    /**
+     * This method will use the pass in movie id to tell the background method to get the
+     * movie trailer data in the background.
+     *
+     * @param id The id of the movie clicked.
+     */
+    private void loadTrailerData(String id) {
+        new FetchTrailerTask().execute(id);
     }
 
     public class FetchReviewTask extends AsyncTask<String, Void, List<Review>> {
@@ -170,6 +198,37 @@ public class DetailActivity extends AppCompatActivity {
                 // not have reviews.
                 String numberOfReviewString = Integer.toString(mReviewAdapter.getItemCount());
                 mDetailBinding.tvNumberOfUserReview.setText(numberOfReviewString);
+            }
+        }
+    }
+
+    public class FetchTrailerTask extends AsyncTask<String, Void, List<Trailer>> {
+
+        @Override
+        protected List<Trailer> doInBackground(String... params) {
+            // If there's no movie id, there's no movie trailers to show.
+            if (params.length == 0) {
+                return null;
+            }
+            String id = params[0];
+            URL movieTrailerRequestUrl = NetworkUtils.buildTrailerUrl(id);
+
+            try {
+                String jsonMovieTrailerResponse = NetworkUtils
+                        .getResponseFromHttpUrl(movieTrailerRequestUrl);
+                List<Trailer> simpleJsonTrailerData = TrailerJsonUtils
+                        .extractResultsFromMovieTrailerJson(jsonMovieTrailerResponse);
+                return simpleJsonTrailerData;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(List<Trailer> trailerData) {
+            if (trailerData != null) {
+                mTrailerAdapter.setReviewData(trailerData);
             }
         }
     }

@@ -31,7 +31,7 @@
     <!-- Label of user review textview in detail activity. -->
     <string name="detail_activity_user_review_label">Total User Reviews:</string>
 
-    <!-- Label of user review author in list_item_user_review layout. -->
+    <!-- Label of user review author in list_item_review layout. -->
     <string name="list_item_user_review_author_label">Author:</string>
 
     <!-- Fake texts show on detail activity for design reason. -->

@@ -86,6 +86,32 @@ public class NetworkUtils {
     }
 
     /**
+     * Builds the URL used to talk to the movie server to fetch movie trailer data using a movie id.
+     * <p>
+     * Note: The right URL to query movie trailer data looks like:
+     * http://api.themoviedb.org/3/movie/263115/trailers?api_key=[YOUR_API_KEY]
+     *
+     * @param id The movie id that will be queried for.
+     * @return the URL to use to query the movie server to fetch movie trailer data.
+     */
+    public static URL buildTrailerUrl(String id) {
+        String addToUrl = "movie/" + id + "/trailers";
+        String baseUrl = MOVIE_BASE_URL + addToUrl;
+        Uri builtUri = Uri.parse(baseUrl).buildUpon()
+                .appendQueryParameter(API_KEY_PARAM, API_KEY)
+                .build();
+
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        Log.v(TAG, "Built Trailers URI " + url);
+        return url;
+    }
+
+    /**
      * This method returns the entire result from the HTTP response.
      *
      * @param url The URL to fetch the HTTP response from.
