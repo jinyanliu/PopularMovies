@@ -4,4 +4,8 @@
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorPrimaryLight">#9E9E9E</color>
     <color name="colorAccent">#000000</color>
+
+    <!-- The favorite star color shows in fab button in Detail Activity if the movie is in user's
+    favorite movies list -->
+    <color name="colorYellowFavoriteStar">#FFEB3B</color>
 </resources>

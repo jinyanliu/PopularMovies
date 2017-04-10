@@ -2,11 +2,12 @@ package se.sugarest.jane.popularmovies;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,8 +22,8 @@ import se.sugarest.jane.popularmovies.databinding.ActivityDetailBinding;
 import se.sugarest.jane.popularmovies.movie.Movie;
 import se.sugarest.jane.popularmovies.review.Review;
 import se.sugarest.jane.popularmovies.review.ReviewAdapter;
-import se.sugarest.jane.popularmovies.utilities.ReviewJsonUtils;
 import se.sugarest.jane.popularmovies.utilities.NetworkUtils;
+import se.sugarest.jane.popularmovies.utilities.ReviewJsonUtils;
 
 /**
  * Created by jane on 3/1/17.
@@ -51,15 +52,27 @@ public class DetailActivity extends AppCompatActivity {
 
         mDetailBinding = DataBindingUtil.setContentView(this, R.layout.activity_detail);
 
-        // Setup FAB to add favorite movies into database and change FAB color to yellow
-        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_favorite);
-        fab.setOnClickListener(new View.OnClickListener() {
+        // Setup fab_favorite to add favorite movies into database and change FAB color to yellow
+        final FloatingActionButton fab_favorite = (FloatingActionButton) findViewById(R.id.fab_favorite);
+        fab_favorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int yellowColorValue = Color.parseColor("#FFEB3B");
-                fab.setColorFilter(yellowColorValue);
+                fab_favorite.setColorFilter(ContextCompat.getColor(DetailActivity.this, R.color.colorYellowFavoriteStar));
             }
         });
+
+        // Setup fav_trailer to open Youtube App to watch trailers.
+        final FloatingActionButton fab_trailer = (FloatingActionButton) findViewById(R.id.fab_trailer);
+        fab_trailer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String trailerKey = "Zvjmt4pwtdg";
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + trailerKey));
+                startActivity(intent);
+            }
+        });
+
+
 
         Intent intentThatStartedThisActivity = getIntent();
         if (intentThatStartedThisActivity != null) {
