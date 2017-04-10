@@ -7,51 +7,45 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="@dimen/image_height_dividing_line_list_view_user_review"
-        android:layout_marginBottom="@dimen/padding_author_and_review"
-        android:background="@color/colorPrimaryLight" />
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/image_height_dividing_line_list_view_user_review"
-        android:layout_marginBottom="@dimen/padding_author_and_review"
+        android:layout_height="@dimen/image_height_dividing_line_single"
+        android:layout_marginBottom="@dimen/list_item_user_review_vertical_padding"
         android:background="@color/colorPrimaryLight" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:paddingEnd="@dimen/list_item_user_review_horizontal_padding"
+        android:paddingLeft="@dimen/list_item_user_review_horizontal_padding"
+        android:paddingRight="@dimen/list_item_user_review_horizontal_padding"
+        android:paddingStart="@dimen/list_item_user_review_horizontal_padding">
 
         <TextView
             android:id="@+id/list_item_user_review_author_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/list_item_user_review_author_label"
-            android:textSize="16sp" />
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/list_item_user_review_author_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/text_default_detail_padding"
-            android:textSize="16sp"
+            android:textSize="12sp"
             tools:text="@string/fake_detail_movie_review_author_name" />
 
     </LinearLayout>
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/image_height_dividing_line_list_view_user_review"
-        android:layout_marginBottom="@dimen/padding_author_and_review"
-        android:layout_marginTop="@dimen/text_default_detail_padding"
-        android:background="@color/colorPrimaryLight" />
 
     <TextView
         android:id="@+id/list_item_user_review_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/text_default_detail_padding"
-        android:paddingTop="@dimen/padding_author_and_review"
+        android:paddingBottom="@dimen/list_item_user_review_vertical_padding"
+        android:paddingEnd="@dimen/list_item_user_review_horizontal_padding"
+        android:paddingLeft="@dimen/list_item_user_review_horizontal_padding"
+        android:paddingRight="@dimen/list_item_user_review_horizontal_padding"
+        android:paddingStart="@dimen/list_item_user_review_horizontal_padding"
+        android:paddingTop="@dimen/list_item_user_review_vertical_padding"
         android:textSize="16sp"
         tools:text="@string/fake_detail_movie_review" />
 

@@ -27,83 +27,118 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_star"
                 app:layout_constraintBottom_toBottomOf="@+id/iv_movie_poster_image_thumbnail"
-                app:layout_constraintRight_toRightOf="@+id/tv_a_plot_synopsis"
+                app:layout_constraintRight_toRightOf="@+id/tv_user_rating"
                 app:layout_constraintTop_toBottomOf="@+id/iv_movie_poster_image_thumbnail" />
 
             <TextView
                 android:id="@+id/tv_release_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/text_default_detail_padding"
-                android:layout_marginStart="@dimen/text_default_detail_padding"
-                android:layout_marginTop="@dimen/text_default_detail_padding"
-                android:textSize="20sp"
+                android:layout_marginLeft="@dimen/activity_detail_horizontal_padding"
+                android:layout_marginStart="@dimen/activity_detail_horizontal_padding"
+                android:layout_marginTop="@dimen/activity_detail_vertical_padding"
+                android:textSize="12sp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/iv_movie_poster_image_thumbnail"
                 tools:text="@string/fake_detail_movie_date" />
+
+            <ImageView
+                android:id="@+id/dividing_line_date_and_plot"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/image_height_dividing_line_single"
+                android:layout_marginTop="@dimen/activity_detail_vertical_padding"
+                android:background="@color/colorPrimaryLight"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_release_date" />
 
             <TextView
                 android:id="@+id/tv_a_plot_synopsis"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/text_default_detail_padding"
-                android:layout_marginLeft="@dimen/text_default_detail_padding"
-                android:layout_marginRight="@dimen/text_default_detail_padding"
-                android:layout_marginStart="@dimen/text_default_detail_padding"
-                android:layout_marginTop="@dimen/text_default_detail_padding"
+                android:layout_marginEnd="@dimen/activity_detail_horizontal_padding"
+                android:layout_marginLeft="@dimen/activity_detail_horizontal_padding"
+                android:layout_marginRight="@dimen/activity_detail_horizontal_padding"
+                android:layout_marginStart="@dimen/activity_detail_horizontal_padding"
+                android:layout_marginTop="@dimen/activity_detail_vertical_padding"
                 android:textSize="16sp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_release_date"
+                app:layout_constraintTop_toBottomOf="@+id/dividing_line_date_and_plot"
                 tools:text="@string/fake_datail_movie_plot" />
+
+            <ImageView
+                android:id="@+id/dividing_line_plot_and_rating"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/image_height_dividing_line_single"
+                android:layout_marginTop="@dimen/activity_detail_vertical_padding"
+                android:background="@color/colorPrimaryLight"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_a_plot_synopsis" />
 
             <TextView
                 android:id="@+id/tv_user_rating_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/text_default_detail_padding"
+                android:layout_marginTop="@dimen/activity_detail_vertical_padding"
                 android:text="@string/detail_activity_user_rating_label"
-                android:textSize="16sp"
+                android:textSize="12sp"
                 app:layout_constraintLeft_toLeftOf="@+id/tv_a_plot_synopsis"
-                app:layout_constraintTop_toBottomOf="@+id/tv_a_plot_synopsis" />
+                app:layout_constraintTop_toBottomOf="@+id/dividing_line_plot_and_rating" />
 
             <TextView
                 android:id="@+id/tv_user_rating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/activity_detail_horizontal_padding"
+                android:layout_marginRight="@dimen/activity_detail_horizontal_padding"
                 android:textSize="20sp"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_user_rating_label"
-                app:layout_constraintRight_toRightOf="@+id/fab"
-                app:layout_constraintTop_toTopOf="@+id/tv_user_rating_label"
+                app:layout_constraintBottom_toTopOf="@+id/dividing_line_rating_and_reviews"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/dividing_line_plot_and_rating"
                 tools:text="@string/fake_detail_movie_rate" />
+
+            <ImageView
+                android:id="@+id/dividing_line_rating_and_reviews"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/image_height_dividing_line_triple"
+                android:layout_marginTop="@dimen/activity_detail_vertical_padding"
+                android:background="@color/colorPrimaryLight"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_user_rating_label" />
 
             <TextView
                 android:id="@+id/tv_user_review_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/text_default_detail_padding"
+                android:layout_marginTop="@dimen/activity_detail_vertical_padding"
                 android:text="@string/detail_activity_user_review_label"
-                android:textSize="16sp"
+                android:textSize="12sp"
                 app:layout_constraintLeft_toLeftOf="@+id/tv_user_rating_label"
-                app:layout_constraintTop_toBottomOf="@+id/tv_user_rating_label" />
+                app:layout_constraintTop_toBottomOf="@+id/dividing_line_rating_and_reviews" />
 
             <TextView
                 android:id="@+id/tv_number_of_user_review"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
-                app:layout_constraintBaseline_toBaselineOf="@+id/tv_user_review_label"
-                app:layout_constraintRight_toRightOf="@+id/tv_user_rating"
+                android:layout_marginLeft="@dimen/activity_detail_horizontal_padding"
+                android:layout_marginStart="@dimen/activity_detail_horizontal_padding"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_user_review_label"
+                app:layout_constraintLeft_toRightOf="@+id/tv_user_review_label"
+                app:layout_constraintTop_toTopOf="@+id/tv_user_review_label"
                 tools:text="@string/fake_detail_movie_number_of_review" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerview_movie_reviews"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/text_default_detail_padding"
-                app:layout_constraintLeft_toLeftOf="@+id/tv_user_review_label"
-                app:layout_constraintRight_toRightOf="@+id/tv_user_rating"
-                app:layout_constraintTop_toBottomOf="@+id/tv_user_review_label" />
+                android:layout_marginTop="@dimen/activity_detail_vertical_padding"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_number_of_user_review" />
 
         </android.support.constraint.ConstraintLayout>
 
