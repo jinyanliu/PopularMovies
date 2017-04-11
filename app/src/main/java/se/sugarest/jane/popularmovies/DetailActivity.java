@@ -171,7 +171,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     /**
      * This method is overridden by the DetailActivity class in order to handle RecyclerView item
      * clicks.
-     *
+     * <p>
      * Props for supporting the YouTube app if it's available, and falling back to the web browser
      * if necessary.
      *
