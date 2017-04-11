@@ -1,11 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#000000</color>
-    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorPrimary">#2B3D4D</color>
+    <color name="colorPrimaryDark">#23303D</color>
     <color name="colorPrimaryLight">#9E9E9E</color>
-    <color name="colorAccent">#000000</color>
+    <color name="colorAccent">#10CAC9</color>
 
     <!-- The favorite star color shows in fab button in Detail Activity if the movie is in user's
     favorite movies list -->
     <color name="colorYellowFavoriteStar">#FFEB3B</color>
+
+    <!-- Background Color for trailer fab button position 0-->
+    <color name="trailer0">#006064</color>
+
+    <!-- Background Color for trailer fab button position 1-->
+    <color name="trailer1">#00838F</color>
+
+    <!-- Background Color for trailer fab button position 2-->
+    <color name="trailer2">#0097A7</color>
+
+    <!-- Background Color for trailer fab button position 3-->
+    <color name="trailer3">#00ACC1</color>
+
+    <!-- Background Color for trailer fab button position 4-->
+    <color name="trailer4">#00BCD4</color>
+
+    <!-- Background Color for trailer fab button position 5-->
+    <color name="trailer5">#26C6DA</color>
+
+    <!-- Background Color for trailer fab button position 6-->
+    <color name="trailer6">#4DD0E1</color>
+
+    <!-- Background Color for trailer fab button position 7-->
+    <color name="trailer7">#80DEEA</color>
+
+    <!-- Background Color for trailer fab button position 8-->
+    <color name="trailer8">#18FFFF</color>
+
+    <!-- Background Color for trailer fab button position 9-->
+    <color name="trailer9">#00E5FF</color>
+
+    <!-- Background Color for trailer fab button position 10-->
+    <color name="trailer10">#00B8D4</color>
+
 </resources>

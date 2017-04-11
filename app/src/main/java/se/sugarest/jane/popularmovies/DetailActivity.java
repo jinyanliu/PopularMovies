@@ -1,5 +1,6 @@
 package se.sugarest.jane.popularmovies;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
@@ -133,7 +134,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
          * The TrailerAdapter is responsible for linking the trailers data with the Views that
          * will end up displaying the trailers data.
          */
-        mTrailerAdapter = new TrailerAdapter(this);
+        mTrailerAdapter = new TrailerAdapter(this, this);
 
         /**
          * Setting the adapter attaches it to the Trailer RecyclerView in the layout.
@@ -171,12 +172,21 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
      * This method is overridden by the DetailActivity class in order to handle RecyclerView item
      * clicks.
      *
+     * Props for supporting the YouTube app if it's available, and falling back to the web browser
+     * if necessary.
+     *
      * @param trailerSourceKey The current trailerSourceKey that was clicked
      */
     @Override
     public void onClick(String trailerSourceKey) {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + trailerSourceKey));
-        startActivity(intent);
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + trailerSourceKey));
+        Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("http://www.youtube.com/watch?v=" + trailerSourceKey));
+        try {
+            startActivity(appIntent);
+        } catch (ActivityNotFoundException ex) {
+            startActivity(webIntent);
+        }
     }
 
     public class FetchReviewTask extends AsyncTask<String, Void, List<Review>> {

@@ -5,7 +5,9 @@ package se.sugarest.jane.popularmovies.trailer;
  */
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +30,8 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
 
     private String[] mKeyStrings;
 
+    private Context mContext;
+
     /**
      * And On-click handler that defined tp make it easy for an Activity to interface with
      * the RecyclerView
@@ -40,8 +44,9 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
      * @param clickHandler The on-click handler for this adapter. This single handler is called
      *                     when an item is clicked.
      */
-    public TrailerAdapter(TrailerAdapterOnClickHandler clickHandler) {
+    public TrailerAdapter(TrailerAdapterOnClickHandler clickHandler, Context context) {
         mClickHandler = clickHandler;
+        mContext = context;
     }
 
     @Override
@@ -57,6 +62,9 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
 
     @Override
     public void onBindViewHolder(TrailerAdapterViewHolder trailerAdapterViewHolder, int position) {
+        int currentColor = getTrailerFabBackgroundColor(position);
+        trailerAdapterViewHolder.mPlayTrailerFab.setBackgroundTintList(ColorStateList
+                .valueOf(currentColor));
     }
 
     /**
@@ -116,5 +124,48 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
      */
     public interface TrailerAdapterOnClickHandler {
         void onClick(String trailerSourceKey);
+    }
+
+    /**
+     * Use switch statement to set the different background color on trailer play icon.
+     */
+    private int getTrailerFabBackgroundColor(int position) {
+        int trailerFabBackgroundColorId;
+        switch (position) {
+            case 0:
+                trailerFabBackgroundColorId = R.color.trailer0;
+                break;
+            case 1:
+                trailerFabBackgroundColorId = R.color.trailer1;
+                break;
+            case 2:
+                trailerFabBackgroundColorId = R.color.trailer2;
+                break;
+            case 3:
+                trailerFabBackgroundColorId = R.color.trailer3;
+                break;
+            case 4:
+                trailerFabBackgroundColorId = R.color.trailer4;
+                break;
+            case 5:
+                trailerFabBackgroundColorId = R.color.trailer5;
+                break;
+            case 6:
+                trailerFabBackgroundColorId = R.color.trailer6;
+                break;
+            case 7:
+                trailerFabBackgroundColorId = R.color.trailer7;
+                break;
+            case 8:
+                trailerFabBackgroundColorId = R.color.trailer8;
+                break;
+            case 9:
+                trailerFabBackgroundColorId = R.color.trailer9;
+                break;
+            default:
+                trailerFabBackgroundColorId = R.color.trailer10;
+                break;
+        }
+        return ContextCompat.getColor(mContext, trailerFabBackgroundColorId);
     }
 }
