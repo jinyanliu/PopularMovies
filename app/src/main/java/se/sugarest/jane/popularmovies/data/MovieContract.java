@@ -115,7 +115,7 @@ public class MovieContract {
         /**
          * MovieIdReview is stored as a String representing movie's id, used to identify the movie.
          */
-        public static final String COLUMN_MOVIE_ID_REVIEW = "movie_id_review";
+        public static final String COLUMN_MOVIE_ID = "movie_id";
 
         /**
          * Author is stored as a String representing review's author.
@@ -142,7 +142,7 @@ public class MovieContract {
         /**
          * MovieIdTrailer is stored as a String representing movie's id, used to identify the movie.
          */
-        public static final String COLUMN_MOVIE_ID_TRAILER = "movie_id_trailer";
+        public static final String COLUMN_MOVIE_ID = "movie_id";
 
         /**
          * KeyOfTrailer is stored as a String representing youtube url to play the trailer either on

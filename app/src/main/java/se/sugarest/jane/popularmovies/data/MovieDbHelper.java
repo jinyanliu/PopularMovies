@@ -22,7 +22,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "movie.db";
 
     /*
-     * If you change the database schema, you must increment the database version or the onUpgrade
+     * If changing the database schema, must increment the database version or the onUpgrade
      * method will not be called.
      */
     private static final int DATABASE_VERSION = 1;
@@ -41,7 +41,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         /*
          * This String will contain a simple SQL statement that will create a table that will
-         * cache our movie data.
+         * store the movie data.
          */
         final String SQL_CREATE_MOVIE_TABLE =
                 "CREATE TABLE " + MovieEntry.TABLE_NAME + " (" +
