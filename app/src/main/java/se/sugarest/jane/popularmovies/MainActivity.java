@@ -231,28 +231,34 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                 null,
                 null);
 
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            String poster_path = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_POSTER_PATH));
-            String original_title = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_ORIGINAL_TITLE));
-            String movie_poster_image_thumbnail =
-                    cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
-            String a_plot_synopsis = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_A_PLOT_SYNOPSIS));
-            String user_rating = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_USER_RATING));
-            String release_date = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_RELEASE_DATE));
-            String id = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_ID));
+        if (cursor != null && cursor.getCount() >0) {
 
-            // Create a new {@link Movie} object with the poster_path, original_title,
-            // movie_poster_image_thumbnail, a_plot_synopsis, user_rating, release_date,id
-            // from the cursor response.
-            Movie movie = new Movie(poster_path, original_title, movie_poster_image_thumbnail
-                    , a_plot_synopsis, user_rating, release_date, id);
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                String poster_path = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_POSTER_PATH));
+                String original_title = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_ORIGINAL_TITLE));
+                String movie_poster_image_thumbnail =
+                        cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
+                String a_plot_synopsis = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_A_PLOT_SYNOPSIS));
+                String user_rating = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_USER_RATING));
+                String release_date = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_RELEASE_DATE));
+                String id = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_ID));
 
-            // Add the new {@link Movie} to the list of movies.
-            movies.add(movie);
-            cursor.moveToNext();
+                // Create a new {@link Movie} object with the poster_path, original_title,
+                // movie_poster_image_thumbnail, a_plot_synopsis, user_rating, release_date,id
+                // from the cursor response.
+                Movie movie = new Movie(poster_path, original_title, movie_poster_image_thumbnail
+                        , a_plot_synopsis, user_rating, release_date, id);
+
+                // Add the new {@link Movie} to the list of movies.
+                movies.add(movie);
+                cursor.moveToNext();
+            }
+            cursor.close();
+            mMovieAdapter.setMoviePosterData(movies);
+        } else {
+            showErrorMessage();
+            mErrorMessageDisplay.setText(getString(R.string.error_message_no_fav_movie));
         }
-        cursor.close();
-        mMovieAdapter.setMoviePosterData(movies);
     }
 }
