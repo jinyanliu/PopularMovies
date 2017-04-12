@@ -27,6 +27,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
     private static final String TAG = MovieAdapter.class.getSimpleName();
 
+    private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
+    private final String IMAGE_SIZE_W185 = "w185/";
+    private final String IMAGE_SIZE_W780 = "w780/";
+
     /**
      * An On-click handler that we've defined to make it easy for an Activity to interface with
      * the RecyclerView
@@ -84,7 +88,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
      */
     @Override
     public void onBindViewHolder(MovieAdapterViewHolder movieAdapterViewHolder, int position) {
-        String moviePosterForOneMovie = mMoviePostersUrlStrings[position];
+        String moviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185).concat(mMoviePostersUrlStrings[position]);
         Log.i(TAG, "Loading ".concat(moviePosterForOneMovie));
         Picasso.with(mContext).load(moviePosterForOneMovie).into(movieAdapterViewHolder.mMoviePosterImageView);
     }

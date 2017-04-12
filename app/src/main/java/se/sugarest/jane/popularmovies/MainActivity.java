@@ -3,6 +3,7 @@ package se.sugarest.jane.popularmovies;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -16,8 +17,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
+import se.sugarest.jane.popularmovies.data.MovieContract.MovieEntry;
 import se.sugarest.jane.popularmovies.movie.Movie;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter.MovieAdapterOnClickHandler;
@@ -103,8 +106,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                 getString(R.string.settings_order_by_key),
                 getString(R.string.settings_order_by_default)
         );
-        orderBy = "movie/" + orderBy;
-        new FetchMovieTask().execute(orderBy);
+
+        if ("favorites".equals(orderBy)) {
+            showDatabaseMoviePoster();
+        } else {
+            orderBy = "movie/" + orderBy;
+            new FetchMovieTask().execute(orderBy);
+        }
     }
 
     /**
@@ -207,5 +215,44 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                 showErrorMessage();
             }
         }
+    }
+
+    private void showDatabaseMoviePoster() {
+
+        // Create an empty ArrayList that can start adding movies to
+        List<Movie> movies = new ArrayList<>();
+
+        // Perform a query on the provider using the ContentResolver.
+        // Use the {@link MovieEntry#CONTENT_URI} to access the movie data.
+        Cursor cursor = getContentResolver().query(
+                MovieEntry.CONTENT_URI,    // The content URI of the movie table
+                null,                      // The columns to return for each row
+                null,
+                null,
+                null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            String poster_path = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_POSTER_PATH));
+            String original_title = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_ORIGINAL_TITLE));
+            String movie_poster_image_thumbnail =
+                    cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
+            String a_plot_synopsis = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_A_PLOT_SYNOPSIS));
+            String user_rating = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_USER_RATING));
+            String release_date = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_RELEASE_DATE));
+            String id = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_ID));
+
+            // Create a new {@link Movie} object with the poster_path, original_title,
+            // movie_poster_image_thumbnail, a_plot_synopsis, user_rating, release_date,id
+            // from the cursor response.
+            Movie movie = new Movie(poster_path, original_title, movie_poster_image_thumbnail
+                    , a_plot_synopsis, user_rating, release_date, id);
+
+            // Add the new {@link Movie} to the list of movies.
+            movies.add(movie);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        mMovieAdapter.setMoviePosterData(movies);
     }
 }

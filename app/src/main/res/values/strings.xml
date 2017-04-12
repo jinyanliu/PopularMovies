@@ -44,6 +44,10 @@
     <string name="settings_order_by_top_rated_label">Top Rated</string>
     <string name="settings_order_by_top_rated_value" translatable="false">top_rated</string>
 
+    <!-- Label for order-by favorite movie option [CHAR LIMIT=20] -->
+    <string name="settings_order_by_favorites_label">Favorite Movies</string>
+    <string name="settings_order_by_favorites_value" translatable="false">favorites</string>
+
     <!-- Label of user rating textview in detail activity. -->
     <string name="detail_activity_user_rating_label">Average User Rating:</string>
     <!-- Label of user review textview in detail activity. -->

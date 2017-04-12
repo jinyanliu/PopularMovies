@@ -13,10 +13,6 @@ import java.io.Serializable;
  */
 public class Movie implements Serializable {
 
-    private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
-    private final String IMAGE_SIZE_W185 = "w185/";
-    private final String IMAGE_SIZE_W780 = "w780/";
-
     /**
      * Poster Url String of the movie
      */
@@ -69,10 +65,10 @@ public class Movie implements Serializable {
     }
 
     /**
-     * Get the poster path of the movie
+     * Get the poster path of the movie, raw from api
      */
     public String getPosterPath() {
-        return BASE_IMAGE_URL.concat(IMAGE_SIZE_W185).concat(mPosterPath);
+        return mPosterPath;
     }
 
     /**
@@ -83,10 +79,10 @@ public class Movie implements Serializable {
     }
 
     /**
-     * Get movie poster image thumbnail url string of the movie
+     * Get movie poster image thumbnail url string of the movie, raw from api
      */
     public String getMoviePosterImageThumbnail() {
-        return BASE_IMAGE_URL.concat(IMAGE_SIZE_W780).concat(mMoviePosterImageThumbnail);
+        return mMoviePosterImageThumbnail;
     }
 
     /**
@@ -120,10 +116,7 @@ public class Movie implements Serializable {
     @Override
     public String toString() {
         return "Movie{" +
-                "BASE_IMAGE_URL='" + BASE_IMAGE_URL + '\'' +
-                ", IMAGE_SIZE_W185='" + IMAGE_SIZE_W185 + '\'' +
-                ", IMAGE_SIZE_W780='" + IMAGE_SIZE_W780 + '\'' +
-                ", mPosterPath='" + mPosterPath + '\'' +
+                "mPosterPath='" + mPosterPath + '\'' +
                 ", mOriginalTitle='" + mOriginalTitle + '\'' +
                 ", mMoviePosterImageThumbnail='" + mMoviePosterImageThumbnail + '\'' +
                 ", mAPlotSynopsis='" + mAPlotSynopsis + '\'' +

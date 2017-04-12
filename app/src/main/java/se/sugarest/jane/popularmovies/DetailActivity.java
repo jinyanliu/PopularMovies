@@ -41,6 +41,9 @@ import se.sugarest.jane.popularmovies.utilities.TrailerJsonUtils;
  */
 
 public class DetailActivity extends AppCompatActivity implements TrailerAdapterOnClickHandler {
+    private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
+    private final String IMAGE_SIZE_W185 = "w185/";
+    private final String IMAGE_SIZE_W780 = "w780/";
 
     private Movie mCurrentMovie;
 
@@ -83,7 +86,8 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         setTitle(mCurrentMovie.getOriginalTitle());
 
         // Set current movie poster image thumbnail
-        Picasso.with(DetailActivity.this).load(mCurrentMovie.getMoviePosterImageThumbnail())
+        String currentMoviePosterImageThumbnail = BASE_IMAGE_URL.concat(IMAGE_SIZE_W780).concat(mCurrentMovie.getMoviePosterImageThumbnail());
+        Picasso.with(DetailActivity.this).load(currentMoviePosterImageThumbnail)
                 .into(mDetailBinding.ivMoviePosterImageThumbnail);
 
         // Set current movie textViews content
@@ -311,7 +315,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     }
 
     public boolean checkIsMovieAlreadyInFavDatabase(String movieId) {
-        SQLiteDatabase database = mMovieDbHelper.getWritableDatabase();
+        SQLiteDatabase database = mMovieDbHelper.getReadableDatabase();
         String selectString = "SELECT * FROM " + MovieEntry.TABLE_NAME + " WHERE "
                 + MovieEntry.COLUMN_MOVIE_ID + " =?";
         Cursor cursor = database.rawQuery(selectString, new String[]{movieId});
