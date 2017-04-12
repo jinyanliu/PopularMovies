@@ -1,6 +1,7 @@
 package se.sugarest.jane.popularmovies;
 
 import android.content.ActivityNotFoundException;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
@@ -13,12 +14,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
 import java.net.URL;
 import java.util.List;
 
+import se.sugarest.jane.popularmovies.data.MovieContract.MovieEntry;
 import se.sugarest.jane.popularmovies.databinding.ActivityDetailBinding;
 import se.sugarest.jane.popularmovies.movie.Movie;
 import se.sugarest.jane.popularmovies.review.Review;
@@ -67,6 +70,11 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             @Override
             public void onClick(View view) {
                 fab_favorite.setColorFilter(ContextCompat.getColor(DetailActivity.this, R.color.colorYellowFavoriteStar));
+                try{
+                    saveFavoriteMovie();
+                } catch (IllegalArgumentException e){
+                    Toast.makeText(DetailActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -252,6 +260,34 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             if (trailerData != null) {
                 mTrailerAdapter.setReviewData(trailerData);
             }
+        }
+    }
+
+    /**
+     * Save movie into database.
+     */
+    private void saveFavoriteMovie() {
+        // Create a ContentValues object where column names are the keys, and current movie
+        // attributes are the values.
+        ContentValues values = new ContentValues();
+        values.put(MovieEntry.COLUMN_POSTER_PATH, mCurrentMovie.getPosterPath());
+        values.put(MovieEntry.COLUMN_ORIGINAL_TITLE, mCurrentMovie.getOriginalTitle());
+        values.put(MovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL, mCurrentMovie.getMoviePosterImageThumbnail());
+        values.put(MovieEntry.COLUMN_A_PLOT_SYNOPSIS, mCurrentMovie.getAPlotSynopsis());
+        values.put(MovieEntry.COLUMN_USER_RATING, mCurrentMovie.getUserRating());
+        values.put(MovieEntry.COLUMN_RELEASE_DATE, mCurrentMovie.getReleaseDate());
+        values.put(MovieEntry.COLUMN_MOVIE_ID, mCurrentMovie.getId());
+
+        // Insert a new movie into the provider, returning the content URI for the new movie.
+        Uri newUri = getContentResolver().insert(MovieEntry.CONTENT_URI, values);
+
+        // Show a toast message depending on whether or not the insertion was successful
+        if (newUri == null) {
+            // If the new content URI is null, then there was an error with insertion.
+            Toast.makeText(this, getString(R.string.insert_movie_failed), Toast.LENGTH_SHORT).show();
+        } else {
+            // Otherwise, the insertion was successful and display a toast with the row ID.
+            Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT).show();
         }
     }
 }

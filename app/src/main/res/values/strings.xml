@@ -1,11 +1,29 @@
 <resources>
     <string name="app_name">Popular Movies</string>
 
-    <!--The text for the TextView to display error message.-->
+    <!-- The text for the TextView to display error message. -->
     <string name="error_message">An error has occurred.</string>
 
-    <!--The text for Log error message when passing JSON.-->
+    <!-- The text for Log error message when passing JSON. -->
     <string name="log_error_message_passing_JSON">Problem parsing the movie JSON results.</string>
+
+    <!-- The text for query method to throw an IllegalArgumentException message. -->
+    <string name="query_default_illegal_argument_exception_message">Cannot query unknown URI </string>
+
+    <!-- The log message when the insertion to database is failed. -->
+    <string name="insert_fail_log_message">Failed to insert row for </string>
+
+    <!-- The text for getType to throw an IllegalArgumentException message, part one. -->
+    <string name="get_type_default_illegal_argument_exception_message_part_one">Unknown URI </string>
+
+    <!-- The text for getType to throw an IllegalArgumentException message, part two. -->
+    <string name="get_type_default_illegal_argument_exception_message_part_two"> with match </string>
+
+    <!-- Toast message for saving success when inserting a movie. [CHAR LIMIT=20] -->
+    <string name="insert_movie_successful">Movie saved</string>
+
+    <!-- Toast message for saving error when inserting a movie. [CHAR LIMIT=20] -->
+    <string name="insert_movie_failed">Error with saving movie</string>
 
     <!-- Settings Menu Item [CHAR LIMIT=NONE] -->
     <string name="settings_menu_item">Settings</string>

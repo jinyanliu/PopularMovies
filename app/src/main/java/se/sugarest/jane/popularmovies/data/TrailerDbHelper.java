@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import se.sugarest.jane.popularmovies.data.MovieContract.TrailerEntry;
+import se.sugarest.jane.popularmovies.data.MovieContract.MovieEntry;
 
 /**
  * Created by jane on 17-4-11.
@@ -51,7 +52,8 @@ public class TrailerDbHelper extends SQLiteOpenHelper {
                          * named "_ID". We use that here to designate our table's primary key.
                          */
                         TrailerEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        TrailerEntry.COLUMN_MOVIE_ID + " TEXT NOT NULL, " +
+                        TrailerEntry.COLUMN_MOVIE_ID + " TEXT NOT NULL FOREIGN KEY REFERENCES "
+                        + MovieEntry.TABLE_NAME + "(" + MovieEntry.COLUMN_MOVIE_ID + "), " +
                         TrailerEntry.COLUMN_KEY_OF_TRAILER + " TEXT NOT NULL);";
 
         /*

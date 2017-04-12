@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import se.sugarest.jane.popularmovies.data.MovieContract.ReviewEntry;
+import se.sugarest.jane.popularmovies.data.MovieContract.MovieEntry;
 
 /**
  * Created by jane on 17-4-11.
@@ -51,7 +52,8 @@ public class ReviewDbHelper extends SQLiteOpenHelper {
                          * named "_ID". We use that here to designate our table's primary key.
                          */
                         ReviewEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        ReviewEntry.COLUMN_MOVIE_ID + " TEXT NOT NULL, " +
+                        ReviewEntry.COLUMN_MOVIE_ID + " TEXT NOT NULL FOREIGN KEY REFERENCES "
+                        + MovieEntry.TABLE_NAME + "(" + MovieEntry.COLUMN_MOVIE_ID + "), " +
                         ReviewEntry.COLUMN_AUTHOR + " TEXT NOT NULL, " +
                         ReviewEntry.COLUMN_REVIEW_CONTENT + " TEXT NOT NULL);";
 

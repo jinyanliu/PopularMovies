@@ -4,6 +4,7 @@ package se.sugarest.jane.popularmovies.data;
  * Created by jane on 17-4-11.
  */
 
+import android.content.ContentResolver;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -53,9 +54,21 @@ public class MovieContract {
     public static final class MovieEntry implements BaseColumns {
 
         /* The base CONTENT_URI used to query the Movie table from the content provider */
-        public static final Uri CONTENT_URI_MOVIE = BASE_CONTENT_URI.buildUpon()
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
                 .appendPath(PATH_MOVIE)
                 .build();
+
+        /**
+         * The MIME type of the {@link #CONTENT_URI} for a list of movies.
+         */
+        public static final String CONTENT_LIST_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIE;
+
+        /**
+         * The MIME type of the {@link #CONTENT_URI} for a single movie.
+         */
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIE;
 
         /* Used internally as the name of our movie table. */
         public static final String TABLE_NAME = "movie";
@@ -105,7 +118,7 @@ public class MovieContract {
     public static final class ReviewEntry implements BaseColumns {
 
         /* The base CONTENT_URI used to query the Review table from the content provider */
-        public static final Uri CONTENT_URI_REVIEW = BASE_CONTENT_URI.buildUpon()
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
                 .appendPath(PATH_REVIEW)
                 .build();
 
@@ -132,7 +145,7 @@ public class MovieContract {
     public static final class TrailerEntry implements BaseColumns {
 
         /* The base CONTENT_URI used to query the Trailer table from the content provider */
-        public static final Uri CONTENT_URI_REVIEW = BASE_CONTENT_URI.buildUpon()
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
                 .appendPath(PATH_TRAILER)
                 .build();
 
