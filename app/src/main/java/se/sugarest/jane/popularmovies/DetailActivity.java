@@ -3,6 +3,8 @@ package se.sugarest.jane.popularmovies;
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -22,6 +24,7 @@ import java.net.URL;
 import java.util.List;
 
 import se.sugarest.jane.popularmovies.data.MovieContract.MovieEntry;
+import se.sugarest.jane.popularmovies.data.MovieDbHelper;
 import se.sugarest.jane.popularmovies.databinding.ActivityDetailBinding;
 import se.sugarest.jane.popularmovies.movie.Movie;
 import se.sugarest.jane.popularmovies.review.Review;
@@ -50,6 +53,11 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     private TrailerAdapter mTrailerAdapter;
 
     /**
+     * Movie Database helper that will provide access to the movie database
+     */
+    private MovieDbHelper mMovieDbHelper;
+
+    /**
      * This field is used for data binding. Normally, we would have to call findViewById many
      * times to get references to the Views in this Activity. With data binding however, we only
      * need to call DateBindingUtil.setContentView and pass in a Context and a layout, as we do
@@ -63,20 +71,6 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         super.onCreate(savedInstanceState);
 
         mDetailBinding = DataBindingUtil.setContentView(this, R.layout.activity_detail);
-
-        // Setup fab_favorite to add favorite movies into database and change FAB color to yellow
-        final FloatingActionButton fab_favorite = (FloatingActionButton) findViewById(R.id.fab_favorite);
-        fab_favorite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                fab_favorite.setColorFilter(ContextCompat.getColor(DetailActivity.this, R.color.colorYellowFavoriteStar));
-                try{
-                    saveFavoriteMovie();
-                } catch (IllegalArgumentException e){
-                    Toast.makeText(DetailActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
 
         Intent intentThatStartedThisActivity = getIntent();
         if (intentThatStartedThisActivity != null) {
@@ -154,6 +148,31 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
          */
         loadTrailerData(mCurrentMovie.getId());
 
+        // To access the database, instantiate the subclass of SQLiteOpenHelper
+        // and pass the context, which is the current activity.
+        mMovieDbHelper = new MovieDbHelper(this);
+
+        // Setup fab_favorite to add favorite movies into database and change FAB color to yellow
+        final FloatingActionButton fab_favorite = (FloatingActionButton) findViewById(R.id.fab_favorite);
+
+        fab_favorite.setColorFilter(ContextCompat.getColor(DetailActivity.this, getFabButtonStarColor()));
+
+        fab_favorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (getFabButtonStarColor() == R.color.colorWhiteFavoriteStar) {
+                    fab_favorite.setColorFilter(ContextCompat.getColor(DetailActivity.this, R.color.colorYellowFavoriteStar));
+                    try {
+                        saveFavoriteMovie();
+                    } catch (IllegalArgumentException e) {
+                        Toast.makeText(DetailActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    fab_favorite.setColorFilter(ContextCompat.getColor(DetailActivity.this, R.color.colorWhiteFavoriteStar));
+                    // Delete movie in database later.
+                }
+            }
+        });
     }
 
     /**
@@ -289,5 +308,29 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             // Otherwise, the insertion was successful and display a toast with the row ID.
             Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public boolean checkIsMovieAlreadyInFavDatabase(String movieId) {
+        SQLiteDatabase database = mMovieDbHelper.getWritableDatabase();
+        String selectString = "SELECT * FROM " + MovieEntry.TABLE_NAME + " WHERE "
+                + MovieEntry.COLUMN_MOVIE_ID + " =?";
+        Cursor cursor = database.rawQuery(selectString, new String[]{movieId});
+        int count = cursor.getCount();
+        cursor.close();
+        database.close();
+        return count > 0;
+    }
+
+    public int getFabButtonStarColor() {
+        int colorOfStar = R.color.colorWhiteFavoriteStar;
+        try {
+            boolean movieIsInDatabase = checkIsMovieAlreadyInFavDatabase(mCurrentMovie.getId());
+            if (movieIsInDatabase) {
+                colorOfStar = R.color.colorYellowFavoriteStar;
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+        return colorOfStar;
     }
 }
