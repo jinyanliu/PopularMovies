@@ -31,6 +31,12 @@
     <!-- Toast message for saving error when inserting a movie. [CHAR LIMIT=20] -->
     <string name="insert_movie_failed">Error with saving movie</string>
 
+    <!-- Toast message for saving success when inserting a movie object. [CHAR LIMIT=20] -->
+    <string name="insert_movie_movie_successful">Movie movie saved</string>
+
+    <!-- Toast message for saving error when inserting a movie object. [CHAR LIMIT=20] -->
+    <string name="insert_movie_movie_failed">Error with saving movie movie</string>
+
     <!-- Toast message for saving success when inserting a review. [CHAR LIMIT=20] -->
     <string name="insert_review_successful">Review saved</string>
 
@@ -73,7 +79,7 @@
     <string name="detail_activity_user_rating_label">Average User Rating:</string>
     <!-- Label of user review textview in detail activity. -->
     <string name="detail_activity_user_review_label">Total User Reviews:</string>
-    <!-- Label of trailes textview in detail activity. -->
+    <!-- Label of trailers textview in detail activity. -->
     <string name="detail_activity_trailers_label">Trailers:</string>
 
     <!-- Label of user review author in list_item_review layout. -->

@@ -46,6 +46,14 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
 
     private static final String TAG = DetailActivity.class.getSimpleName();
 
+    private static final int SAVE_MOVIE_SUCCESS = 10;
+    private static final int SAVE_MOVIE_FAIL = 11;
+    private static final int SAVE_REVIEW_SUCCESS = 20;
+    private static final int SAVE_REVIEW_FAIL = 21;
+
+    private int saveMovieRecordNumber;
+    private int saveReviewRecordNumber;
+
     private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
     private final String IMAGE_SIZE_W185 = "w185/";
     private final String IMAGE_SIZE_W780 = "w780/";
@@ -178,10 +186,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                 if (setFabButtonStarColor() == R.color.colorWhiteFavoriteStar) {
                     fab_favorite.setColorFilter(ContextCompat.getColor(DetailActivity.this, R.color.colorYellowFavoriteStar));
                     try {
-                        saveFavoriteMovie();
-                        if (mCurrentMovieReviews.size() > 0) {
-                            saveFavoriteReview();
-                        }
+                        saveMovie();
                     } catch (IllegalArgumentException e) {
                         Toast.makeText(DetailActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
@@ -302,6 +307,38 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     }
 
     /**
+     * Save movie, review and trailer into database.
+     */
+    private void saveMovie() {
+        if (mCurrentMovieReviews.size() > 0) {
+            saveFavoriteMovie();
+            saveFavoriteReview();
+            if (mToast != null) {
+                mToast.cancel();
+            }
+            if (saveMovieRecordNumber == SAVE_MOVIE_SUCCESS && saveReviewRecordNumber == SAVE_REVIEW_SUCCESS) {
+                mToast = Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT);
+                mToast.show();
+            } else {
+                mToast = Toast.makeText(this, getString(R.string.insert_movie_failed), Toast.LENGTH_SHORT);
+                mToast.show();
+            }
+        } else {
+            saveFavoriteMovie();
+            if (mToast != null) {
+                mToast.cancel();
+            }
+            if (saveMovieRecordNumber == SAVE_MOVIE_SUCCESS) {
+                mToast = Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT);
+                mToast.show();
+            } else {
+                mToast = Toast.makeText(this, getString(R.string.insert_movie_failed), Toast.LENGTH_SHORT);
+                mToast.show();
+            }
+        }
+    }
+
+    /**
      * Save movie into database.
      */
     private void saveFavoriteMovie() {
@@ -321,15 +358,11 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
 
         // Show a toast message depending on whether or not the insertion was successful
         if (newUri == null) {
-            // If the new content URI is null, then there was an error with insertion.
-            Toast.makeText(this, getString(R.string.insert_movie_failed), Toast.LENGTH_SHORT).show();
+            saveMovieRecordNumber = SAVE_MOVIE_FAIL;
+            Log.e(TAG, getString(R.string.insert_movie_movie_failed));
         } else {
-            // Otherwise, the insertion was successful and display a toast with the row ID.
-            if (mToast != null) {
-                mToast.cancel();
-            }
-            mToast = Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT);
-            mToast.show();
+            saveMovieRecordNumber = SAVE_MOVIE_SUCCESS;
+            Log.i(TAG, getString(R.string.insert_movie_movie_successful));
         }
     }
 
@@ -347,8 +380,10 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             Uri newUri = getContentResolver().insert(ReviewEntry.CONTENT_URI, values);
 
             if (newUri == null) {
+                saveReviewRecordNumber = SAVE_REVIEW_FAIL;
                 Log.e(TAG, getString(R.string.insert_review_failed) + i);
             } else {
+                saveReviewRecordNumber = SAVE_REVIEW_SUCCESS;
                 Log.i(TAG, getString(R.string.insert_review_successful) + i);
             }
         }
