@@ -15,6 +15,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -24,6 +25,7 @@ import java.net.URL;
 import java.util.List;
 
 import se.sugarest.jane.popularmovies.data.MovieContract.MovieEntry;
+import se.sugarest.jane.popularmovies.data.MovieContract.ReviewEntry;
 import se.sugarest.jane.popularmovies.data.MovieDbHelper;
 import se.sugarest.jane.popularmovies.databinding.ActivityDetailBinding;
 import se.sugarest.jane.popularmovies.movie.Movie;
@@ -41,6 +43,9 @@ import se.sugarest.jane.popularmovies.utilities.TrailerJsonUtils;
  */
 
 public class DetailActivity extends AppCompatActivity implements TrailerAdapterOnClickHandler {
+
+    private static final String TAG = DetailActivity.class.getSimpleName();
+
     private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
     private final String IMAGE_SIZE_W185 = "w185/";
     private final String IMAGE_SIZE_W780 = "w780/";
@@ -54,6 +59,10 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     private ReviewAdapter mReviewAdapter;
 
     private TrailerAdapter mTrailerAdapter;
+
+    private List<Review> mCurrentMovieReviews;
+
+    private String numberOfReviewString;
 
     /**
      * Movie Database helper that will provide access to the movie database
@@ -170,6 +179,9 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                     fab_favorite.setColorFilter(ContextCompat.getColor(DetailActivity.this, R.color.colorYellowFavoriteStar));
                     try {
                         saveFavoriteMovie();
+                        if (mCurrentMovieReviews.size() > 0) {
+                            saveFavoriteReview();
+                        }
                     } catch (IllegalArgumentException e) {
                         Toast.makeText(DetailActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
@@ -248,10 +260,11 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         @Override
         protected void onPostExecute(List<Review> reviewData) {
             if (reviewData != null) {
+                mCurrentMovieReviews = reviewData;
                 mReviewAdapter.setReviewData(reviewData);
                 // Display total number of reviews in the detail activity, because some movies does
                 // not have reviews.
-                String numberOfReviewString = Integer.toString(mReviewAdapter.getItemCount());
+                numberOfReviewString = Integer.toString(mReviewAdapter.getItemCount());
                 mDetailBinding.tvNumberOfUserReview.setText(numberOfReviewString);
             }
         }
@@ -317,6 +330,27 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             }
             mToast = Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT);
             mToast.show();
+        }
+    }
+
+    /**
+     * Save review into database.
+     */
+    private void saveFavoriteReview() {
+
+        for (int i = 0; i < Integer.valueOf(numberOfReviewString); i++) {
+            ContentValues values = new ContentValues();
+            values.put(ReviewEntry.COLUMN_MOVIE_ID, mCurrentMovie.getId());
+            values.put(ReviewEntry.COLUMN_AUTHOR, mCurrentMovieReviews.get(i).getAuthor());
+            values.put(ReviewEntry.COLUMN_REVIEW_CONTENT, mCurrentMovieReviews.get(i).getReviewContent());
+
+            Uri newUri = getContentResolver().insert(ReviewEntry.CONTENT_URI, values);
+
+            if (newUri == null) {
+                Log.e(TAG, getString(R.string.insert_review_failed) + i);
+            } else {
+                Log.i(TAG, getString(R.string.insert_review_successful) + i);
+            }
         }
     }
 

@@ -13,6 +13,9 @@
     <!-- The text for query method to throw an IllegalArgumentException message. -->
     <string name="query_default_illegal_argument_exception_message">Cannot query unknown URI </string>
 
+    <!-- The text for insert method to throw an IllegalArgumentException message. -->
+    <string name="insert_default_illegal_argument_exception_message">Cannot insert unknown URI </string>
+
     <!-- The log message when the insertion to database is failed. -->
     <string name="insert_fail_log_message">Failed to insert row for </string>
 
@@ -27,6 +30,12 @@
 
     <!-- Toast message for saving error when inserting a movie. [CHAR LIMIT=20] -->
     <string name="insert_movie_failed">Error with saving movie</string>
+
+    <!-- Toast message for saving success when inserting a review. [CHAR LIMIT=20] -->
+    <string name="insert_review_successful">Review saved</string>
+
+    <!-- Toast message for saving error when inserting a review. [CHAR LIMIT=20] -->
+    <string name="insert_review_failed">Error with saving review</string>
 
     <!-- Toast message for deleting success when deleting a movie. [CHAR LIMIT=20] -->
     <string name="delete_movie_successful">Movie deleted</string>

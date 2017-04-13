@@ -13,6 +13,8 @@ import android.util.Log;
 
 import se.sugarest.jane.popularmovies.R;
 import se.sugarest.jane.popularmovies.data.MovieContract.MovieEntry;
+import se.sugarest.jane.popularmovies.data.MovieContract.ReviewEntry;
+import se.sugarest.jane.popularmovies.data.MovieContract.TrailerEntry;
 
 /**
  * Created by jane on 17-4-11.
@@ -34,6 +36,26 @@ public class MovieProvider extends ContentProvider {
      * URI matcher code for the content URI for a single movie in the movie table
      */
     private static final int MOVIE_ID = 101;
+
+    /**
+     * URI matcher code for the content URI for the review table
+     */
+    private static final int REVIEWS = 200;
+
+    /**
+     * URI matcher code for the content URI for a single review in the review table
+     */
+    private static final int REVIEW_ID = 201;
+
+    /**
+     * URI matcher code for the content URI for the trailer table
+     */
+    private static final int TRAILERS = 300;
+
+    /**
+     * URI matcher code for the content URI for a single review in the review table
+     */
+    private static final int TRAILER_ID = 301;
 
     /**
      * UriMatcher object to match a content URI to a corresponding code.
@@ -62,6 +84,12 @@ public class MovieProvider extends ContentProvider {
         // "content://se.sugarest.jane.popularmovies.data/movie" (without a number at the end)
         // doesn't match.
         sUriMatcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_MOVIE + "/#", MOVIE_ID);
+
+        sUriMatcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_REVIEW, REVIEWS);
+        sUriMatcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_REVIEW + "/#", REVIEW_ID);
+
+        sUriMatcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_TRAILER, TRAILERS);
+        sUriMatcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_TRAILER + "/#", TRAILER_ID);
     }
 
     /**
@@ -132,6 +160,38 @@ public class MovieProvider extends ContentProvider {
                 cursor = database.query(MovieEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
+            case REVIEWS:
+                cursor = database.query(
+                        ReviewEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            case REVIEW_ID:
+                selection = ReviewEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                cursor = database.query(TrailerEntry.TABLE_NAME, projection, selection, selectionArgs,
+                        null, null, sortOrder);
+                break;
+            case TRAILERS:
+                cursor = database.query(
+                        TrailerEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            case TRAILER_ID:
+                selection = TrailerEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                cursor = database.query(TrailerEntry.TABLE_NAME, projection, selection, selectionArgs,
+                        null, null, sortOrder);
+                break;
             default:
                 throw new IllegalArgumentException(getContext().getResources().getString(R.string.query_default_illegal_argument_exception_message) + uri);
         }
@@ -157,6 +217,14 @@ public class MovieProvider extends ContentProvider {
                 return MovieEntry.CONTENT_LIST_TYPE;
             case MOVIE_ID:
                 return MovieEntry.CONTENT_ITEM_TYPE;
+            case REVIEWS:
+                return ReviewEntry.CONTENT_LIST_TYPE;
+            case REVIEW_ID:
+                return ReviewEntry.CONTENT_ITEM_TYPE;
+            case TRAILERS:
+                return TrailerEntry.CONTENT_LIST_TYPE;
+            case TRAILER_ID:
+                return TrailerEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new IllegalArgumentException(getContext().getString(R.string.get_type_default_illegal_argument_exception_message_part_one)
                         + uri + getContext().getString(R.string.get_type_default_illegal_argument_exception_message_part_two) + match);
@@ -174,8 +242,25 @@ public class MovieProvider extends ContentProvider {
         // Get writable database
         SQLiteDatabase database = mMovieDbHelper.getWritableDatabase();
 
-        // Insert a new pet into the pets database table with the given ContentValues
-        long id = database.insert(MovieEntry.TABLE_NAME, null, values);
+        // The new row id
+        long id;
+
+        // Figure out if the URI matcher can match the URI to a specific code
+        int match = sUriMatcher.match(uri);
+        switch (match) {
+            case MOVIES:
+                // Insert a new movie into the pets database table with the given ContentValues
+                id = database.insert(MovieEntry.TABLE_NAME, null, values);
+                break;
+            case REVIEWS:
+                id = database.insert(ReviewEntry.TABLE_NAME, null, values);
+                break;
+            case TRAILERS:
+                id = database.insert(TrailerEntry.TABLE_NAME, null, values);
+                break;
+            default:
+                throw new IllegalArgumentException(getContext().getResources().getString(R.string.insert_default_illegal_argument_exception_message) + uri);
+        }
 
         // If the ID is -1, then the insertion failed. Log an error and return null.
         if (id == -1) {
@@ -209,7 +294,7 @@ public class MovieProvider extends ContentProvider {
         switch (match) {
             case MOVIES:
                 // Delete all rows that match the selection and selection args
-                selection = selection + " =?";
+                selection = selection + "=?";
                 rowsDeleted = database.delete(MovieEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             case MOVIE_ID:
@@ -217,6 +302,24 @@ public class MovieProvider extends ContentProvider {
                 selection = MovieEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
                 rowsDeleted = database.delete(MovieEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            case REVIEWS:
+                selection = selection + "=?";
+                rowsDeleted = database.delete(ReviewEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            case REVIEW_ID:
+                selection = ReviewEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                rowsDeleted = database.delete(ReviewEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            case TRAILERS:
+                selection = selection + "=?";
+                rowsDeleted = database.delete(TrailerEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            case TRAILER_ID:
+                selection = TrailerEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                rowsDeleted = database.delete(TrailerEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             default:
                 throw new IllegalArgumentException(getContext().getString(R.string.unknown_uri_for_deletion) + uri);

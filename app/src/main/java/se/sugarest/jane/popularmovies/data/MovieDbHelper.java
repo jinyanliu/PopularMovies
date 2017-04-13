@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import se.sugarest.jane.popularmovies.data.MovieContract.MovieEntry;
+import se.sugarest.jane.popularmovies.data.MovieContract.ReviewEntry;
+import se.sugarest.jane.popularmovies.data.MovieContract.TrailerEntry;
 
 /**
  * Manages a local database for movie data
@@ -72,6 +74,53 @@ public class MovieDbHelper extends SQLiteOpenHelper {
          * that SQL with the execSQL method of the SQLite database object.
          */
         sqLiteDatabase.execSQL(SQL_CREATE_MOVIE_TABLE);
+
+        /*
+         * This String will contain a simple SQL statement that will create a table that will
+         * store the review data.
+         */
+        final String SQL_CREATE_REVIEW_TABLE =
+                "CREATE TABLE " + ReviewEntry.TABLE_NAME + " (" +
+                        /**
+                         * ReviewEntry did not explicitly declare a column called "_ID". However,
+                         * ReviewEntry implements the interface, "BaseColumns", which does have a field
+                         * named "_ID". We use that here to designate our table's primary key.
+                         */
+                        ReviewEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        ReviewEntry.COLUMN_MOVIE_ID + " TEXT, " +
+                        ReviewEntry.COLUMN_AUTHOR + " TEXT NOT NULL, " +
+                        ReviewEntry.COLUMN_REVIEW_CONTENT + " TEXT NOT NULL, " +
+                        " FOREIGN KEY(" + ReviewEntry.COLUMN_MOVIE_ID + ") REFERENCES "
+                        + MovieEntry.TABLE_NAME + "(" + MovieEntry.COLUMN_MOVIE_ID + "));";
+
+        /*
+         * After spelling out the SQLite table creation statement above, actually execute
+         * that SQL with the execSQL method of the SQLite database object.
+         */
+        sqLiteDatabase.execSQL(SQL_CREATE_REVIEW_TABLE);
+
+        /*
+         * This String will contain a simple SQL statement that will create a table that will
+         * store the trailer data.
+         */
+        final String SQL_CREATE_TRAILER_TABLE =
+                "CREATE TABLE " + TrailerEntry.TABLE_NAME + " (" +
+                        /**
+                         * TrailerEntry did not explicitly declare a column called "_ID". However,
+                         * TrailerEntry implements the interface, "BaseColumns", which does have a field
+                         * named "_ID". We use that here to designate our table's primary key.
+                         */
+                        TrailerEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        TrailerEntry.COLUMN_MOVIE_ID + " TEXT, " +
+                        TrailerEntry.COLUMN_KEY_OF_TRAILER + " TEXT NOT NULL, " +
+                        " FOREIGN KEY(" + TrailerEntry.COLUMN_MOVIE_ID + ") REFERENCES "
+                        + MovieEntry.TABLE_NAME + "(" + MovieEntry.COLUMN_MOVIE_ID + "));";
+
+        /*
+         * After spelling out the SQLite table creation statement above, actually execute
+         * that SQL with the execSQL method of the SQLite database object.
+         */
+        sqLiteDatabase.execSQL(SQL_CREATE_TRAILER_TABLE);
     }
 
     @Override

@@ -122,6 +122,18 @@ public class MovieContract {
                 .appendPath(PATH_REVIEW)
                 .build();
 
+        /**
+         * The MIME type of the {@link #CONTENT_URI} for a list of reviews.
+         */
+        public static final String CONTENT_LIST_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_REVIEW;
+
+        /**
+         * The MIME type of the {@link #CONTENT_URI} for a single review.
+         */
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_REVIEW;
+
         /* Used internally as the name of our review table. */
         public static final String TABLE_NAME = "review";
 
@@ -148,6 +160,19 @@ public class MovieContract {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
                 .appendPath(PATH_TRAILER)
                 .build();
+
+        /**
+         * The MIME type of the {@link #CONTENT_URI} for a list of trailers.
+         */
+        public static final String CONTENT_LIST_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TRAILER;
+
+        /**
+         * The MIME type of the {@link #CONTENT_URI} for a single trailer.
+         */
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TRAILER;
+
 
         /* Used internally as the name of our trailer table. */
         public static final String TABLE_NAME = "trailer";
