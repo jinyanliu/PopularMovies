@@ -69,6 +69,8 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
      */
     private ActivityDetailBinding mDetailBinding;
 
+    private Toast mToast;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -310,7 +312,11 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             Toast.makeText(this, getString(R.string.insert_movie_failed), Toast.LENGTH_SHORT).show();
         } else {
             // Otherwise, the insertion was successful and display a toast with the row ID.
-            Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT).show();
+            if (mToast != null) {
+                mToast.cancel();
+            }
+            mToast = Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT);
+            mToast.show();
         }
     }
 
@@ -325,7 +331,11 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         if (rowsDeleted == 0) {
             Toast.makeText(this, getString(R.string.delete_movie_failed), Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, getString(R.string.delete_movie_successful), Toast.LENGTH_SHORT).show();
+            if (mToast != null) {
+                mToast.cancel();
+            }
+            mToast = Toast.makeText(this, getString(R.string.delete_movie_successful), Toast.LENGTH_SHORT);
+            mToast.show();
         }
     }
 
