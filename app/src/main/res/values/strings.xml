@@ -28,6 +28,15 @@
     <!-- Toast message for saving error when inserting a movie. [CHAR LIMIT=20] -->
     <string name="insert_movie_failed">Error with saving movie</string>
 
+    <!-- Toast message for deleting success when deleting a movie. [CHAR LIMIT=20] -->
+    <string name="delete_movie_successful">Movie deleted</string>
+
+    <!-- Toast message for deleting error when deleting a movie. [CHAR LIMIT=20] -->
+    <string name="delete_movie_failed">Error with deleting movie</string>
+
+    <!-- The text for delete method to throw an IllegalArgumentException message. -->
+    <string name="unknown_uri_for_deletion">Deletion is not supported for </string>
+
     <!-- Settings Menu Item [CHAR LIMIT=NONE] -->
     <string name="settings_menu_item">Settings</string>
 

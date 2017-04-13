@@ -192,9 +192,44 @@ public class MovieProvider extends ContentProvider {
         return ContentUris.withAppendedId(uri, id);
     }
 
+    /**
+     * Delete the data at the given selection and selection arguments.
+     *
+     * @return
+     */
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+        // Track the number of rows that were deleted
+        int rowsDeleted;
+
+        // Get writable database
+        SQLiteDatabase database = mMovieDbHelper.getWritableDatabase();
+
+        final int match = sUriMatcher.match(uri);
+        switch (match) {
+            case MOVIES:
+                // Delete all rows that match the selection and selection args
+                selection = selection + " =?";
+                rowsDeleted = database.delete(MovieEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            case MOVIE_ID:
+                // Delete a single row given by the ID the URI
+                selection = MovieEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                rowsDeleted = database.delete(MovieEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            default:
+                throw new IllegalArgumentException(getContext().getString(R.string.unknown_uri_for_deletion) + uri);
+        }
+
+        // If 1 or more rows were deleted, then notify all listeners that the data at the given
+        // URI has changed.
+        if (rowsDeleted != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        // Return the number of rows deleted
+        return rowsDeleted;
     }
 
     @Override

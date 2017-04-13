@@ -159,12 +159,12 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         // Setup fab_favorite to add favorite movies into database and change FAB color to yellow
         final FloatingActionButton fab_favorite = (FloatingActionButton) findViewById(R.id.fab_favorite);
 
-        fab_favorite.setColorFilter(ContextCompat.getColor(DetailActivity.this, getFabButtonStarColor()));
+        fab_favorite.setColorFilter(ContextCompat.getColor(DetailActivity.this, setFabButtonStarColor()));
 
         fab_favorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (getFabButtonStarColor() == R.color.colorWhiteFavoriteStar) {
+                if (setFabButtonStarColor() == R.color.colorWhiteFavoriteStar) {
                     fab_favorite.setColorFilter(ContextCompat.getColor(DetailActivity.this, R.color.colorYellowFavoriteStar));
                     try {
                         saveFavoriteMovie();
@@ -173,7 +173,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                     }
                 } else {
                     fab_favorite.setColorFilter(ContextCompat.getColor(DetailActivity.this, R.color.colorWhiteFavoriteStar));
-                    // Delete movie in database later.
+                    deleteFavoriteMovie();
                 }
             }
         });
@@ -314,6 +314,21 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         }
     }
 
+    /**
+     * Delete movie from database.
+     */
+    private void deleteFavoriteMovie() {
+        String selection = MovieEntry.COLUMN_MOVIE_ID;
+        String[] selectionArgs = {mCurrentMovie.getId()};
+        int rowsDeleted = getContentResolver().delete(MovieEntry.CONTENT_URI, selection, selectionArgs);
+
+        if (rowsDeleted == 0) {
+            Toast.makeText(this, getString(R.string.delete_movie_failed), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, getString(R.string.delete_movie_successful), Toast.LENGTH_SHORT).show();
+        }
+    }
+
     public boolean checkIsMovieAlreadyInFavDatabase(String movieId) {
         SQLiteDatabase database = mMovieDbHelper.getReadableDatabase();
         String selectString = "SELECT * FROM " + MovieEntry.TABLE_NAME + " WHERE "
@@ -325,7 +340,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         return count > 0;
     }
 
-    public int getFabButtonStarColor() {
+    public int setFabButtonStarColor() {
         int colorOfStar = R.color.colorWhiteFavoriteStar;
         try {
             boolean movieIsInDatabase = checkIsMovieAlreadyInFavDatabase(mCurrentMovie.getId());
