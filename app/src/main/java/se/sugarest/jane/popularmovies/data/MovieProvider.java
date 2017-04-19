@@ -161,6 +161,7 @@ public class MovieProvider extends ContentProvider {
                         null, null, sortOrder);
                 break;
             case REVIEWS:
+                selection = selection + "=?";
                 cursor = database.query(
                         ReviewEntry.TABLE_NAME,
                         projection,
@@ -177,6 +178,7 @@ public class MovieProvider extends ContentProvider {
                         null, null, sortOrder);
                 break;
             case TRAILERS:
+                selection = selection + "=?";
                 cursor = database.query(
                         TrailerEntry.TABLE_NAME,
                         projection,

@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import se.sugarest.jane.popularmovies.data.MovieContract.MovieEntry;
@@ -78,7 +79,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
 
     private List<Review> mCurrentMovieReviews;
 
-    private String numberOfReviewString;
+    private String mNumberOfReviewString;
 
     /**
      * Movie Database helper that will provide access to the movie database
@@ -121,6 +122,10 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         mDetailBinding.tvUserRating.setText(mCurrentMovie.getUserRating());
         mDetailBinding.tvReleaseDate.setText(mCurrentMovie.getReleaseDate());
         mDetailBinding.tvAPlotSynopsis.setText(mCurrentMovie.getAPlotSynopsis());
+
+        // To access the database, instantiate the subclass of SQLiteOpenHelper
+        // and pass the context, which is the current activity.
+        mMovieDbHelper = new MovieDbHelper(this);
 
          /*
          * A LinearLayoutManager is responsible for measuring and positioning item views within a
@@ -179,10 +184,6 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
          */
         loadTrailerData(mCurrentMovie.getId());
 
-        // To access the database, instantiate the subclass of SQLiteOpenHelper
-        // and pass the context, which is the current activity.
-        mMovieDbHelper = new MovieDbHelper(this);
-
         // Setup fab_favorite to add favorite movies into database and change FAB color to yellow
         final FloatingActionButton fab_favorite = (FloatingActionButton) findViewById(R.id.fab_favorite);
 
@@ -207,18 +208,27 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     }
 
     /**
-     * This method will use the pass in movie id to tell the background method to get the
-     * movie review data in the background.
+     * This method will use the pass in movie id to either tell the background method to get the
+     * movie review data in the background or load the review data from the database.
      *
      * @param id The id of the movie clicked.
      */
     private void loadReviewData(String id) {
-        new FetchReviewTask().execute(id);
+        try {
+            boolean movieIsInDatabase = checkIsMovieAlreadyInFavDatabase(id);
+            if (movieIsInDatabase) {
+                loadReviewDataFromDatabase(id);
+            } else {
+                new FetchReviewTask().execute(id);
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
-     * This method will use the pass in movie id to tell the background method to get the
-     * movie trailer data in the background.
+     * This method will use the pass in movie id to either tell the background method to get the
+     * movie trailer data in the background or load the trailer data from the database.
      *
      * @param id The id of the movie clicked.
      */
@@ -277,8 +287,8 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                 mReviewAdapter.setReviewData(reviewData);
                 // Display total number of reviews in the detail activity, because some movies does
                 // not have reviews.
-                numberOfReviewString = Integer.toString(mReviewAdapter.getItemCount());
-                mDetailBinding.tvNumberOfUserReview.setText(numberOfReviewString);
+                mNumberOfReviewString = Integer.toString(mReviewAdapter.getItemCount());
+                mDetailBinding.tvNumberOfUserReview.setText(mNumberOfReviewString);
             }
         }
     }
@@ -411,7 +421,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
      */
     private void saveFavoriteReview() {
 
-        for (int i = 0; i < Integer.valueOf(numberOfReviewString); i++) {
+        for (int i = 0; i < Integer.valueOf(mNumberOfReviewString); i++) {
             ContentValues values = new ContentValues();
             values.put(ReviewEntry.COLUMN_MOVIE_ID, mCurrentMovie.getId());
             values.put(ReviewEntry.COLUMN_AUTHOR, mCurrentMovieReviews.get(i).getAuthor());
@@ -460,6 +470,49 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         } else {
             deleteReviewRecordNumber = DELETE_REVIEW_SUCCESS;
             Log.i(TAG, rowsDeleted + getString(R.string.delete_review_successful));
+        }
+    }
+
+    public void loadReviewDataFromDatabase(String movieId) {
+        // Create an empty ArrayList that can start adding reviews to
+        List<Review> reviews = new ArrayList<>();
+
+        String selection = ReviewEntry.COLUMN_MOVIE_ID;
+        String[] selectionArgs = {movieId};
+        // Perform a query on the provider using the ContentResolver.
+        // Use the {@link ReviewEntry#CONTENT_URI} to access the review data.
+        Cursor cursor = getContentResolver().query(
+                ReviewEntry.CONTENT_URI,    // The content URI of the movie table
+                null,                       // The columns to return for each row
+                selection,
+                selectionArgs,
+                null);
+
+        if (cursor != null && cursor.getCount() > 0) {
+
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                String author = cursor.getString(cursor.getColumnIndex(ReviewEntry.COLUMN_AUTHOR));
+                String review_content = cursor.getString(cursor.getColumnIndex(ReviewEntry.COLUMN_REVIEW_CONTENT));
+
+                // Create a new {@link Review} object with the author and review_content
+                // from the cursor response.
+                Review review = new Review(author, review_content);
+
+                // Add the new {@link Review} to the list of movies.
+                reviews.add(review);
+                cursor.moveToNext();
+            }
+            cursor.close();
+        }
+
+        if (reviews != null) {
+            mCurrentMovieReviews = reviews;
+            mReviewAdapter.setReviewData(reviews);
+            // Display total number of reviews in the detail activity, because some movies does
+            // not have reviews.
+            mNumberOfReviewString = Integer.toString(mReviewAdapter.getItemCount());
+            mDetailBinding.tvNumberOfUserReview.setText(mNumberOfReviewString);
         }
     }
 
