@@ -51,8 +51,16 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     private static final int SAVE_REVIEW_SUCCESS = 20;
     private static final int SAVE_REVIEW_FAIL = 21;
 
+    private static final int DELETE_MOVIE_SUCCESS = 30;
+    private static final int DELETE_MOVIE_FAIL = 31;
+    private static final int DELETE_REVIEW_SUCCESS = 40;
+    private static final int DELETE_REVIEW_FAIL = 41;
+
     private int saveMovieRecordNumber;
     private int saveReviewRecordNumber;
+
+    private int deleteMovieRecordNumber;
+    private int deleteReviewRecordNumber;
 
     private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
     private final String IMAGE_SIZE_W185 = "w185/";
@@ -192,7 +200,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                     }
                 } else {
                     fab_favorite.setColorFilter(ContextCompat.getColor(DetailActivity.this, R.color.colorWhiteFavoriteStar));
-                    deleteFavoriteMovie();
+                    deleteMovie();
                 }
             }
         });
@@ -339,6 +347,38 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     }
 
     /**
+     * Delete movie, review and trailer from database.
+     */
+    private void deleteMovie() {
+        if (mCurrentMovieReviews.size() > 0) {
+            deleteFavoriteMovie();
+            deleteFavoriteReview();
+            if (mToast != null) {
+                mToast.cancel();
+            }
+            if (deleteMovieRecordNumber == DELETE_MOVIE_SUCCESS && deleteReviewRecordNumber == DELETE_REVIEW_SUCCESS) {
+                mToast = Toast.makeText(this, getString(R.string.delete_movie_successful), Toast.LENGTH_SHORT);
+                mToast.show();
+            } else {
+                mToast = Toast.makeText(this, getString(R.string.delete_movie_failed), Toast.LENGTH_SHORT);
+                mToast.show();
+            }
+        } else {
+            deleteFavoriteMovie();
+            if (mToast != null) {
+                mToast.cancel();
+            }
+            if (deleteMovieRecordNumber == DELETE_MOVIE_SUCCESS) {
+                mToast = Toast.makeText(this, getString(R.string.delete_movie_successful), Toast.LENGTH_SHORT);
+                mToast.show();
+            } else {
+                mToast = Toast.makeText(this, getString(R.string.delete_movie_failed), Toast.LENGTH_SHORT);
+                mToast.show();
+            }
+        }
+    }
+
+    /**
      * Save movie into database.
      */
     private void saveFavoriteMovie() {
@@ -398,13 +438,28 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         int rowsDeleted = getContentResolver().delete(MovieEntry.CONTENT_URI, selection, selectionArgs);
 
         if (rowsDeleted == 0) {
-            Toast.makeText(this, getString(R.string.delete_movie_failed), Toast.LENGTH_SHORT).show();
+            deleteMovieRecordNumber = DELETE_MOVIE_FAIL;
+            Log.e(TAG, getString(R.string.delete_movie_movie_failed));
         } else {
-            if (mToast != null) {
-                mToast.cancel();
-            }
-            mToast = Toast.makeText(this, getString(R.string.delete_movie_successful), Toast.LENGTH_SHORT);
-            mToast.show();
+            deleteMovieRecordNumber = DELETE_MOVIE_SUCCESS;
+            Log.i(TAG, getString(R.string.delete_movie_movie_successful));
+        }
+    }
+
+    /**
+     * Delete review from database.
+     */
+    private void deleteFavoriteReview() {
+        String selection = MovieEntry.COLUMN_MOVIE_ID;
+        String[] selectionArgs = {mCurrentMovie.getId()};
+        int rowsDeleted = getContentResolver().delete(ReviewEntry.CONTENT_URI, selection, selectionArgs);
+
+        if (rowsDeleted == 0) {
+            deleteReviewRecordNumber = DELETE_REVIEW_FAIL;
+            Log.e(TAG, getString(R.string.delete_review_failed));
+        } else {
+            deleteReviewRecordNumber = DELETE_REVIEW_SUCCESS;
+            Log.i(TAG, rowsDeleted + getString(R.string.delete_review_successful));
         }
     }
 
