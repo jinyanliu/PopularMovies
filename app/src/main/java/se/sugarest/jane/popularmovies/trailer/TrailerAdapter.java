@@ -87,7 +87,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
      *
      * @param trailerData The new trailer data to be played.
      */
-    public void setReviewData(List<Trailer> trailerData) {
+    public void setTrailerData(List<Trailer> trailerData) {
         mTrailerData = trailerData;
         String[] arrayKeyString = new String[trailerData.size()];
         for (int i = 0; i < trailerData.size(); i++) {

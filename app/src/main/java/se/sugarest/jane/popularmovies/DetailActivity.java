@@ -245,7 +245,16 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
      * @param id The id of the movie clicked.
      */
     private void loadTrailerData(String id) {
-        new FetchTrailerTask().execute(id);
+        try {
+            boolean movieIsInDatabase = checkIsMovieAlreadyInFavDatabase(id);
+            if (movieIsInDatabase) {
+                loadTrailerDataFromDatabase(id);
+            } else {
+                new FetchTrailerTask().execute(id);
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -332,7 +341,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         protected void onPostExecute(List<Trailer> trailerData) {
             if (trailerData != null) {
                 mCurrentMovieTrailers = trailerData;
-                mTrailerAdapter.setReviewData(trailerData);
+                mTrailerAdapter.setTrailerData(trailerData);
                 mNumberOfTrailerString = Integer.toString(mTrailerAdapter.getItemCount());
             }
         }
@@ -535,7 +544,6 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     public void loadReviewDataFromDatabase(String movieId) {
         // Create an empty ArrayList that can start adding reviews to
         List<Review> reviews = new ArrayList<>();
-
         String selection = ReviewEntry.COLUMN_MOVIE_ID;
         String[] selectionArgs = {movieId};
         // Perform a query on the provider using the ContentResolver.
@@ -546,9 +554,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                 selection,
                 selectionArgs,
                 null);
-
         if (cursor != null && cursor.getCount() > 0) {
-
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
                 String author = cursor.getString(cursor.getColumnIndex(ReviewEntry.COLUMN_AUTHOR));
@@ -564,7 +570,6 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             }
             cursor.close();
         }
-
         if (reviews != null) {
             mCurrentMovieReviews = reviews;
             mReviewAdapter.setReviewData(reviews);
@@ -572,6 +577,33 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             // not have reviews.
             mNumberOfReviewString = Integer.toString(mReviewAdapter.getItemCount());
             mDetailBinding.tvNumberOfUserReview.setText(mNumberOfReviewString);
+        }
+    }
+
+    public void loadTrailerDataFromDatabase(String movieId) {
+        List<Trailer> trailers = new ArrayList<>();
+        String selection = TrailerEntry.COLUMN_MOVIE_ID;
+        String[] selectionArgs = {movieId};
+        Cursor cursor = getContentResolver().query(
+                TrailerEntry.CONTENT_URI,
+                null,
+                selection,
+                selectionArgs,
+                null);
+        if (cursor != null && cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                String trailer_key = cursor.getString(cursor.getColumnIndex(TrailerEntry.COLUMN_KEY_OF_TRAILER));
+                Trailer trailer = new Trailer(trailer_key);
+                trailers.add(trailer);
+                cursor.moveToNext();
+            }
+            cursor.close();
+        }
+        if (trailers != null) {
+            mCurrentMovieTrailers = trailers;
+            mTrailerAdapter.setTrailerData(trailers);
+            mNumberOfTrailerString = Integer.toString(mTrailerAdapter.getItemCount());
         }
     }
 
