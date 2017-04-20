@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -26,7 +25,6 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,12 +36,11 @@ import se.sugarest.jane.popularmovies.databinding.ActivityDetailBinding;
 import se.sugarest.jane.popularmovies.movie.Movie;
 import se.sugarest.jane.popularmovies.review.Review;
 import se.sugarest.jane.popularmovies.review.ReviewAdapter;
+import se.sugarest.jane.popularmovies.tasks.FetchReviewTask;
+import se.sugarest.jane.popularmovies.tasks.FetchTrailerTask;
 import se.sugarest.jane.popularmovies.trailer.Trailer;
 import se.sugarest.jane.popularmovies.trailer.TrailerAdapter;
 import se.sugarest.jane.popularmovies.trailer.TrailerAdapter.TrailerAdapterOnClickHandler;
-import se.sugarest.jane.popularmovies.utilities.NetworkUtils;
-import se.sugarest.jane.popularmovies.utilities.ReviewJsonUtils;
-import se.sugarest.jane.popularmovies.utilities.TrailerJsonUtils;
 
 /**
  * Created by jane on 3/1/17.
@@ -116,6 +113,38 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     private ActivityDetailBinding mDetailBinding;
 
     private Toast mToast;
+
+    public ActivityDetailBinding getmDetailBinding() {
+        return mDetailBinding;
+    }
+
+    public void setmCurrentMovieReviews(List<Review> mCurrentMovieReviews) {
+        this.mCurrentMovieReviews = mCurrentMovieReviews;
+    }
+
+    public void setmCurrentMovieTrailers(List<Trailer> mCurrentMovieTrailers) {
+        this.mCurrentMovieTrailers = mCurrentMovieTrailers;
+    }
+
+    public ReviewAdapter getmReviewAdapter() {
+        return mReviewAdapter;
+    }
+
+    public TrailerAdapter getmTrailerAdapter() {
+        return mTrailerAdapter;
+    }
+
+    public void setmNumberOfReviewString(String mNumberOfReviewString) {
+        this.mNumberOfReviewString = mNumberOfReviewString;
+    }
+
+    public void setmNumberOfTrailerString(String mNumberOfTrailerString) {
+        this.mNumberOfTrailerString = mNumberOfTrailerString;
+    }
+
+    public void setmFirstTrailerSourceKey(String mFirstTrailerSourceKey) {
+        this.mFirstTrailerSourceKey = mFirstTrailerSourceKey;
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -240,7 +269,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             if (movieIsInDatabase) {
                 loadReviewDataFromDatabase(id);
             } else {
-                new FetchReviewTask().execute(id);
+                new FetchReviewTask(this).execute(id);
             }
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -259,7 +288,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             if (movieIsInDatabase) {
                 loadTrailerDataFromDatabase(id);
             } else {
-                new FetchTrailerTask().execute(id);
+                new FetchTrailerTask(this).execute(id);
             }
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -284,76 +313,6 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             startActivity(appIntent);
         } catch (ActivityNotFoundException ex) {
             startActivity(webIntent);
-        }
-    }
-
-    public class FetchReviewTask extends AsyncTask<String, Void, List<Review>> {
-
-        @Override
-        protected List<Review> doInBackground(String... params) {
-            // If there's no movie id, there's no movie reviews to show.
-            if (params.length == 0) {
-                return null;
-            }
-            String id = params[0];
-            URL movieReviewRequestUrl = NetworkUtils.buildReviewUrl(id);
-
-            try {
-                String jsonMovieReviewResponse = NetworkUtils
-                        .getResponseFromHttpUrl(movieReviewRequestUrl);
-                List<Review> simpleJsonReviewData = ReviewJsonUtils
-                        .extractResultsFromMovieReviewJson(jsonMovieReviewResponse);
-                return simpleJsonReviewData;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(List<Review> reviewData) {
-            if (reviewData != null) {
-                mCurrentMovieReviews = reviewData;
-                mReviewAdapter.setReviewData(reviewData);
-                // Display total number of reviews in the detail activity, because some movies does
-                // not have reviews.
-                mNumberOfReviewString = Integer.toString(mReviewAdapter.getItemCount());
-                mDetailBinding.extraDetails.tvNumberOfUserReview.setText(mNumberOfReviewString);
-            }
-        }
-    }
-
-    public class FetchTrailerTask extends AsyncTask<String, Void, List<Trailer>> {
-
-        @Override
-        protected List<Trailer> doInBackground(String... params) {
-            // If there's no movie id, there's no movie trailers to show.
-            if (params.length == 0) {
-                return null;
-            }
-            String id = params[0];
-            URL movieTrailerRequestUrl = NetworkUtils.buildTrailerUrl(id);
-
-            try {
-                String jsonMovieTrailerResponse = NetworkUtils
-                        .getResponseFromHttpUrl(movieTrailerRequestUrl);
-                List<Trailer> simpleJsonTrailerData = TrailerJsonUtils
-                        .extractResultsFromMovieTrailerJson(jsonMovieTrailerResponse);
-                return simpleJsonTrailerData;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(List<Trailer> trailerData) {
-            if (trailerData != null) {
-                mFirstTrailerSourceKey = trailerData.get(0).getKeyString();
-                mCurrentMovieTrailers = trailerData;
-                mTrailerAdapter.setTrailerData(trailerData);
-                mNumberOfTrailerString = Integer.toString(mTrailerAdapter.getItemCount());
-            }
         }
     }
 
