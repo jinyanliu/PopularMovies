@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -370,9 +371,11 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             if (saveMovieRecordNumber == SAVE_MOVIE_SUCCESS && saveReviewRecordNumber == SAVE_REVIEW_SUCCESS
                     && saveTrailerRecordNumber == SAVE_TRAILER_SUCCESS) {
                 mToast = Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT);
+                mToast.setGravity(Gravity.BOTTOM, 0, 0);
                 mToast.show();
             } else {
                 mToast = Toast.makeText(this, getString(R.string.insert_movie_failed), Toast.LENGTH_SHORT);
+                mToast.setGravity(Gravity.BOTTOM, 0, 0);
                 mToast.show();
             }
         } else {
@@ -383,9 +386,11 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             }
             if (saveMovieRecordNumber == SAVE_MOVIE_SUCCESS && saveTrailerRecordNumber == SAVE_TRAILER_SUCCESS) {
                 mToast = Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT);
+                mToast.setGravity(Gravity.BOTTOM, 0, 0);
                 mToast.show();
             } else {
                 mToast = Toast.makeText(this, getString(R.string.insert_movie_failed), Toast.LENGTH_SHORT);
+                mToast.setGravity(Gravity.BOTTOM, 0, 0);
                 mToast.show();
             }
         }
@@ -405,9 +410,11 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             if (deleteMovieRecordNumber == DELETE_MOVIE_SUCCESS && deleteReviewRecordNumber == DELETE_REVIEW_SUCCESS
                     && deleteTrailerRecordNumber == DELETE_TRAILER_SUCCESS) {
                 mToast = Toast.makeText(this, getString(R.string.delete_movie_successful), Toast.LENGTH_SHORT);
+                mToast.setGravity(Gravity.BOTTOM, 0, 0);
                 mToast.show();
             } else {
                 mToast = Toast.makeText(this, getString(R.string.delete_movie_failed), Toast.LENGTH_SHORT);
+                mToast.setGravity(Gravity.BOTTOM, 0, 0);
                 mToast.show();
             }
         } else {
@@ -418,9 +425,11 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             }
             if (deleteMovieRecordNumber == DELETE_MOVIE_SUCCESS && deleteTrailerRecordNumber == DELETE_TRAILER_SUCCESS) {
                 mToast = Toast.makeText(this, getString(R.string.delete_movie_successful), Toast.LENGTH_SHORT);
+                mToast.setGravity(Gravity.BOTTOM, 0, 0);
                 mToast.show();
             } else {
                 mToast = Toast.makeText(this, getString(R.string.delete_movie_failed), Toast.LENGTH_SHORT);
+                mToast.setGravity(Gravity.BOTTOM, 0, 0);
                 mToast.show();
             }
         }
