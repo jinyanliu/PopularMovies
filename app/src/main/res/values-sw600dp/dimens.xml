@@ -1,0 +1,24 @@
+<resources>
+    <!-- Height of movie image show in detail activity -->
+    <dimen name="image_height_detail">400dp</dimen>
+
+    <!-- The horizontal padding in activity_detail -->
+    <dimen name="activity_detail_horizontal_padding">32dp</dimen>
+    <!-- The vertical padding in activity_detail-->
+    <dimen name="activity_detail_vertical_padding">16dp</dimen>
+
+    <!-- The horizontal padding in list_item_review -->
+    <dimen name="list_item_user_review_horizontal_padding">32dp</dimen>
+    <!-- The vertical padding in list_item_review -->
+    <dimen name="list_item_user_review_vertical_padding">16dp</dimen>
+
+    <!-- The horizontal padding in list_item_trailers -->
+    <dimen name="list_item_trailers_horizontal_padding">32dp</dimen>
+
+    <!-- The height of the imageView to use as a dividing line -->
+    <dimen name="image_height_dividing_line_single">2dp</dimen>
+    <!-- The height of the imageView to use as a thicker line -->
+    <dimen name="image_height_dividing_line_triple">6dp</dimen>
+    <!-- The width of the imageView to use as a thicker line in detail land view -->
+    <dimen name="image_width_dividing_line_triple">6dp</dimen>
+</resources>

@@ -197,7 +197,8 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         loadTrailerData(mCurrentMovie.getId());
 
         // Setup fab_favorite to add favorite movies into database and change FAB color to yellow
-        final FloatingActionButton fab_favorite = (FloatingActionButton) findViewById(R.id.fab_favorite);
+        View primaryLayout = findViewById(R.id.primary_info);
+        final FloatingActionButton fab_favorite = (FloatingActionButton) primaryLayout.findViewById(R.id.fab_favorite);
 
         fab_favorite.setColorFilter(ContextCompat.getColor(DetailActivity.this, setFabButtonStarColor()));
 
