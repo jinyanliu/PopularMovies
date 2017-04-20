@@ -128,12 +128,12 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         // Set current movie poster image thumbnail
         String currentMoviePosterImageThumbnail = BASE_IMAGE_URL.concat(IMAGE_SIZE_W780).concat(mCurrentMovie.getMoviePosterImageThumbnail());
         Picasso.with(DetailActivity.this).load(currentMoviePosterImageThumbnail)
-                .into(mDetailBinding.ivMoviePosterImageThumbnail);
+                .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
 
         // Set current movie textViews content
-        mDetailBinding.tvUserRating.setText(mCurrentMovie.getUserRating());
-        mDetailBinding.tvReleaseDate.setText(mCurrentMovie.getReleaseDate());
-        mDetailBinding.tvAPlotSynopsis.setText(mCurrentMovie.getAPlotSynopsis());
+        mDetailBinding.primaryInfo.tvUserRating.setText(mCurrentMovie.getUserRating());
+        mDetailBinding.primaryInfo.tvReleaseDate.setText(mCurrentMovie.getReleaseDate());
+        mDetailBinding.primaryInfo.tvAPlotSynopsis.setText(mCurrentMovie.getAPlotSynopsis());
 
         // To access the database, instantiate the subclass of SQLiteOpenHelper
         // and pass the context, which is the current activity.
@@ -153,7 +153,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         LinearLayoutManager layoutManagerReviews = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,
                 false);
 
-        mReviewRecyclerView = mDetailBinding.recyclerviewMovieReviews;
+        mReviewRecyclerView = mDetailBinding.extraDetails.recyclerviewMovieReviews;
 
         mReviewRecyclerView.setLayoutManager(layoutManagerReviews);
 
@@ -176,7 +176,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         LinearLayoutManager layoutManagerTrailers = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,
                 false);
 
-        mTrailerRecyclerView = mDetailBinding.recyclerviewMovieTrailers;
+        mTrailerRecyclerView = mDetailBinding.extraDetails.recyclerviewMovieTrailers;
 
         mTrailerRecyclerView.setLayoutManager(layoutManagerTrailers);
 
@@ -309,7 +309,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                 // Display total number of reviews in the detail activity, because some movies does
                 // not have reviews.
                 mNumberOfReviewString = Integer.toString(mReviewAdapter.getItemCount());
-                mDetailBinding.tvNumberOfUserReview.setText(mNumberOfReviewString);
+                mDetailBinding.extraDetails.tvNumberOfUserReview.setText(mNumberOfReviewString);
             }
         }
     }
@@ -576,7 +576,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             // Display total number of reviews in the detail activity, because some movies does
             // not have reviews.
             mNumberOfReviewString = Integer.toString(mReviewAdapter.getItemCount());
-            mDetailBinding.tvNumberOfUserReview.setText(mNumberOfReviewString);
+            mDetailBinding.extraDetails.tvNumberOfUserReview.setText(mNumberOfReviewString);
         }
     }
 

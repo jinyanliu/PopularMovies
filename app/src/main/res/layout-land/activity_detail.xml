@@ -8,27 +8,27 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
             <include
                 android:id="@+id/primary_info"
                 layout="@layout/primary_movie_info"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
 
             <ImageView
                 android:id="@+id/dividing_line_rating_and_trailers"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/image_height_dividing_line_triple"
-                android:layout_marginBottom="@dimen/activity_detail_vertical_padding"
-                android:layout_marginTop="@dimen/activity_detail_vertical_padding"
+                android:layout_width="@dimen/image_width_dividing_line_triple"
+                android:layout_height="match_parent"
                 android:background="@color/colorPrimaryLight" />
 
             <include
                 android:id="@+id/extra_details"
                 layout="@layout/extra_movie_details"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
         </LinearLayout>
     </ScrollView>
 </layout>
