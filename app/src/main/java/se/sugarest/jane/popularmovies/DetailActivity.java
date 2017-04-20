@@ -27,6 +27,7 @@ import java.util.List;
 
 import se.sugarest.jane.popularmovies.data.MovieContract.MovieEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.ReviewEntry;
+import se.sugarest.jane.popularmovies.data.MovieContract.TrailerEntry;
 import se.sugarest.jane.popularmovies.data.MovieDbHelper;
 import se.sugarest.jane.popularmovies.databinding.ActivityDetailBinding;
 import se.sugarest.jane.popularmovies.movie.Movie;
@@ -51,17 +52,24 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     private static final int SAVE_MOVIE_FAIL = 11;
     private static final int SAVE_REVIEW_SUCCESS = 20;
     private static final int SAVE_REVIEW_FAIL = 21;
+    private static final int SAVE_TRAILER_SUCCESS = 50;
+    private static final int SAVE_TRAILER_FAIL = 51;
 
     private static final int DELETE_MOVIE_SUCCESS = 30;
     private static final int DELETE_MOVIE_FAIL = 31;
     private static final int DELETE_REVIEW_SUCCESS = 40;
     private static final int DELETE_REVIEW_FAIL = 41;
+    private static final int DELETE_TRAILER_SUCCESS = 60;
+    private static final int DELETE_TRAILER_FAIL = 61;
 
     private int saveMovieRecordNumber;
     private int saveReviewRecordNumber;
 
     private int deleteMovieRecordNumber;
     private int deleteReviewRecordNumber;
+
+    private int saveTrailerRecordNumber;
+    private int deleteTrailerRecordNumber;
 
     private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
     private final String IMAGE_SIZE_W185 = "w185/";
@@ -79,7 +87,11 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
 
     private List<Review> mCurrentMovieReviews;
 
+    private List<Trailer> mCurrentMovieTrailers;
+
     private String mNumberOfReviewString;
+
+    private String mNumberOfTrailerString;
 
     /**
      * Movie Database helper that will provide access to the movie database
@@ -319,7 +331,9 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         @Override
         protected void onPostExecute(List<Trailer> trailerData) {
             if (trailerData != null) {
+                mCurrentMovieTrailers = trailerData;
                 mTrailerAdapter.setReviewData(trailerData);
+                mNumberOfTrailerString = Integer.toString(mTrailerAdapter.getItemCount());
             }
         }
     }
@@ -330,11 +344,13 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     private void saveMovie() {
         if (mCurrentMovieReviews.size() > 0) {
             saveFavoriteMovie();
+            saveFavoriteTrailer();
             saveFavoriteReview();
             if (mToast != null) {
                 mToast.cancel();
             }
-            if (saveMovieRecordNumber == SAVE_MOVIE_SUCCESS && saveReviewRecordNumber == SAVE_REVIEW_SUCCESS) {
+            if (saveMovieRecordNumber == SAVE_MOVIE_SUCCESS && saveReviewRecordNumber == SAVE_REVIEW_SUCCESS
+                    && saveTrailerRecordNumber == SAVE_TRAILER_SUCCESS) {
                 mToast = Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT);
                 mToast.show();
             } else {
@@ -343,10 +359,11 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             }
         } else {
             saveFavoriteMovie();
+            saveFavoriteTrailer();
             if (mToast != null) {
                 mToast.cancel();
             }
-            if (saveMovieRecordNumber == SAVE_MOVIE_SUCCESS) {
+            if (saveMovieRecordNumber == SAVE_MOVIE_SUCCESS && saveTrailerRecordNumber == SAVE_TRAILER_SUCCESS) {
                 mToast = Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT);
                 mToast.show();
             } else {
@@ -362,11 +379,13 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     private void deleteMovie() {
         if (mCurrentMovieReviews.size() > 0) {
             deleteFavoriteMovie();
+            deleteFavoriteTrailer();
             deleteFavoriteReview();
             if (mToast != null) {
                 mToast.cancel();
             }
-            if (deleteMovieRecordNumber == DELETE_MOVIE_SUCCESS && deleteReviewRecordNumber == DELETE_REVIEW_SUCCESS) {
+            if (deleteMovieRecordNumber == DELETE_MOVIE_SUCCESS && deleteReviewRecordNumber == DELETE_REVIEW_SUCCESS
+                    && deleteTrailerRecordNumber == DELETE_TRAILER_SUCCESS) {
                 mToast = Toast.makeText(this, getString(R.string.delete_movie_successful), Toast.LENGTH_SHORT);
                 mToast.show();
             } else {
@@ -375,10 +394,11 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             }
         } else {
             deleteFavoriteMovie();
+            deleteFavoriteTrailer();
             if (mToast != null) {
                 mToast.cancel();
             }
-            if (deleteMovieRecordNumber == DELETE_MOVIE_SUCCESS) {
+            if (deleteMovieRecordNumber == DELETE_MOVIE_SUCCESS && deleteTrailerRecordNumber == DELETE_TRAILER_SUCCESS) {
                 mToast = Toast.makeText(this, getString(R.string.delete_movie_successful), Toast.LENGTH_SHORT);
                 mToast.show();
             } else {
@@ -440,6 +460,28 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     }
 
     /**
+     * Save trailer into database.
+     */
+    private void saveFavoriteTrailer() {
+
+        for (int i = 0; i < Integer.valueOf(mNumberOfTrailerString); i++) {
+            ContentValues values = new ContentValues();
+            values.put(TrailerEntry.COLUMN_MOVIE_ID, mCurrentMovie.getId());
+            values.put(TrailerEntry.COLUMN_KEY_OF_TRAILER, mCurrentMovieTrailers.get(i).getKeyString());
+
+            Uri newUri = getContentResolver().insert(TrailerEntry.CONTENT_URI, values);
+
+            if (newUri == null) {
+                saveTrailerRecordNumber = SAVE_TRAILER_FAIL;
+                Log.e(TAG, getString(R.string.insert_trailer_failed) + i);
+            } else {
+                saveTrailerRecordNumber = SAVE_TRAILER_SUCCESS;
+                Log.i(TAG, getString(R.string.insert_trailer_successful) + i);
+            }
+        }
+    }
+
+    /**
      * Delete movie from database.
      */
     private void deleteFavoriteMovie() {
@@ -460,7 +502,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
      * Delete review from database.
      */
     private void deleteFavoriteReview() {
-        String selection = MovieEntry.COLUMN_MOVIE_ID;
+        String selection = ReviewEntry.COLUMN_MOVIE_ID;
         String[] selectionArgs = {mCurrentMovie.getId()};
         int rowsDeleted = getContentResolver().delete(ReviewEntry.CONTENT_URI, selection, selectionArgs);
 
@@ -470,6 +512,23 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         } else {
             deleteReviewRecordNumber = DELETE_REVIEW_SUCCESS;
             Log.i(TAG, rowsDeleted + getString(R.string.delete_review_successful));
+        }
+    }
+
+    /**
+     * Delete trailer from database
+     */
+    private void deleteFavoriteTrailer() {
+        String selection = TrailerEntry.COLUMN_MOVIE_ID;
+        String[] selectionArgs = {mCurrentMovie.getId()};
+        int rowsDeleted = getContentResolver().delete(TrailerEntry.CONTENT_URI, selection, selectionArgs);
+
+        if (rowsDeleted == 0) {
+            deleteTrailerRecordNumber = DELETE_TRAILER_FAIL;
+            Log.e(TAG, getString(R.string.delete_trailer_failed));
+        } else {
+            deleteTrailerRecordNumber = DELETE_TRAILER_SUCCESS;
+            Log.i(TAG, rowsDeleted + getString(R.string.delete_trailer_successful));
         }
     }
 

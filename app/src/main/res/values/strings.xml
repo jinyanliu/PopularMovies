@@ -49,6 +49,12 @@
     <!-- Log message for saving error when inserting a review. [CHAR LIMIT=20] -->
     <string name="insert_review_failed">Error with saving review</string>
 
+    <!-- Log message for saving success when inserting a trailer. [CHAR LIMIT=20] -->
+    <string name="insert_trailer_successful">Traielr saved</string>
+
+    <!-- Log message for saving error when inserting a trailer. [CHAR LIMIT=20] -->
+    <string name="insert_trailer_failed">Error with saving trailer</string>
+
     <!-- Log message for deleting success when deleting a movie. [CHAR LIMIT=20] -->
     <string name="delete_movie_movie_successful">Movie movie deleted</string>
 
@@ -56,10 +62,16 @@
     <string name="delete_movie_movie_failed">Error with deleting movie movie</string>
 
     <!-- Log message for deleting success when deleting a review. [CHAR LIMIT=20] -->
-    <string name="delete_review_successful">reviews deleted</string>
+    <string name="delete_review_successful"> reviews deleted</string>
 
     <!-- Log message for deleting error when deleting a review. [CHAR LIMIT=20] -->
     <string name="delete_review_failed">Error with deleting review</string>
+
+    <!-- Log message for deleting success when deleting a trailer. [CHAR LIMIT=20] -->
+    <string name="delete_trailer_successful"> trailers deleted</string>
+
+    <!-- Log message for deleting error when deleting a trailer. [CHAR LIMIT=20] -->
+    <string name="delete_trailer_failed">Error with deleting trailer</string>
 
     <!-- The text for delete method to throw an IllegalArgumentException message. -->
     <string name="unknown_uri_for_deletion">Deletion is not supported for </string>
