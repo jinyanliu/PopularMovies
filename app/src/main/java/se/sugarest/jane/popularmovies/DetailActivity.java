@@ -11,11 +11,15 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ShareCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -74,6 +78,8 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
     private final String IMAGE_SIZE_W185 = "w185/";
     private final String IMAGE_SIZE_W780 = "w780/";
+    private final String BASE_YOUTUBE_URL_APP = "vnd.youtube:";
+    private final String BASE_YOUTUBE_URL_WEB = "http://www.youtube.com/watch?v=";
 
     private Movie mCurrentMovie;
 
@@ -92,6 +98,8 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     private String mNumberOfReviewString;
 
     private String mNumberOfTrailerString;
+
+    private String mFirstTrailerSourceKey;
 
     /**
      * Movie Database helper that will provide access to the movie database
@@ -269,9 +277,9 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
      */
     @Override
     public void onClick(String trailerSourceKey) {
-        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + trailerSourceKey));
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(BASE_YOUTUBE_URL_APP + trailerSourceKey));
         Intent webIntent = new Intent(Intent.ACTION_VIEW,
-                Uri.parse("http://www.youtube.com/watch?v=" + trailerSourceKey));
+                Uri.parse(BASE_YOUTUBE_URL_WEB + trailerSourceKey));
         try {
             startActivity(appIntent);
         } catch (ActivityNotFoundException ex) {
@@ -341,6 +349,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         @Override
         protected void onPostExecute(List<Trailer> trailerData) {
             if (trailerData != null) {
+                mFirstTrailerSourceKey = trailerData.get(0).getKeyString();
                 mCurrentMovieTrailers = trailerData;
                 mTrailerAdapter.setTrailerData(trailerData);
                 mNumberOfTrailerString = Integer.toString(mTrailerAdapter.getItemCount());
@@ -593,6 +602,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                 null);
         if (cursor != null && cursor.getCount() > 0) {
             cursor.moveToFirst();
+            mFirstTrailerSourceKey = cursor.getString(cursor.getColumnIndex(TrailerEntry.COLUMN_KEY_OF_TRAILER));
             while (!cursor.isAfterLast()) {
                 String trailer_key = cursor.getString(cursor.getColumnIndex(TrailerEntry.COLUMN_KEY_OF_TRAILER));
                 Trailer trailer = new Trailer(trailer_key);
@@ -630,5 +640,33 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             e.printStackTrace();
         }
         return colorOfStar;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.detail, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_share) {
+            String urlToShare = BASE_YOUTUBE_URL_WEB + mFirstTrailerSourceKey;
+            shareFirstYoutubeUrl(urlToShare);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void shareFirstYoutubeUrl(String urlToShare) {
+        String mimeType = "text/plain";
+        String title = getString(R.string.title_share_url_string);
+        ShareCompat.IntentBuilder
+                .from(this)
+                .setType(mimeType)
+                .setChooserTitle(title)
+                .setText(urlToShare)
+                .startChooser();
     }
 }

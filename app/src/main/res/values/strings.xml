@@ -79,6 +79,12 @@
     <!-- Settings Menu Item [CHAR LIMIT=NONE] -->
     <string name="settings_menu_item">Settings</string>
 
+    <!-- Used to share the first trailer’s YouTube URL on a given movie from the DetailActivity -->
+    <string name="action_share">Share</string>
+
+    <!-- The title of the ShareCompat to build a share action. -->
+    <string name="title_share_url_string">Share the first Youtube Url</string>
+
     <!-- Settings Activity Title [CHAR LIMIT=NONE] -->
     <string name="settings_title">Movie Settings</string>
 
