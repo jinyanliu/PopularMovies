@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/black"/>
+        android:background="@android:color/black" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview_movieposters"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
     <TextView
         android:id="@+id/tv_error_message_display"
@@ -23,12 +22,12 @@
         android:text="@string/error_message"
         android:textColor="@android:color/white"
         android:textSize="16sp"
-        android:visibility="invisible"/>
+        android:visibility="invisible" />
 
     <ProgressBar
         android:id="@+id/pb_loading_indicator"
         android:layout_width="42dp"
         android:layout_height="42dp"
         android:layout_gravity="center"
-        android:visibility="invisible"/>
+        android:visibility="invisible" />
 </FrameLayout>

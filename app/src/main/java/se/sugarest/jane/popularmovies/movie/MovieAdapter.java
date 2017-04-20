@@ -53,7 +53,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     public MovieAdapter(MovieAdapterOnClickHandler clickHandler, Context context) {
         mClickHandler = clickHandler;
         mContext = context;
-
     }
 
     /**
@@ -124,7 +123,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
         mMoviePostersUrlStrings = array;
         notifyDataSetChanged();
-
     }
 
     /**

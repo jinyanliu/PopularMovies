@@ -103,7 +103,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewAdap
         mAuthorStrings = arrayAuthor;
         mContentStrings = arrayContent;
         notifyDataSetChanged();
-
     }
 
     /**

@@ -44,7 +44,6 @@ public class MovieJsonUtils {
          * Catch the exception so the app doesn't crash, and print the error message to the logs.
          */
         try {
-
             // Create a JSONObject from the JSON response string
             JSONObject baseJsonResponse = new JSONObject(movieJSON);
 
@@ -83,7 +82,7 @@ public class MovieJsonUtils {
                 // movie_poster_image_thumbnail, a_plot_synopsis, user_rating, release_date,id
                 // from the JSON response.
                 Movie movie = new Movie(poster_path, original_title, movie_poster_image_thumbnail
-                        , a_plot_synopsis, user_rating, release_date,id);
+                        , a_plot_synopsis, user_rating, release_date, id);
 
                 // Add the new {@link Movie} to the list of movies.
                 movies.add(movie);

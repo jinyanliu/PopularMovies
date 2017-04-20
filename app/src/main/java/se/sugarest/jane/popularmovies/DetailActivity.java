@@ -76,12 +76,15 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     private int deleteTrailerRecordNumber;
 
     private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
-    private final String IMAGE_SIZE_W185 = "w185/";
     private final String IMAGE_SIZE_W780 = "w780/";
     private final String BASE_YOUTUBE_URL_APP = "vnd.youtube:";
     private final String BASE_YOUTUBE_URL_WEB = "http://www.youtube.com/watch?v=";
 
     private Movie mCurrentMovie;
+
+    private List<Review> mCurrentMovieReviews;
+
+    private List<Trailer> mCurrentMovieTrailers;
 
     private RecyclerView mReviewRecyclerView;
 
@@ -90,10 +93,6 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     private ReviewAdapter mReviewAdapter;
 
     private TrailerAdapter mTrailerAdapter;
-
-    private List<Review> mCurrentMovieReviews;
-
-    private List<Trailer> mCurrentMovieTrailers;
 
     private String mNumberOfReviewString;
 

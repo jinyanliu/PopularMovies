@@ -3,90 +3,67 @@
 
     <!-- The text for the TextView to display error message. -->
     <string name="error_message">An error has occurred.</string>
-
     <!-- The text for the TextView to display error message when there is no favorite movies to display. -->
     <string name="error_message_no_fav_movie">You don\'t have favorite movies !\nStart by pressing the STAR button on single movie\'s Page !</string>
-
     <!-- The text for Log error message when passing JSON. -->
     <string name="log_error_message_passing_JSON">Problem parsing the movie JSON results.</string>
-
     <!-- The text for query method to throw an IllegalArgumentException message. -->
     <string name="query_default_illegal_argument_exception_message">Cannot query unknown URI </string>
-
     <!-- The text for insert method to throw an IllegalArgumentException message. -->
     <string name="insert_default_illegal_argument_exception_message">Cannot insert unknown URI </string>
-
     <!-- The log message when the insertion to database is failed. -->
     <string name="insert_fail_log_message">Failed to insert row for </string>
-
     <!-- The text for getType to throw an IllegalArgumentException message, part one. -->
     <string name="get_type_default_illegal_argument_exception_message_part_one">Unknown URI </string>
-
     <!-- The text for getType to throw an IllegalArgumentException message, part two. -->
     <string name="get_type_default_illegal_argument_exception_message_part_two"> with match </string>
+    <!-- The text for delete method to throw an IllegalArgumentException message. -->
+    <string name="unknown_uri_for_deletion">Deletion is not supported for </string>
 
     <!-- Toast message for saving success when inserting a movie. [CHAR LIMIT=20] -->
     <string name="insert_movie_successful">Movie saved</string>
-
     <!-- Toast message for saving error when inserting a movie. [CHAR LIMIT=20] -->
     <string name="insert_movie_failed">Error with saving movie</string>
-
     <!-- Toast message for deleting success when deleting a movie. [CHAR LIMIT=20] -->
     <string name="delete_movie_successful">Movie deleted</string>
-
     <!-- Toast message for deleting error when deleting a movie. [CHAR LIMIT=20] -->
     <string name="delete_movie_failed">Error with deleting movie</string>
 
     <!-- Log message for saving success when inserting a movie object. [CHAR LIMIT=20] -->
     <string name="insert_movie_movie_successful">Movie movie saved</string>
-
     <!-- Log message for saving error when inserting a movie object. [CHAR LIMIT=20] -->
     <string name="insert_movie_movie_failed">Error with saving movie movie</string>
-
     <!-- Log message for saving success when inserting a review. [CHAR LIMIT=20] -->
     <string name="insert_review_successful">Review saved</string>
-
     <!-- Log message for saving error when inserting a review. [CHAR LIMIT=20] -->
     <string name="insert_review_failed">Error with saving review</string>
-
     <!-- Log message for saving success when inserting a trailer. [CHAR LIMIT=20] -->
     <string name="insert_trailer_successful">Traielr saved</string>
-
     <!-- Log message for saving error when inserting a trailer. [CHAR LIMIT=20] -->
     <string name="insert_trailer_failed">Error with saving trailer</string>
 
     <!-- Log message for deleting success when deleting a movie. [CHAR LIMIT=20] -->
     <string name="delete_movie_movie_successful">Movie movie deleted</string>
-
     <!-- Log message for deleting error when deleting a movie. [CHAR LIMIT=20] -->
     <string name="delete_movie_movie_failed">Error with deleting movie movie</string>
-
     <!-- Log message for deleting success when deleting a review. [CHAR LIMIT=20] -->
     <string name="delete_review_successful"> reviews deleted</string>
-
     <!-- Log message for deleting error when deleting a review. [CHAR LIMIT=20] -->
     <string name="delete_review_failed">Error with deleting review</string>
-
     <!-- Log message for deleting success when deleting a trailer. [CHAR LIMIT=20] -->
     <string name="delete_trailer_successful"> trailers deleted</string>
-
     <!-- Log message for deleting error when deleting a trailer. [CHAR LIMIT=20] -->
     <string name="delete_trailer_failed">Error with deleting trailer</string>
 
-    <!-- The text for delete method to throw an IllegalArgumentException message. -->
-    <string name="unknown_uri_for_deletion">Deletion is not supported for </string>
-
     <!-- Settings Menu Item [CHAR LIMIT=NONE] -->
     <string name="settings_menu_item">Settings</string>
+    <!-- Settings Activity Title [CHAR LIMIT=NONE] -->
+    <string name="settings_title">Movie Settings</string>
 
     <!-- Used to share the first trailer’s YouTube URL on a given movie from the DetailActivity -->
     <string name="action_share">Share</string>
-
     <!-- The title of the ShareCompat to build a share action. -->
     <string name="title_share_url_string">Share the first Youtube Url</string>
-
-    <!-- Settings Activity Title [CHAR LIMIT=NONE] -->
-    <string name="settings_title">Movie Settings</string>
 
     <!-- Strings For Order-By Preference [CHAR LIMIT=30] -->
     <string name="settings_order_by_label">Order By</string>
@@ -115,7 +92,9 @@
     <!-- Label of user review author in list_item_review layout. -->
     <string name="list_item_user_review_author_label">Author:</string>
 
-    <!-- Fake texts show on detail activity for design reason. -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    - Fake texts show on detail activity for design reason.  -
+    - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <string name="fake_detail_movie_name">Sing</string>
     <string name="fake_detail_movie_rate">6.7</string>
     <string name="fake_detail_movie_date">2016-11-23</string>
@@ -131,3 +110,4 @@
         Hudson-voiced renditions of \"Golden Slumbers/Carry That Weight\" to the piggy duet of \"Shake It Off\" (by Witherspoon
         and comedian Nick Kroll as a German boar called Gunter) to Kelly\'s show-stopping version of "Hallelujah."</string>
 </resources>
+

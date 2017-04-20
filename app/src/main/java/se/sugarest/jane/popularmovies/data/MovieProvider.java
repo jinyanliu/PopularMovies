@@ -111,7 +111,6 @@ public class MovieProvider extends ContentProvider {
         return true;
     }
 
-
     /**
      * Perform the query for the given URI. Use the given projection, selection, selection arguments,
      * and sort order.
@@ -281,8 +280,6 @@ public class MovieProvider extends ContentProvider {
 
     /**
      * Delete the data at the given selection and selection arguments.
-     *
-     * @return
      */
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
