@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -16,7 +15,6 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,8 +22,7 @@ import se.sugarest.jane.popularmovies.data.MovieContract.MovieEntry;
 import se.sugarest.jane.popularmovies.movie.Movie;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter.MovieAdapterOnClickHandler;
-import se.sugarest.jane.popularmovies.utilities.MovieJsonUtils;
-import se.sugarest.jane.popularmovies.utilities.NetworkUtils;
+import se.sugarest.jane.popularmovies.tasks.FetchMovieTask;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapterOnClickHandler {
 
@@ -38,6 +35,22 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     private TextView mErrorMessageDisplay;
 
     private ProgressBar mLoadingIndicator;
+
+    public MovieAdapter getmMovieAdapter() {
+        return mMovieAdapter;
+    }
+
+    public void setmMovieAdapter(MovieAdapter mMovieAdapter) {
+        this.mMovieAdapter = mMovieAdapter;
+    }
+
+    public ProgressBar getmLoadingIndicator() {
+        return mLoadingIndicator;
+    }
+
+    public void setmLoadingIndicator(ProgressBar mLoadingIndicator) {
+        this.mLoadingIndicator = mLoadingIndicator;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
             showDatabaseMoviePoster();
         } else {
             orderBy = "movie/" + orderBy;
-            new FetchMovieTask().execute(orderBy);
+            new FetchMovieTask(this).execute(orderBy);
         }
     }
 
@@ -137,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
      * Since it is okay to redundantly set the visibility of a View, we don't
      * need to check whether each view is currently visible or invisible.
      */
-    private void showMovieDataView() {
+    public void showMovieDataView() {
         // First, make sure the error is invisible.
         mErrorMessageDisplay.setVisibility(View.INVISIBLE);
         // Then, make sure the movie data is visible.
@@ -150,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
      * Since it is okay to redundantly set the visibility of a View, we don't
      * need to check whether each view is currently visible or invisible.
      */
-    private void showErrorMessage() {
+    public void showErrorMessage() {
         // First, hide the currently visible data.
         mRecyclerView.setVisibility(View.INVISIBLE);
         // Then, show the error.
@@ -174,49 +187,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         return super.onOptionsItemSelected(item);
     }
 
-    public class FetchMovieTask extends AsyncTask<String, Void, List<Movie>> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mLoadingIndicator.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected List<Movie> doInBackground(String... params) {
-
-            // If there's no sortBy method, there's no way of showing movies.
-            if (params.length == 0) {
-                return null;
-            }
-
-            String sortByMethod = params[0];
-            URL movieRequestUrl = NetworkUtils.buildUrl(sortByMethod);
-
-            try {
-                String jsonMovieResponse = NetworkUtils
-                        .getResponseFromHttpUrl(movieRequestUrl);
-                List<Movie> simpleJsonMovieData = MovieJsonUtils
-                        .extractResultsFromJson(jsonMovieResponse);
-                return simpleJsonMovieData;
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(List<Movie> movieData) {
-            mLoadingIndicator.setVisibility(View.INVISIBLE);
-            if (movieData != null) {
-                mMovieAdapter.setMoviePosterData(movieData);
-            } else {
-                showErrorMessage();
-            }
-        }
-    }
-
     private void showDatabaseMoviePoster() {
 
         // Create an empty ArrayList that can start adding movies to
@@ -231,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                 null,
                 null);
 
-        if (cursor != null && cursor.getCount() >0) {
+        if (cursor != null && cursor.getCount() > 0) {
 
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {

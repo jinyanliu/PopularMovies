@@ -29,7 +29,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
     private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
     private final String IMAGE_SIZE_W185 = "w185/";
-    private final String IMAGE_SIZE_W780 = "w780/";
 
     /**
      * An On-click handler that we've defined to make it easy for an Activity to interface with
