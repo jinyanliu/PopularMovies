@@ -29,3 +29,6 @@ Support custom layout_land design to use up white spaces when the phone is rotat
 
 Store all the strings in string.xml. Store all the dimens in dimens.xml. 
 
+# App ScreenShots
+<img src="screenshots/1.png" width="24%"/>
+
