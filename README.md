@@ -1,4 +1,6 @@
 # PopularMovies
+-- You can type in YOUR_API_KEY in se.sugarest.jane.popularmovies.utilities.NetworkUtils . Thank you. --
+
 Present the user with a grid arrangement of movie posters upon launch. 
 
 Allow the user to change sort order via a setting:
