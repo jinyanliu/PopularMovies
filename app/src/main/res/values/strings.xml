@@ -5,6 +5,10 @@
     <string name="error_message">An error has occurred.</string>
     <!-- The text for the TextView to display error message when there is no favorite movies to display. -->
     <string name="error_message_no_fav_movie">You don\'t have favorite movies !\nStart by pressing the STAR button on single movie\'s Page !</string>
+    <!-- The text for the TextView to display error message when there is no popular movies to display. -->
+    <string name="error_message_no_popular_movie">No popular movies! Please try again later!</string>
+    <!-- The text for the TextView to display error message when there is no top rated movies to display. -->
+    <string name="error_message_no_top_rated_movie">No top rated movies! Please try again later!</string>
     <!-- The text for Log error message when passing JSON. -->
     <string name="log_error_message_passing_JSON">Problem parsing the movie JSON results.</string>
     <!-- The text for query method to throw an IllegalArgumentException message. -->

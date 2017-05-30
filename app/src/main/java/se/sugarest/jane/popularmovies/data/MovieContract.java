@@ -48,6 +48,10 @@ public class MovieContract {
 
     public static final String PATH_TRAILER = "trailer";
 
+    public static final String PATH_CACHE_MOVIE_MOST_POPULAR = "cache_movie_most_popular";
+
+    public static final String PATH_CACHE_MOVIE_TOP_RATED = "cache_movie_top_rated";
+
     /**
      * Inner class that defines the table contents of the movie table.
      */
@@ -188,5 +192,133 @@ public class MovieContract {
          */
         public static final String COLUMN_KEY_OF_TRAILER = "key_of_trailer";
 
+    }
+
+    /**
+     * Inner class that defines the table contents of the cache movie most popular table.
+     */
+    public static final class CacheMovieMostPopularEntry implements BaseColumns {
+
+        /* The base CONTENT_URI used to query the cache movie most popular table from the content provider */
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_CACHE_MOVIE_MOST_POPULAR)
+                .build();
+
+        /**
+         * The MIME type of the {@link #CONTENT_URI} for a list of movies.
+         */
+        public static final String CONTENT_LIST_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_CACHE_MOVIE_MOST_POPULAR;
+
+        /**
+         * The MIME type of the {@link #CONTENT_URI} for a single movie.
+         */
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_CACHE_MOVIE_MOST_POPULAR;
+
+        /* Used internally as the name of the cache movie most popular table. */
+        public static final String TABLE_NAME = "cache_movie_most_popular";
+
+        /**
+         * PosterPath is stored as a String representing movie's poster_path url, used for
+         * display on main screen when user setting sortOrder by most popular.
+         */
+        public static final String COLUMN_POSTER_PATH = "poster_path";
+
+        /**
+         * OriginalTitle is stored as a String representing movie's original title.
+         */
+        public static final String COLUMN_ORIGINAL_TITLE = "original_title";
+
+        /**
+         * MoviePosterImageThumbnail is stored as a String representing movie's poster_image_thumbnail
+         * url, used for display on detail screen.
+         */
+        public static final String COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL
+                = "movie_poster_image_thumbnail";
+
+        /**
+         * APlotSynopsis is stored as a String representing movie's plot synopsis.
+         */
+        public static final String COLUMN_A_PLOT_SYNOPSIS = "a_plot_synopsis";
+
+        /**
+         * UserRating is stored as a String representing movie's average rating.
+         */
+        public static final String COLUMN_USER_RATING = "user_rating";
+
+        /**
+         * ReleaseDate is stored as a String representing movie's release date.
+         */
+        public static final String COLUMN_RELEASE_DATE = "release_date";
+
+        /**
+         * MovieId is stored as a String representing movie's id, used to identify the movie.
+         */
+        public static final String COLUMN_MOVIE_ID = "movie_id";
+    }
+
+    /**
+     * Inner class that defines the table contents of the cache movie top rated table.
+     */
+    public static final class CacheMovieTopRatedEntry implements BaseColumns {
+
+        /* The base CONTENT_URI used to query the cache movie top rated table from the content provider */
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_CACHE_MOVIE_TOP_RATED)
+                .build();
+
+        /**
+         * The MIME type of the {@link #CONTENT_URI} for a list of movies.
+         */
+        public static final String CONTENT_LIST_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_CACHE_MOVIE_TOP_RATED;
+
+        /**
+         * The MIME type of the {@link #CONTENT_URI} for a single movie.
+         */
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_CACHE_MOVIE_TOP_RATED;
+
+        /* Used internally as the name of the cache movie top rated table. */
+        public static final String TABLE_NAME = "cache_movie_top_rated";
+
+        /**
+         * PosterPath is stored as a String representing movie's poster_path url, used for
+         * display on main screen when user setting sortOrder by top rated.
+         */
+        public static final String COLUMN_POSTER_PATH = "poster_path";
+
+        /**
+         * OriginalTitle is stored as a String representing movie's original title.
+         */
+        public static final String COLUMN_ORIGINAL_TITLE = "original_title";
+
+        /**
+         * MoviePosterImageThumbnail is stored as a String representing movie's poster_image_thumbnail
+         * url, used for display on detail screen.
+         */
+        public static final String COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL
+                = "movie_poster_image_thumbnail";
+
+        /**
+         * APlotSynopsis is stored as a String representing movie's plot synopsis.
+         */
+        public static final String COLUMN_A_PLOT_SYNOPSIS = "a_plot_synopsis";
+
+        /**
+         * UserRating is stored as a String representing movie's average rating.
+         */
+        public static final String COLUMN_USER_RATING = "user_rating";
+
+        /**
+         * ReleaseDate is stored as a String representing movie's release date.
+         */
+        public static final String COLUMN_RELEASE_DATE = "release_date";
+
+        /**
+         * MovieId is stored as a String representing movie's id, used to identify the movie.
+         */
+        public static final String COLUMN_MOVIE_ID = "movie_id";
     }
 }

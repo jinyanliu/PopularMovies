@@ -15,6 +15,8 @@ import se.sugarest.jane.popularmovies.R;
 import se.sugarest.jane.popularmovies.data.MovieContract.MovieEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.ReviewEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.TrailerEntry;
+import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
+import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedEntry;
 
 /**
  * Created by jane on 17-4-11.
@@ -58,6 +60,16 @@ public class MovieProvider extends ContentProvider {
     private static final int TRAILER_ID = 301;
 
     /**
+     * URI matcher code for the content URI for the cache movie most popular table
+     */
+    private static final int CACHE_MOVIES_MOST_POPULAR = 400;
+
+    /**
+     * URI matcher code for the content URI for the cache movie top rated table
+     */
+    private static final int CACHE_MOVIES_TOP_RATED = 500;
+
+    /**
      * UriMatcher object to match a content URI to a corresponding code.
      * The input passed into the constructor represents the code to return for the root URI.
      * It's common to use NO_MATCH as the input for this case.
@@ -90,6 +102,9 @@ public class MovieProvider extends ContentProvider {
 
         sUriMatcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_TRAILER, TRAILERS);
         sUriMatcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_TRAILER + "/#", TRAILER_ID);
+
+        sUriMatcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_CACHE_MOVIE_MOST_POPULAR, CACHE_MOVIES_MOST_POPULAR);
+        sUriMatcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_CACHE_MOVIE_TOP_RATED, CACHE_MOVIES_TOP_RATED);
     }
 
     /**
@@ -191,6 +206,14 @@ public class MovieProvider extends ContentProvider {
                 selection = TrailerEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
                 cursor = database.query(TrailerEntry.TABLE_NAME, projection, selection, selectionArgs,
+                        null, null, sortOrder);
+                break;
+            case CACHE_MOVIES_MOST_POPULAR:
+                cursor = database.query(CacheMovieMostPopularEntry.TABLE_NAME, projection, selection, selectionArgs,
+                        null, null, sortOrder);
+                break;
+            case CACHE_MOVIES_TOP_RATED:
+                cursor = database.query(CacheMovieTopRatedEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
             default:
@@ -337,5 +360,52 @@ public class MovieProvider extends ContentProvider {
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
         return 0;
+    }
+
+    @Override
+    public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
+        // Get writable database
+        SQLiteDatabase database = mMovieDbHelper.getWritableDatabase();
+        int rowsInserted = 0;
+        switch (sUriMatcher.match(uri)) {
+            case CACHE_MOVIES_MOST_POPULAR:
+                database.beginTransaction();
+                try {
+                    for (ContentValues value : values) {
+                        long id = database.insert(CacheMovieMostPopularEntry.TABLE_NAME, null,
+                                value);
+                        if (id != -1) {
+                            rowsInserted++;
+                        }
+                    }
+                    database.setTransactionSuccessful();
+                } finally {
+                    database.endTransaction();
+                }
+                if (rowsInserted > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+                return rowsInserted;
+            case CACHE_MOVIES_TOP_RATED:
+                database.beginTransaction();
+                try {
+                    for (ContentValues value : values) {
+                        long id = database.insert(CacheMovieTopRatedEntry.TABLE_NAME, null,
+                                value);
+                        if (id != -1) {
+                            rowsInserted++;
+                        }
+                    }
+                    database.setTransactionSuccessful();
+                } finally {
+                    database.endTransaction();
+                }
+                if (rowsInserted > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+                return rowsInserted;
+            default:
+                return super.bulkInsert(uri, values);
+        }
     }
 }
