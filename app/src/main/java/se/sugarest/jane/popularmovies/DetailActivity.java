@@ -164,7 +164,10 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
 
         // Set current movie poster image thumbnail
         String currentMoviePosterImageThumbnail = BASE_IMAGE_URL.concat(IMAGE_SIZE_W780).concat(mCurrentMovie.getMoviePosterImageThumbnail());
-        Picasso.with(DetailActivity.this).load(currentMoviePosterImageThumbnail)
+        Picasso.with(DetailActivity.this)
+                .load(currentMoviePosterImageThumbnail)
+                .placeholder(R.drawable.picasso_placeholder_loading)
+                .error(R.drawable.picasso_placeholder_error)
                 .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
 
         // Set current movie textViews content
