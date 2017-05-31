@@ -9,8 +9,22 @@
     <string name="error_message_no_popular_movie">No popular movies! Please try again later!</string>
     <!-- The text for the TextView to display error message when there is no top rated movies to display. -->
     <string name="error_message_no_top_rated_movie">No top rated movies! Please try again later!</string>
+
     <!-- The text for Log error message when passing JSON. -->
     <string name="log_error_message_passing_JSON">Problem parsing the movie JSON results.</string>
+    <!-- The text for Log error message when forming URL. -->
+    <string name="log_error_message_malformedurl_exception">Problem forming the movie thumbnail poster url.</string>
+    <!-- The text for Log error message when opening url connection. -->
+    <string name="log_error_message_io_exception">Problem opening url connection.</string>
+    <!-- The text for Log information message (display file name) when downloading the poster thumbnail and put it into SD card storage. -->
+    <string name="log_information_message_download_poster_thumbnail_filename">Local filename: </string>
+    <!-- The text for Log information message (display downloadedSize) when downloading the poster thumbnail and put it into SD card storage. -->
+    <string name="log_information_message_download_poster_thumbnail_downloadedSize">Progress: downloadedSize: </string>
+    <!-- The text for Log information message (display totalSize) when downloading the poster thumbnail and put it into SD card storage. -->
+    <string name="log_information_message_download_poster_thumbnail_totalSize">totalSize: </string>
+    <!-- The text for Log information message (display filepath) when downloading the poster thumbnail and put it into SD card storage. -->
+    <string name="log_information_message_download_poster_thumbnail_filepath">filepath: </string>
+
     <!-- The text for query method to throw an IllegalArgumentException message. -->
     <string name="query_default_illegal_argument_exception_message">Cannot query unknown URI </string>
     <!-- The text for insert method to throw an IllegalArgumentException message. -->
@@ -23,6 +37,8 @@
     <string name="get_type_default_illegal_argument_exception_message_part_two"> with match </string>
     <!-- The text for delete method to throw an IllegalArgumentException message. -->
     <string name="unknown_uri_for_deletion">Deletion is not supported for </string>
+    <!-- The text for update method to throw an IllegalArgumentException message. -->
+    <string name="unknown_uri_for_update">Update is not supported for </string>
 
     <!-- Toast message for saving success when inserting a movie. [CHAR LIMIT=20] -->
     <string name="insert_movie_successful">Movie saved</string>

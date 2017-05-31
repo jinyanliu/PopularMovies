@@ -209,10 +209,12 @@ public class MovieProvider extends ContentProvider {
                         null, null, sortOrder);
                 break;
             case CACHE_MOVIES_MOST_POPULAR:
+                selection = selection + "=?";
                 cursor = database.query(CacheMovieMostPopularEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
             case CACHE_MOVIES_TOP_RATED:
+                selection = selection + "=?";
                 cursor = database.query(CacheMovieTopRatedEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
@@ -359,7 +361,39 @@ public class MovieProvider extends ContentProvider {
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+
+        // Logically be more efficient if placed before the data validation
+        // If there are no valuds to update, then don't try to update the database
+        if (values.size() == 0) {
+            return 0;
+        }
+
+        // Track the number of rows that were updated
+        int rowsUpdated;
+
+        // Get writable database
+        SQLiteDatabase database = mMovieDbHelper.getWritableDatabase();
+
+        final int match = sUriMatcher.match(uri);
+
+        switch (match) {
+            case CACHE_MOVIES_MOST_POPULAR:
+                selection = selection + "=?";
+                rowsUpdated = database.update(CacheMovieMostPopularEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+            case CACHE_MOVIES_TOP_RATED:
+                selection = selection + "=?";
+                rowsUpdated = database.update(CacheMovieTopRatedEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+            default:
+                throw new IllegalArgumentException(getContext().getString(R.string.unknown_uri_for_update) + uri);
+        }
+
+        if (rowsUpdated != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        return rowsUpdated;
     }
 
     @Override

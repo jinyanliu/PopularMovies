@@ -276,8 +276,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                 cursor.moveToNext();
             }
             cursor.close();
+            getmLoadingIndicator().setVisibility(View.INVISIBLE);
             mMovieAdapter.setMoviePosterData(movies);
         } else {
+            getmLoadingIndicator().setVisibility(View.INVISIBLE);
             showErrorMessage();
             mErrorMessageDisplay.setText(getString(R.string.error_message_no_popular_movie));
         }
@@ -321,8 +323,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                 cursor.moveToNext();
             }
             cursor.close();
+            getmLoadingIndicator().setVisibility(View.INVISIBLE);
             mMovieAdapter.setMoviePosterData(movies);
         } else {
+            getmLoadingIndicator().setVisibility(View.INVISIBLE);
             showErrorMessage();
             mErrorMessageDisplay.setText(getString(R.string.error_message_no_top_rated_movie));
         }
