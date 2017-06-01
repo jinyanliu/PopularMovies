@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
@@ -47,7 +48,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
         // If there's no sortBy method, there's no way of showing movies.
         if (params.length == 0) {
-            return null;
+            return Collections.emptyList();
         }
 
         String sortByMethod = params[0];
@@ -62,7 +63,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
-            return null;
+            return Collections.emptyList();
         }
     }
 
@@ -104,7 +105,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<Movie>> {
                 }
 
 
-                this.mainActivity.restartLoader();
+                // this.mainActivity.restartLoader();
 
 
 //                for (int i = 0; i < count; i++) {

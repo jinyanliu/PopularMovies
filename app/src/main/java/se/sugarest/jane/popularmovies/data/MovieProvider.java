@@ -209,12 +209,12 @@ public class MovieProvider extends ContentProvider {
                         null, null, sortOrder);
                 break;
             case CACHE_MOVIES_MOST_POPULAR:
-                selection = selection + "=?";
+                // selection = selection + "=?";
                 cursor = database.query(CacheMovieMostPopularEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
             case CACHE_MOVIES_TOP_RATED:
-                selection = selection + "=?";
+                // selection = selection + "=?";
                 cursor = database.query(CacheMovieTopRatedEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;

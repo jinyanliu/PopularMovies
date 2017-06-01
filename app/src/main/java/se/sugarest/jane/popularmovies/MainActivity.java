@@ -398,7 +398,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
             showErrorMessage();
             mErrorMessageDisplay.setText(getString(R.string.error_message_no_popular_movie));
         }
-        cursor.close();
+        //cursor.close();
     }
 
     @Override
