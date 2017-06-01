@@ -103,7 +103,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         Picasso.with(mContext)
                 .load(fullMoviePosterForOneMovie)
                 .error(R.drawable.picasso_placeholder_error)
-                .placeholder(R.drawable.picasso_placeholder_loading)
+                //.placeholder(R.drawable.picasso_placeholder_loading)
                 .into(movieAdapterViewHolder.mMoviePosterImageView);
     }
 

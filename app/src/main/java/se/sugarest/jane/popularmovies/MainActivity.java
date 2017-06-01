@@ -363,34 +363,42 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        mMovieAdapter.swapCursor(cursor);
-        List<Movie> movies = new ArrayList<>();
+
         if (cursor != null && cursor.getCount() > 0) {
-
-            cursor.moveToFirst();
-            while (!cursor.isAfterLast()) {
-                String poster_path = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH));
-                String original_title = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE));
-                String movie_poster_image_thumbnail =
-                        cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
-                String a_plot_synopsis = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_A_PLOT_SYNOPSIS));
-                String user_rating = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_USER_RATING));
-                String release_date = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_RELEASE_DATE));
-                String id = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_MOVIE_ID));
-
-                // Create a new {@link Movie} object with the poster_path, original_title,
-                // movie_poster_image_thumbnail, a_plot_synopsis, user_rating, release_date,id
-                // from the cursor response.
-                Movie movie = new Movie(poster_path, original_title, movie_poster_image_thumbnail
-                        , a_plot_synopsis, user_rating, release_date, id);
-
-                // Add the new {@link Movie} to the list of movies.
-                movies.add(movie);
-                cursor.moveToNext();
-            }
-
             mLoadingIndicator.setVisibility(View.INVISIBLE);
-            mMovieAdapter.setMoviePosterData(movies);
+            mMovieAdapter.swapCursor(cursor);
+//        }
+//
+//
+//        mMovieAdapter.swapCursor(cursor);
+//        List<Movie> movies = new ArrayList<>();
+//        if (cursor != null && cursor.getCount() > 0) {
+//
+//            cursor.moveToFirst();
+//            while (!cursor.isAfterLast()) {
+//                String poster_path = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH));
+//                String original_title = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE));
+//                String movie_poster_image_thumbnail =
+//                        cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
+//                String a_plot_synopsis = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_A_PLOT_SYNOPSIS));
+//                String user_rating = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_USER_RATING));
+//                String release_date = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_RELEASE_DATE));
+//                String id = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_MOVIE_ID));
+//
+//                // Create a new {@link Movie} object with the poster_path, original_title,
+//                // movie_poster_image_thumbnail, a_plot_synopsis, user_rating, release_date,id
+//                // from the cursor response.
+//                Movie movie = new Movie(poster_path, original_title, movie_poster_image_thumbnail
+//                        , a_plot_synopsis, user_rating, release_date, id);
+//
+//                // Add the new {@link Movie} to the list of movies.
+//                movies.add(movie);
+//                cursor.moveToNext();
+//            }
+//
+//            mLoadingIndicator.setVisibility(View.INVISIBLE);
+//            mMovieAdapter.setMoviePosterData(movies);
+
         } else {
 
             supportStartPostponedEnterTransition();
