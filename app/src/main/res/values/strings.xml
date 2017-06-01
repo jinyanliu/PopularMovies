@@ -12,10 +12,6 @@
 
     <!-- The text for Log error message when passing JSON. -->
     <string name="log_error_message_passing_JSON">Problem parsing the movie JSON results.</string>
-    <!-- The text for Log error message when forming URL. -->
-    <string name="log_error_message_malformedurl_exception">Problem forming the movie thumbnail poster url.</string>
-    <!-- The text for Log error message when opening url connection. -->
-    <string name="log_error_message_io_exception">Problem opening url connection.</string>
     <!-- The text for Log information message (display file name) when downloading the poster thumbnail and put it into SD card storage. -->
     <string name="log_information_message_download_poster_thumbnail_filename">Local filename: </string>
     <!-- The text for Log information message (display downloadedSize) when downloading the poster thumbnail and put it into SD card storage. -->

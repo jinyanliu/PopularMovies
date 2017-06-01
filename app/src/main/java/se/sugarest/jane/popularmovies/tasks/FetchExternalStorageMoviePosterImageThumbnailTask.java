@@ -57,18 +57,38 @@ public class FetchExternalStorageMoviePosterImageThumbnailTask extends AsyncTask
         String fullUrlToBeDownLoaded = BASE_IMAGE_URL.concat(IMAGE_SIZE_W780)
                 .concat(urlToBeDownloaded);
         try {
+
+
             URL url = new URL(fullUrlToBeDownLoaded);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.setDoOutput(true);
             urlConnection.connect();
-            File SDCardRoot = Environment.getExternalStorageDirectory().getAbsoluteFile();
+            // File SDCardRoot = Environment.getExternalStorageDirectory().getAbsoluteFile();
+
+
+            // Make sure the Pictures directory exists.
+            // SDCardRoot.mkdir();
+
             String filename = fullUrlToBeDownLoaded;
             Log.i(TAG, this.mainActivity.getString(R.string.log_information_message_download_poster_thumbnail_filename) + filename);
-            File file = new File(SDCardRoot, filename);
-            if (file.createNewFile()) {
-                file.createNewFile();
+            // File file = new File(Environment.getExternalStorageDirectory().toString(), filename);
+
+            // File file = new File(SDCardRoot, filename);
+
+            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath() + filename);
+
+            // file.getParentFile().mkdirs();
+
+            if (!file.exists()) {
+                file.getParentFile().mkdirs();
             }
+
+            //file.createNewFile();
+
+//            if (file.createNewFile()) {
+//                file.createNewFile();
+//            }
             FileOutputStream fileOutput = new FileOutputStream(file);
             InputStream inputStream = urlConnection.getInputStream();
             int totalSize = urlConnection.getContentLength();
@@ -87,10 +107,10 @@ public class FetchExternalStorageMoviePosterImageThumbnailTask extends AsyncTask
                 filepath = file.getPath();
             }
         } catch (MalformedURLException e) {
-            Log.e(TAG, this.mainActivity.getString(R.string.log_error_message_malformedurl_exception));
+            Log.e(TAG, e.getMessage());
         } catch (IOException e) {
             filepath = null;
-            Log.e(TAG, this.mainActivity.getString(R.string.log_error_message_io_exception));
+            Log.e(TAG, e.getMessage());
         }
         Log.i(TAG, this.mainActivity.getString(R.string.log_information_message_download_poster_thumbnail_filepath) + filepath);
         return filepath;
@@ -132,6 +152,9 @@ public class FetchExternalStorageMoviePosterImageThumbnailTask extends AsyncTask
             values.put(CacheMovieMostPopularEntry.COLUMN_USER_RATING,
                     cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_USER_RATING)));
             this.mainActivity.getContentResolver().update(CacheMovieMostPopularEntry.CONTENT_URI, values, selection, selectionArgs);
+
+            cursor.close();
+
         } else {
             String selection = CacheMovieTopRatedEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL;
             String[] selectionArgs = {urlToBeDownloaded};
@@ -160,6 +183,8 @@ public class FetchExternalStorageMoviePosterImageThumbnailTask extends AsyncTask
             values.put(CacheMovieTopRatedEntry.COLUMN_USER_RATING,
                     cursor.getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_USER_RATING)));
             this.mainActivity.getContentResolver().update(CacheMovieTopRatedEntry.CONTENT_URI, values, selection, selectionArgs);
+
+            cursor.close();
         }
     }
 }

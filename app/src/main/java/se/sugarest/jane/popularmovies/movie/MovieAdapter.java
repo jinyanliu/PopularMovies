@@ -1,8 +1,8 @@
 package se.sugarest.jane.popularmovies.movie;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -14,6 +14,7 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 import se.sugarest.jane.popularmovies.R;
+import se.sugarest.jane.popularmovies.data.MovieContract;
 
 /**
  * Created by jane on 2/26/17.
@@ -29,6 +30,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
     private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
     private final String IMAGE_SIZE_W185 = "w185/";
+
+    private Cursor mCursor;
 
     /**
      * An On-click handler that we've defined to make it easy for an Activity to interface with
@@ -86,9 +89,22 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
      */
     @Override
     public void onBindViewHolder(MovieAdapterViewHolder movieAdapterViewHolder, int position) {
-        String moviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185).concat(mMoviePostersUrlStrings[position]);
-        Log.i(TAG, "Loading ".concat(moviePosterForOneMovie));
-        Picasso.with(mContext).load(moviePosterForOneMovie).into(movieAdapterViewHolder.mMoviePosterImageView);
+        mCursor.moveToPosition(position);
+        int moviePosterColumnIndex = mCursor
+                .getColumnIndex(MovieContract.CacheMovieMostPopularEntry.COLUMN_POSTER_PATH);
+        String moviePosterForOneMovie = mCursor.getString(moviePosterColumnIndex);
+        String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
+                .concat(moviePosterForOneMovie);
+
+
+        // String moviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
+        // .concat(mMoviePostersUrlStrings[position]);
+        // Log.i(TAG, "Loading ".concat(moviePosterForOneMovie));
+        Picasso.with(mContext)
+                .load(fullMoviePosterForOneMovie)
+                .error(R.drawable.picasso_placeholder_error)
+                .placeholder(R.drawable.picasso_placeholder_loading)
+                .into(movieAdapterViewHolder.mMoviePosterImageView);
     }
 
     /**
@@ -98,8 +114,13 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
      */
     @Override
     public int getItemCount() {
-        if (mMoviePostersUrlStrings == null) return 0;
-        return mMoviePostersUrlStrings.length;
+//        if (mMoviePostersUrlStrings == null) return 0;
+//        return mMoviePostersUrlStrings.length;
+
+        if (null == mCursor) {
+            return 0;
+        }
+        return mCursor.getCount();
     }
 
     /**
@@ -128,7 +149,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
      * The interface that receives onClick messages.
      */
     public interface MovieAdapterOnClickHandler {
-        void onClick(Movie currentMovie);
+        // void onClick(Movie currentMovie);
+        void onClick(String movieTitle);
     }
 
     /**
@@ -147,9 +169,23 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         @Override
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
-            Movie currentMovieData = mMoveData.get(adapterPosition);
-            mClickHandler.onClick(currentMovieData);
+            mCursor.moveToPosition(adapterPosition);
+            int movieTitleColumnIndex = mCursor
+                    .getColumnIndex(MovieContract.CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE);
+
+
+            // Movie currentMovieData = mMoveData.get(adapterPosition);
+            mClickHandler.onClick(mCursor.getString(movieTitleColumnIndex));
         }
+    }
+
+    public void swapCursor(Cursor newCursor) {
+        mCursor = newCursor;
+        notifyDataSetChanged();
+    }
+
+    public Cursor getCursor() {
+        return mCursor;
     }
 }
 

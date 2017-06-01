@@ -1,7 +1,9 @@
 package se.sugarest.jane.popularmovies;
 
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -18,17 +20,19 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.MovieEntry;
 import se.sugarest.jane.popularmovies.movie.Movie;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter.MovieAdapterOnClickHandler;
 import se.sugarest.jane.popularmovies.tasks.FetchMovieTask;
-import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
 
-public class MainActivity extends AppCompatActivity implements MovieAdapterOnClickHandler {
+public class MainActivity extends AppCompatActivity implements MovieAdapterOnClickHandler, android.app.LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+
+    public static final int MOVIE_LOADER = 0;
 
     private RecyclerView mRecyclerView;
 
@@ -40,6 +44,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
 
     public MovieAdapter getmMovieAdapter() {
         return mMovieAdapter;
+    }
+
+    public TextView getmErrorMessageDisplay() {
+        return mErrorMessageDisplay;
     }
 
     public void setmMovieAdapter(MovieAdapter mMovieAdapter) {
@@ -107,6 +115,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
          * Once all of the views are setup, movie data can be load.
          */
         loadMovieData();
+
+        getLoaderManager().initLoader(MOVIE_LOADER, null, this);
     }
 
     /**
@@ -126,7 +136,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         } else if ("popular".equals(orderBy)) {
             orderBy = "movie/" + orderBy;
             new FetchMovieTask(this).execute(orderBy);
-            showDataBaseCacheMovieMostPopularPoster();
+
+            // showDataBaseCacheMovieMostPopularPoster();
         } else {
             orderBy = "movie/" + orderBy;
             new FetchMovieTask(this).execute(orderBy);
@@ -137,15 +148,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     /**
      * This method is overridden by the MainActivity class in order to handle RecyclerView item
      * clicks.
-     *
-     * @param currentMovie The current Movie object that was clicked
      */
     @Override
-    public void onClick(Movie currentMovie) {
+    public void onClick(String movieTtile) {
         Context context = this;
         Class destinationClass = DetailActivity.class;
         Intent intentToStartDetailActivity = new Intent(context, destinationClass);
-        intentToStartDetailActivity.putExtra("movie", currentMovie);
+        intentToStartDetailActivity.putExtra("movieTitle", movieTtile);
         startActivity(intentToStartDetailActivity);
     }
 
@@ -230,62 +239,68 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                 movies.add(movie);
                 cursor.moveToNext();
             }
-            cursor.close();
+
             mMovieAdapter.setMoviePosterData(movies);
         } else {
             showErrorMessage();
             mErrorMessageDisplay.setText(getString(R.string.error_message_no_fav_movie));
         }
+
+        cursor.close();
     }
 
-    private void showDataBaseCacheMovieMostPopularPoster() {
-
-        // Create an empty ArrayList that can start adding movies to
-        List<Movie> movies = new ArrayList<>();
-
-        // Perform a query on the provider using the ContentResolver.
-        // Use the {@link CacheMovieMostPopularEntry#CONTENT_URI} to access the movie data.
-        Cursor cursor = getContentResolver().query(
-                CacheMovieMostPopularEntry.CONTENT_URI, // The content URI of the cache movie most popular table
-                null,                                   // The columns to return for each row
-                null,
-                null,
-                null);
-
-        if (cursor != null && cursor.getCount() > 0) {
-
-            cursor.moveToFirst();
-            while (!cursor.isAfterLast()) {
-                String poster_path = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_POSTER_PATH));
-                String original_title = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_ORIGINAL_TITLE));
-                String movie_poster_image_thumbnail =
-                        cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
-                String a_plot_synopsis = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_A_PLOT_SYNOPSIS));
-                String user_rating = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_USER_RATING));
-                String release_date = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_RELEASE_DATE));
-                String id = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_ID));
-
-                // Create a new {@link Movie} object with the poster_path, original_title,
-                // movie_poster_image_thumbnail, a_plot_synopsis, user_rating, release_date,id
-                // from the cursor response.
-                Movie movie = new Movie(poster_path, original_title, movie_poster_image_thumbnail
-                        , a_plot_synopsis, user_rating, release_date, id);
-
-                // Add the new {@link Movie} to the list of movies.
-                movies.add(movie);
-                cursor.moveToNext();
-            }
-            cursor.close();
-            getmLoadingIndicator().setVisibility(View.INVISIBLE);
-            mMovieAdapter.setMoviePosterData(movies);
-        } else {
-            getmLoadingIndicator().setVisibility(View.INVISIBLE);
-            showErrorMessage();
-            mErrorMessageDisplay.setText(getString(R.string.error_message_no_popular_movie));
-        }
-    }
+//    private void showDataBaseCacheMovieMostPopularPoster() {
+//
+//        getmLoadingIndicator().setVisibility(View.VISIBLE);
+//
+//        // Create an empty ArrayList that can start adding movies to
+//        List<Movie> movies = new ArrayList<>();
+//
+//        // Perform a query on the provider using the ContentResolver.
+//        // Use the {@link CacheMovieMostPopularEntry#CONTENT_URI} to access the movie data.
+//        Cursor cursor = getContentResolver().query(
+//                CacheMovieMostPopularEntry.CONTENT_URI, // The content URI of the cache movie most popular table
+//                null,                                   // The columns to return for each row
+//                null,
+//                null,
+//                null);
+//
+//        if (cursor != null && cursor.getCount() > 0) {
+//
+//            cursor.moveToFirst();
+//            while (!cursor.isAfterLast()) {
+//                String poster_path = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH));
+//                String original_title = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE));
+//                String movie_poster_image_thumbnail =
+//                        cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
+//                String a_plot_synopsis = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_A_PLOT_SYNOPSIS));
+//                String user_rating = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_USER_RATING));
+//                String release_date = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_RELEASE_DATE));
+//                String id = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_MOVIE_ID));
+//
+//                // Create a new {@link Movie} object with the poster_path, original_title,
+//                // movie_poster_image_thumbnail, a_plot_synopsis, user_rating, release_date,id
+//                // from the cursor response.
+//                Movie movie = new Movie(poster_path, original_title, movie_poster_image_thumbnail
+//                        , a_plot_synopsis, user_rating, release_date, id);
+//
+//                // Add the new {@link Movie} to the list of movies.
+//                movies.add(movie);
+//                cursor.moveToNext();
+//            }
+//            cursor.close();
+//            getmLoadingIndicator().setVisibility(View.INVISIBLE);
+//            mMovieAdapter.setMoviePosterData(movies);
+//        } else {
+//            getmLoadingIndicator().setVisibility(View.INVISIBLE);
+//            showErrorMessage();
+//            mErrorMessageDisplay.setText(getString(R.string.error_message_no_popular_movie));
+//        }
+//    }
 
     private void showDataBaseCacheMovieTopRatedPoster() {
+
+        getmLoadingIndicator().setVisibility(View.VISIBLE);
 
         // Create an empty ArrayList that can start adding movies to
         List<Movie> movies = new ArrayList<>();
@@ -303,14 +318,14 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
 
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
-                String poster_path = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_POSTER_PATH));
-                String original_title = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_ORIGINAL_TITLE));
+                String poster_path = cursor.getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_POSTER_PATH));
+                String original_title = cursor.getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_ORIGINAL_TITLE));
                 String movie_poster_image_thumbnail =
-                        cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
-                String a_plot_synopsis = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_A_PLOT_SYNOPSIS));
-                String user_rating = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_USER_RATING));
-                String release_date = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_RELEASE_DATE));
-                String id = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_ID));
+                        cursor.getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
+                String a_plot_synopsis = cursor.getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_A_PLOT_SYNOPSIS));
+                String user_rating = cursor.getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_USER_RATING));
+                String release_date = cursor.getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_RELEASE_DATE));
+                String id = cursor.getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_MOVIE_ID));
 
                 // Create a new {@link Movie} object with the poster_path, original_title,
                 // movie_poster_image_thumbnail, a_plot_synopsis, user_rating, release_date,id
@@ -322,13 +337,140 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                 movies.add(movie);
                 cursor.moveToNext();
             }
-            cursor.close();
-            getmLoadingIndicator().setVisibility(View.INVISIBLE);
+
+            mLoadingIndicator.setVisibility(View.INVISIBLE);
             mMovieAdapter.setMoviePosterData(movies);
         } else {
-            getmLoadingIndicator().setVisibility(View.INVISIBLE);
+            mLoadingIndicator.setVisibility(View.INVISIBLE);
             showErrorMessage();
             mErrorMessageDisplay.setText(getString(R.string.error_message_no_top_rated_movie));
         }
+
+        cursor.close();
     }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(
+                this,
+                CacheMovieMostPopularEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        mMovieAdapter.swapCursor(cursor);
+        List<Movie> movies = new ArrayList<>();
+        if (cursor != null && cursor.getCount() > 0) {
+
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                String poster_path = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH));
+                String original_title = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE));
+                String movie_poster_image_thumbnail =
+                        cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
+                String a_plot_synopsis = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_A_PLOT_SYNOPSIS));
+                String user_rating = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_USER_RATING));
+                String release_date = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_RELEASE_DATE));
+                String id = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_MOVIE_ID));
+
+                // Create a new {@link Movie} object with the poster_path, original_title,
+                // movie_poster_image_thumbnail, a_plot_synopsis, user_rating, release_date,id
+                // from the cursor response.
+                Movie movie = new Movie(poster_path, original_title, movie_poster_image_thumbnail
+                        , a_plot_synopsis, user_rating, release_date, id);
+
+                // Add the new {@link Movie} to the list of movies.
+                movies.add(movie);
+                cursor.moveToNext();
+            }
+
+            mLoadingIndicator.setVisibility(View.INVISIBLE);
+            mMovieAdapter.setMoviePosterData(movies);
+        } else {
+
+            supportStartPostponedEnterTransition();
+            mLoadingIndicator.setVisibility(View.INVISIBLE);
+            showErrorMessage();
+            mErrorMessageDisplay.setText(getString(R.string.error_message_no_popular_movie));
+        }
+        cursor.close();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mMovieAdapter.swapCursor(null);
+
+    }
+
+    public void restartLoader() {
+        getLoaderManager().restartLoader(MOVIE_LOADER, null, this);
+    }
+
+
+//    @Override
+//    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+//        return new CursorLoader(
+//                this,
+//                MovieContract.CacheMovieMostPopularEntry.CONTENT_URI,
+//                null,
+//                null,
+//                null,
+//                null);
+//    }
+//
+//    @Override
+//    public void onLoaderReset(android.support.v4.content.Loader<Cursor> loader) {
+//
+//    }
+//
+//    @Override
+//    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+//        getmMovieAdapter().swapCursor(cursor);
+//        List<Movie> movies = new ArrayList<>();
+//        if (cursor != null && cursor.getCount() > 0) {
+//
+//            cursor.moveToFirst();
+//            while (!cursor.isAfterLast()) {
+//                String poster_path = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH));
+//                String original_title = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE));
+//                String movie_poster_image_thumbnail =
+//                        cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
+//                String a_plot_synopsis = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_A_PLOT_SYNOPSIS));
+//                String user_rating = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_USER_RATING));
+//                String release_date = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_RELEASE_DATE));
+//                String id = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_MOVIE_ID));
+//
+//                // Create a new {@link Movie} object with the poster_path, original_title,
+//                // movie_poster_image_thumbnail, a_plot_synopsis, user_rating, release_date,id
+//                // from the cursor response.
+//                Movie movie = new Movie(poster_path, original_title, movie_poster_image_thumbnail
+//                        , a_plot_synopsis, user_rating, release_date, id);
+//
+//                // Add the new {@link Movie} to the list of movies.
+//                movies.add(movie);
+//                cursor.moveToNext();
+//            }
+//            cursor.close();
+//            this.mainActivity.getmLoadingIndicator().setVisibility(View.INVISIBLE);
+//            this.mainActivity.getmMovieAdapter().setMoviePosterData(movies);
+//        } else {
+//            this.mainActivity.supportStartPostponedEnterTransition();
+//            this.mainActivity.getmLoadingIndicator().setVisibility(View.INVISIBLE);
+//            this.mainActivity.showErrorMessage();
+//            this.mainActivity.getmErrorMessageDisplay().setText(this.mainActivity.getString(R.string.error_message_no_popular_movie));
+//        }
+//
+//
+//    }
+//
+//    @Override
+//    public void onLoaderReset(Loader<Cursor> loader) {
+//
+//        this.mainActivity.getmMovieAdapter().swapCursor(null);
+//    }
 }
