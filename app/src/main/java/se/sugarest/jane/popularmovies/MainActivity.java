@@ -126,6 +126,25 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // Get a reference to the ConnectivityManager to check state of network connectivity.
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        // Get details on the currently active default data network
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        if (networkInfo != null && networkInfo.isConnected()) {
+            showMovieDataView();
+            /**
+             * Once all of the views are setup, movie data can be load.
+             */
+            loadMovieData();
+        }
+    }
+
     public void initCursorLoader() {
         getLoaderManager().initLoader(MOVIE_LOADER, null, this);
     }
@@ -449,11 +468,27 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
             supportStartPostponedEnterTransition();
             mLoadingIndicator.setVisibility(View.INVISIBLE);
             showErrorMessage();
-            // Because we only fetch data when there is network, if there is no network, we load
-            // movie data from database. so this message will only happen when users open the app
-            // for the first time without network (no data in database).
-            // We will display "Please check your network connection."
-            mErrorMessageDisplay.setText(getString(R.string.error_message_no_popular_movie));
+
+            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+            String orderBy = sharedPrefs.getString(
+                    getString(R.string.settings_order_by_key),
+                    getString(R.string.settings_order_by_default));
+
+            if ("popular".equals(orderBy)) {
+                // Because we only fetch data when there is network, if there is no network, we load
+                // movie data from database. so this message will only happen when users open the app
+                // for the first time without network (no data in database).
+                // We will display "Please check your network connection."
+                mErrorMessageDisplay.setText(getString(R.string.error_message_no_popular_movie));
+            } else if ("top_rated".equals(orderBy)) {
+                // Because we only fetch data when there is network, if there is no network, we load
+                // movie data from database. so this message will only happen when users open the app
+                // for the first time without network (no data in database).
+                // We will display "Please check your network connection."
+                mErrorMessageDisplay.setText(getString(R.string.error_message_no_top_rated_movie));
+            } else {
+                mErrorMessageDisplay.setText(getString(R.string.error_message_no_fav_movie));
+            }
         }
         //cursor.close();
     }
