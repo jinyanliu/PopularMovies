@@ -130,20 +130,20 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
      *
      * @param movieData The new movie data to be displayed.
      */
-    public void setMoviePosterData(List<Movie> movieData) {
-
-        mMoveData = movieData;
-
-        String[] array = new String[movieData.size()];
-
-        for (int i = 0; i < movieData.size(); i++) {
-            String currentMoviePostersData = movieData.get(i).getPosterPath();
-            array[i] = currentMoviePostersData;
-        }
-
-        mMoviePostersUrlStrings = array;
-        notifyDataSetChanged();
-    }
+//    public void setMoviePosterData(List<Movie> movieData) {
+//
+//        mMoveData = movieData;
+//
+//        String[] array = new String[movieData.size()];
+//
+//        for (int i = 0; i < movieData.size(); i++) {
+//            String currentMoviePostersData = movieData.get(i).getPosterPath();
+//            array[i] = currentMoviePostersData;
+//        }
+//
+//        mMoviePostersUrlStrings = array;
+//        notifyDataSetChanged();
+//    }
 
     /**
      * The interface that receives onClick messages.

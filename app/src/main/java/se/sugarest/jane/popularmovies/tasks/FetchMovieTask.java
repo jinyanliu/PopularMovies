@@ -78,6 +78,12 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<Movie>> {
             );
 
             if ("popular".equals(orderBy)) {
+
+                this.mainActivity.getContentResolver().delete(
+                        CacheMovieMostPopularEntry.CONTENT_URI,
+                        null,
+                        null);
+
                 int count = movieData.size();
                 Vector<ContentValues> cVVector = new Vector<ContentValues>(count);
                 // ContentValues[] cvArray = new ContentValues[count];
@@ -99,9 +105,14 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<Movie>> {
                 if (cVVector.size() > 0) {
                     ContentValues[] cvArray = new ContentValues[cVVector.size()];
                     cVVector.toArray(cvArray);
-                    this.mainActivity.getContentResolver().bulkInsert(
+                    int bulkInsertRows = this.mainActivity.getContentResolver().bulkInsert(
                             CacheMovieMostPopularEntry.CONTENT_URI,
                             cvArray);
+                    if (bulkInsertRows == cVVector.size()) {
+                        Log.i(TAG, "bulkInsertCacheMovie MostPopular successful.");
+                    } else {
+                        Log.i(TAG, "bulkInsertCacheMovie MostPopular unsuccessful.");
+                    }
                 }
 
 
@@ -117,8 +128,15 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
 
             } else {
+
+                this.mainActivity.getContentResolver().delete(
+                        CacheMovieTopRatedEntry.CONTENT_URI,
+                        null,
+                        null);
+
                 int count = movieData.size();
-                ContentValues[] cvArray = new ContentValues[count];
+                Vector<ContentValues> cVVector = new Vector<ContentValues>(count);
+                // ContentValues[] cvArray = new ContentValues[count];
                 for (int i = 0; i < count; i++) {
                     ContentValues values = new ContentValues();
                     values.put(CacheMovieTopRatedEntry.COLUMN_A_PLOT_SYNOPSIS, movieData.get(i).getAPlotSynopsis());
@@ -128,11 +146,28 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<Movie>> {
                     values.put(CacheMovieTopRatedEntry.COLUMN_POSTER_PATH, movieData.get(i).getPosterPath());
                     values.put(CacheMovieTopRatedEntry.COLUMN_RELEASE_DATE, movieData.get(i).getReleaseDate());
                     values.put(CacheMovieTopRatedEntry.COLUMN_USER_RATING, movieData.get(i).getUserRating());
-                    cvArray[i] = values;
+
+                    cVVector.add(values);
+                    // cvArray[i] = values;
                 }
-                this.mainActivity.getContentResolver().bulkInsert(
-                        CacheMovieTopRatedEntry.CONTENT_URI,
-                        cvArray);
+
+                if (cVVector.size() > 0) {
+                    ContentValues[] cvArray = new ContentValues[cVVector.size()];
+                    cVVector.toArray(cvArray);
+                    int bulkInsertRows = this.mainActivity.getContentResolver().bulkInsert(
+                            CacheMovieTopRatedEntry.CONTENT_URI,
+                            cvArray);
+                    if (bulkInsertRows == cVVector.size()) {
+                        Log.i(TAG, "bulkInsertCacheMovie TopRated successful.");
+                    } else {
+                        Log.i(TAG, "bulkInsertCacheMovie TopRated unsuccessful.");
+                    }
+                }
+
+
+//                this.mainActivity.getContentResolver().bulkInsert(
+//                        CacheMovieTopRatedEntry.CONTENT_URI,
+//                        cvArray);
 
 //                for (int i = 0; i < count; i++) {
 //                    String urlToBeDownLoaded = movieData.get(i).getMoviePosterImageThumbnail();
@@ -141,6 +176,11 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<Movie>> {
             }
 
         }
+
+
+        this.mainActivity.initCursorLoader();
+
+
     }
 
 //    public String getExternalStorageMoviePosterImageThumbnail(String urlToBeDownloaded) {

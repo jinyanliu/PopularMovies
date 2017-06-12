@@ -345,6 +345,12 @@ public class MovieProvider extends ContentProvider {
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
                 rowsDeleted = database.delete(TrailerEntry.TABLE_NAME, selection, selectionArgs);
                 break;
+            case CACHE_MOVIES_MOST_POPULAR:
+                rowsDeleted = database.delete(CacheMovieMostPopularEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            case CACHE_MOVIES_TOP_RATED:
+                rowsDeleted = database.delete(CacheMovieTopRatedEntry.TABLE_NAME, selection, selectionArgs);
+                break;
             default:
                 throw new IllegalArgumentException(getContext().getString(R.string.unknown_uri_for_deletion) + uri);
         }
