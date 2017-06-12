@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -107,12 +109,21 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
          */
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
 
-        /**
-         * Once all of the views are setup, movie data can be load.
-         */
-        loadMovieData();
+        // Get a reference to the ConnectivityManager to check state of network connectivity.
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        // getLoaderManager().initLoader(MOVIE_LOADER, null, this);
+        // Get details on the currently active default data network
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        // If there is a network connection, fetch data
+        if (networkInfo != null && networkInfo.isConnected()) {
+            /**
+             * Once all of the views are setup, movie data can be load.
+             */
+            loadMovieData();
+        } else {
+            getLoaderManager().initLoader(MOVIE_LOADER, null, this);
+        }
     }
 
     public void initCursorLoader() {
@@ -438,6 +449,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
             supportStartPostponedEnterTransition();
             mLoadingIndicator.setVisibility(View.INVISIBLE);
             showErrorMessage();
+            // Because we only fetch data when there is network, if there is no network, we load
+            // movie data from database. so this message will only happen when users open the app
+            // for the first time without network (no data in database).
+            // We will display "Please check your network connection."
             mErrorMessageDisplay.setText(getString(R.string.error_message_no_popular_movie));
         }
         //cursor.close();
