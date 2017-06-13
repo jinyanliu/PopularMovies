@@ -79,19 +79,17 @@ public class FetchExternalStorageMoviePosterImagesTask extends AsyncTask<String,
 
             // File file = new File(SDCardRoot, filename);
 
-            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath() + filename);
-
-            // file.getParentFile().mkdirs();
+            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath() + "/" + filename);
 
             if (!file.exists()) {
                 file.getParentFile().mkdirs();
+                boolean fileCreated = file.createNewFile();
+
+                Log.i(TAG, "creating new file: " + file.getAbsolutePath() + ", result: " + fileCreated);
+            }else {
+                Log.i(TAG, "File already exists: " + file.getAbsolutePath());
             }
 
-            //file.createNewFile();
-
-//            if (file.createNewFile()) {
-//                file.createNewFile();
-//            }
             FileOutputStream fileOutput = new FileOutputStream(file);
             InputStream inputStream = urlConnection.getInputStream();
             int totalSize = urlConnection.getContentLength();
@@ -127,6 +125,8 @@ public class FetchExternalStorageMoviePosterImagesTask extends AsyncTask<String,
         values.put(CacheMovieMostPopularPosterEntry.COLUMN_POSTER_PATH, s);
 
         Uri newUri = mContext.getContentResolver().insert(CacheMovieMostPopularPosterEntry.CONTENT_URI, values);
+
+        Log.i(TAG, "inserting uri: " + values + "result: " + newUri.toString());
 
 //        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.mainActivity);
 //        String orderBy = sharedPrefs.getString(

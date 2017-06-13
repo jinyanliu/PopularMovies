@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -13,6 +14,7 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.List;
 
 import se.sugarest.jane.popularmovies.R;
@@ -122,13 +124,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
             String[] projection = {CacheMovieMostPopularPosterEntry.COLUMN_POSTER_PATH};
 
-            String selection = CacheMovieMostPopularPosterEntry._ID + "=?";
-            String[] selectionArgs = {String.valueOf(position)};
+//            String selection = CacheMovieMostPopularPosterEntry._ID + "=?";
+//            String[] selectionArgs = {String.valueOf(position)};
+
             Cursor cursor = mContext.getContentResolver().query(
                     CacheMovieMostPopularPosterEntry.CONTENT_URI,
                     projection,
-                    selection,
-                    selectionArgs,
+                    null,
+                    null,
                     null);
 
 
@@ -148,11 +151,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 //            String moviePosterForOneMovie = mMoviePostersUrlStrings[position];
 
             if (cursor != null && cursor.getCount() > 0) {
-                cursor.moveToFirst();
+                cursor.moveToPosition(position);
+                // cursor.moveToFirst();
                 String moviePosterForOneMovie = cursor
                         .getString(cursor.getColumnIndex(CacheMovieMostPopularPosterEntry.COLUMN_POSTER_PATH));
+                File pathToPic = new File(moviePosterForOneMovie);
+                Log.i(TAG, "Loading pic exists at " + moviePosterForOneMovie + " ? " + pathToPic.exists());
                 Picasso.with(mContext)
-                        .load(moviePosterForOneMovie)
+                        .load(pathToPic)
                         .error(R.drawable.picasso_placeholder_error)
                         //.placeholder(R.drawable.picasso_placeholder_loading)
                         .into(movieAdapterViewHolder.mMoviePosterImageView);
