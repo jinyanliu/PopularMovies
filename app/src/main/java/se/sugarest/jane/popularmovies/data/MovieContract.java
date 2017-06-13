@@ -52,6 +52,8 @@ public class MovieContract {
 
     public static final String PATH_CACHE_MOVIE_TOP_RATED = "cache_movie_top_rated";
 
+    public static final String PATH_CACHE_MOVIE_MOST_POPULAR_POSTER = "cache_movie_most_popular_poster";
+
     /**
      * Inner class that defines the table contents of the movie table.
      */
@@ -320,5 +322,37 @@ public class MovieContract {
          * MovieId is stored as a String representing movie's id, used to identify the movie.
          */
         public static final String COLUMN_MOVIE_ID = "movie_id";
+    }
+
+    /**
+     * Inner class that defines the table contents of the cache movie most popular poster table.
+     */
+    public static final class CacheMovieMostPopularPosterEntry implements BaseColumns {
+
+        /* The base CONTENT_URI used to query the cache movie most popular poster table from the content provider */
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_CACHE_MOVIE_MOST_POPULAR_POSTER)
+                .build();
+
+        /**
+         * The MIME type of the {@link #CONTENT_URI} for a list of movie posters.
+         */
+        public static final String CONTENT_LIST_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_CACHE_MOVIE_MOST_POPULAR_POSTER;
+
+        /**
+         * The MIME type of the {@link #CONTENT_URI} for a single movie poster.
+         */
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_CACHE_MOVIE_MOST_POPULAR_POSTER;
+
+        /* Used internally as the name of the cache movie most popular poster table. */
+        public static final String TABLE_NAME = "cache_movie_most_popular_poster";
+
+        /**
+         * PosterPath is stored as a String representing movie's poster_path url, used for
+         * display on main screen when user setting sortOrder by most popular.
+         */
+        public static final String COLUMN_POSTER_PATH = "poster_path";
     }
 }

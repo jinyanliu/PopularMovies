@@ -14,6 +14,7 @@ import java.util.Vector;
 
 import se.sugarest.jane.popularmovies.MainActivity;
 import se.sugarest.jane.popularmovies.R;
+import se.sugarest.jane.popularmovies.data.MovieContract;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedEntry;
 import se.sugarest.jane.popularmovies.movie.Movie;
@@ -29,6 +30,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
     private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
     private final String IMAGE_SIZE_W780 = "w780/";
+    private final String IMAGE_SIZE_W185 = "w185/";
 
     MainActivity mainActivity;
 
@@ -84,6 +86,11 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<Movie>> {
                         null,
                         null);
 
+                this.mainActivity.getContentResolver().delete(
+                        MovieContract.CacheMovieMostPopularPosterEntry.CONTENT_URI,
+                        null,
+                        null);
+
                 int count = movieData.size();
                 Vector<ContentValues> cVVector = new Vector<ContentValues>(count);
                 // ContentValues[] cvArray = new ContentValues[count];
@@ -93,7 +100,14 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<Movie>> {
                     values.put(CacheMovieMostPopularEntry.COLUMN_MOVIE_ID, movieData.get(i).getId());
                     values.put(CacheMovieMostPopularEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL, movieData.get(i).getMoviePosterImageThumbnail());
                     values.put(CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE, movieData.get(i).getOriginalTitle());
+
                     values.put(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH, movieData.get(i).getPosterPath());
+
+                    String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
+                            .concat(movieData.get(i).getPosterPath());
+
+                    new FetchExternalStorageMoviePosterImagesTask(this.mainActivity).execute(fullMoviePosterForOneMovie);
+
                     values.put(CacheMovieMostPopularEntry.COLUMN_RELEASE_DATE, movieData.get(i).getReleaseDate());
                     values.put(CacheMovieMostPopularEntry.COLUMN_USER_RATING, movieData.get(i).getUserRating());
 
@@ -121,7 +135,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
 //                for (int i = 0; i < count; i++) {
 //                    String urlToBeDownLoaded = movieData.get(i).getMoviePosterImageThumbnail();
-//                    new FetchExternalStorageMoviePosterImageThumbnailTask(this.mainActivity).execute(urlToBeDownLoaded);
+//                    new FetchExternalStorageMoviePosterImagesTask(this.mainActivity).execute(urlToBeDownLoaded);
 //                }
 
                 // showDataBaseCacheMovieMostPopularPoster();
@@ -171,7 +185,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
 //                for (int i = 0; i < count; i++) {
 //                    String urlToBeDownLoaded = movieData.get(i).getMoviePosterImageThumbnail();
-//                    new FetchExternalStorageMoviePosterImageThumbnailTask(this.mainActivity).execute(urlToBeDownLoaded);
+//                    new FetchExternalStorageMoviePosterImagesTask(this.mainActivity).execute(urlToBeDownLoaded);
 //                }
             }
 
