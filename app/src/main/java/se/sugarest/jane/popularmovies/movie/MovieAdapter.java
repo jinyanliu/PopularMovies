@@ -20,6 +20,7 @@ import java.util.List;
 import se.sugarest.jane.popularmovies.R;
 import se.sugarest.jane.popularmovies.data.MovieContract;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularPosterEntry;
+import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
 
 /**
  * Created by jane on 2/26/17.
@@ -223,8 +224,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
      * The interface that receives onClick messages.
      */
     public interface MovieAdapterOnClickHandler {
-        // void onClick(Movie currentMovie);
-        void onClick(String movieTitle);
+        void onClick(Movie currentMovie);
+
     }
 
     /**
@@ -244,12 +245,22 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
             mCursor.moveToPosition(adapterPosition);
-            int movieTitleColumnIndex = mCursor
-                    .getColumnIndex(MovieContract.CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE);
 
+            String poster_path = mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH));
+            String original_title = mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE));
+            String movie_poster_image_thumbnail =
+                    mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
+            String a_plot_synopsis = mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_A_PLOT_SYNOPSIS));
+            String user_rating = mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_USER_RATING));
+            String release_date = mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_RELEASE_DATE));
+            String id = mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_MOVIE_ID));
 
-            // Movie currentMovieData = mMoveData.get(adapterPosition);
-            mClickHandler.onClick(mCursor.getString(movieTitleColumnIndex));
+            // Create a new {@link Movie} object with the poster_path, original_title,
+            // movie_poster_image_thumbnail, a_plot_synopsis, user_rating, release_date,id
+            // from the cursor response.
+            Movie currentMovieData = new Movie(poster_path, original_title, movie_poster_image_thumbnail
+                    , a_plot_synopsis, user_rating, release_date, id);
+            mClickHandler.onClick(currentMovieData);
         }
     }
 

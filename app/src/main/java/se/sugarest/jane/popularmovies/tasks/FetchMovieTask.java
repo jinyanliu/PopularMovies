@@ -207,52 +207,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
     }
 
-//    public String getExternalStorageMoviePosterImageThumbnail(String urlToBeDownloaded) {
-//
-//        String filepath = Environment.getExternalStorageDirectory().getAbsolutePath();
-//
-//        String fullUrlToBeDownLoaded = BASE_IMAGE_URL.concat(IMAGE_SIZE_W780)
-//                .concat(urlToBeDownloaded);
-//
-//        try {
-//            URL url = new URL(fullUrlToBeDownLoaded);
-//            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-//            urlConnection.setRequestMethod("GET");
-//            urlConnection.setDoOutput(true);
-//            urlConnection.connect();
-//            File SDCardRoot = Environment.getExternalStorageDirectory().getAbsoluteFile();
-//            String filename = fullUrlToBeDownLoaded;
-//            Log.i(TAG, this.mainActivity.getString(R.string.log_information_message_download_poster_thumbnail_filename) + filename);
-//            File file = new File(SDCardRoot, filename);
-//            if (file.createNewFile()) {
-//                file.createNewFile();
-//            }
-//            FileOutputStream fileOutput = new FileOutputStream(file);
-//            InputStream inputStream = urlConnection.getInputStream();
-//            int totalSize = urlConnection.getContentLength();
-//            int downloadedSize = 0;
-//            byte[] buffer = new byte[1024];
-//            int bufferLength = 0;
-//            while ((bufferLength = inputStream.read(buffer)) > 0) {
-//                fileOutput.write(buffer, 0, bufferLength);
-//                downloadedSize += bufferLength;
-//                Log.i(TAG, this.mainActivity.getString(R.string.log_information_message_download_poster_thumbnail_downloadedSize)
-//                        + downloadedSize + this.mainActivity.getString(R.string.log_information_message_download_poster_thumbnail_totalSize)
-//                        + totalSize);
-//            }
-//            fileOutput.close();
-//            if (downloadedSize == totalSize) {
-//                filepath = file.getPath();
-//            }
-//        } catch (MalformedURLException e) {
-//            Log.e(TAG, this.mainActivity.getString(R.string.log_error_message_malformedurl_exception));
-//        } catch (IOException e) {
-//            filepath = null;
-//            Log.e(TAG, this.mainActivity.getString(R.string.log_error_message_io_exception));
-//        }
-//        Log.i(TAG, this.mainActivity.getString(R.string.log_information_message_download_poster_thumbnail_filepath) + filepath);
-//        return filepath;
-//    }
+
 
 //    private void showDataBaseCacheMovieMostPopularPoster() {
 //

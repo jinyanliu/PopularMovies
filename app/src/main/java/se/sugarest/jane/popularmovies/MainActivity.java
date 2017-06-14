@@ -22,6 +22,7 @@ import android.widget.TextView;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.MovieEntry;
+import se.sugarest.jane.popularmovies.movie.Movie;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter.MovieAdapterOnClickHandler;
 import se.sugarest.jane.popularmovies.tasks.FetchMovieTask;
@@ -191,11 +192,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
      * clicks.
      */
     @Override
-    public void onClick(String movieTtile) {
+    public void onClick(Movie movie) {
         Context context = this;
         Class destinationClass = DetailActivity.class;
         Intent intentToStartDetailActivity = new Intent(context, destinationClass);
-        intentToStartDetailActivity.putExtra("movieTitle", movieTtile);
+        intentToStartDetailActivity.putExtra("movie", movie);
         startActivity(intentToStartDetailActivity);
     }
 
