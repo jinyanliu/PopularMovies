@@ -3,10 +3,12 @@ package se.sugarest.jane.popularmovies.tasks;
 import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 
+import java.io.File;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
@@ -81,15 +83,23 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
             if ("popular".equals(orderBy)) {
 
+                // When latest movie data fetches, delete CacheMovieMostPopularTable
                 this.mainActivity.getContentResolver().delete(
                         CacheMovieMostPopularEntry.CONTENT_URI,
                         null,
                         null);
 
+                // When latest movie data fetches, delete CacheMovieMostPopularPosterTable
                 this.mainActivity.getContentResolver().delete(
                         MovieContract.CacheMovieMostPopularPosterEntry.CONTENT_URI,
                         null,
                         null);
+
+                // When latest movie data fetches, delete External Storage Folder
+                File popularMoviePicsFolder
+                        = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+                        + "/popularmovies/");
+                popularMoviePicsFolder.delete();
 
                 int count = movieData.size();
                 Vector<ContentValues> cVVector = new Vector<ContentValues>(count);
