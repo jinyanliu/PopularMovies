@@ -21,10 +21,8 @@ import java.util.List;
 
 import se.sugarest.jane.popularmovies.R;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
-import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularPosterEntry;
-import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedPosterEntry;
-import se.sugarest.jane.popularmovies.data.MovieContract.MovieEntry;
+import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularPosterEntry;
 
 /**
  * Created by jane on 2/26/17.
@@ -99,42 +97,49 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
      */
     @Override
     public void onBindViewHolder(MovieAdapterViewHolder movieAdapterViewHolder, int position) {
+
+
         // Get a reference to the ConnectivityManager to check state of network connectivity.
         ConnectivityManager connMgr = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         // Get details on the currently active default data network
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
 
-            mCursor.moveToPosition(position);
 
-            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-            String orderBy = sharedPrefs.getString(
-                    mContext.getString(R.string.settings_order_by_key),
-                    mContext.getString(R.string.settings_order_by_default));
+            String moviePosterForOneMovie = mMoviePostersUrlStrings[position];
+            Picasso.with(mContext).load(moviePosterForOneMovie).into(movieAdapterViewHolder.mMoviePosterImageView);
 
-            int moviePosterColumnIndex;
 
-            if ("popular".equals(orderBy)) {
-                moviePosterColumnIndex = mCursor
-                        .getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH);
-            } else if ("top_rated".equals(orderBy)) {
-                moviePosterColumnIndex = mCursor
-                        .getColumnIndex(CacheMovieTopRatedEntry.COLUMN_POSTER_PATH);
-            } else {
-                moviePosterColumnIndex = mCursor
-                        .getColumnIndex(MovieEntry.COLUMN_POSTER_PATH);
-            }
-
-            String moviePosterForOneMovie = mCursor.getString(moviePosterColumnIndex);
-            String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
-                    .concat(moviePosterForOneMovie);
-
-            // If there is a network connection, fetch poster data from web
-            Picasso.with(mContext)
-                    .load(fullMoviePosterForOneMovie)
-                    .error(R.drawable.picasso_placeholder_error)
-                    //.placeholder(R.drawable.picasso_placeholder_loading)
-                    .into(movieAdapterViewHolder.mMoviePosterImageView);
+//            mCursor.moveToPosition(position);
+//
+//            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+//            String orderBy = sharedPrefs.getString(
+//                    mContext.getString(R.string.settings_order_by_key),
+//                    mContext.getString(R.string.settings_order_by_default));
+//
+//            int moviePosterColumnIndex;
+//
+//            if ("popular".equals(orderBy)) {
+//                moviePosterColumnIndex = mCursor
+//                        .getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH);
+//            } else if ("top_rated".equals(orderBy)) {
+//                moviePosterColumnIndex = mCursor
+//                        .getColumnIndex(CacheMovieTopRatedEntry.COLUMN_POSTER_PATH);
+//            } else {
+//                moviePosterColumnIndex = mCursor
+//                        .getColumnIndex(MovieEntry.COLUMN_POSTER_PATH);
+//            }
+//
+//            String moviePosterForOneMovie = mCursor.getString(moviePosterColumnIndex);
+//            String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
+//                    .concat(moviePosterForOneMovie);
+//
+//            // If there is a network connection, fetch poster data from web
+//            Picasso.with(mContext)
+//                    .load(fullMoviePosterForOneMovie)
+//                    .error(R.drawable.picasso_placeholder_error)
+//                    //.placeholder(R.drawable.picasso_placeholder_loading)
+//                    .into(movieAdapterViewHolder.mMoviePosterImageView);
 
         } else {
             // setMoviePosterData();
@@ -213,39 +218,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     }
 
     /**
-     * This method is used to set the movie posters on a MovieAdapter from external storage posters urls.
+     * This method is used to set the movie posters on a MovieAdapter from very first time of installing.
+     * Without store any information, just to display the posters fast.
      */
-//    public void setMoviePosterData() {
-//
-//        // storeMoviePostersUrlStringsIntoExternalDatabase();
-//
-//        String[] projection = {CacheMovieMostPopularPosterEntry.COLUMN_POSTER_PATH};
-//        String selection = CacheMovieMostPopularPosterEntry._ID +"=?";
-//        String[] selectionArgs = {};
-//        Cursor cursor = mContext.getContentResolver().query(
-//                CacheMovieMostPopularPosterEntry.CONTENT_URI,
-//                projection,
-//                null,
-//                null,
-//                null);
-//
-//
-//        if (cursor != null && cursor.getCount() > 0) {
-//            String[] array = new String[cursor.getCount()];
-//            int i = 0;
-//
-//            cursor.moveToFirst();
-//
-//            while (!cursor.isAfterLast()) {
-//                array[i] = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularPosterEntry.COLUMN_POSTER_PATH));
-//                i++;
-//                cursor.moveToNext();
-//            }
-//
-//            mMoviePostersUrlStrings = array;
-//            notifyDataSetChanged();
-//        }
-//    }
+    public void setMoviePosterData(String[] moviePostersUrls) {
+        mMoviePostersUrlStrings = moviePostersUrls;
+    }
 
     /**
      * The interface that receives onClick messages.
@@ -300,26 +278,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         return mCursor;
     }
 
-//    public void storeMoviePostersUrlStringsIntoExternalDatabase() {
-//        String[] projection = {CacheMovieMostPopularEntry.COLUMN_POSTER_PATH};
-//        Cursor cursor = mContext.getContentResolver().query(
-//                CacheMovieMostPopularEntry.CONTENT_URI,
-//                projection,
-//                null,
-//                null,
-//                null);
-//        if (cursor != null && cursor.getCount() > 0) {
-//            cursor.moveToFirst();
-//            while (!cursor.isAfterLast()) {
-//                String poster_path = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH));
-//                String fullPosterPathToBeDownload = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
-//                        .concat(poster_path);
-//                new FetchExternalStoragePopMoviePosterImagesTask(mContext).execute(fullPosterPathToBeDownload);
-//                cursor.moveToNext();
-//            }
-//        }
-//        cursor.close();
-//    }
 }
 
 

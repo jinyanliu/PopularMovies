@@ -25,6 +25,7 @@ import se.sugarest.jane.popularmovies.data.MovieContract.MovieEntry;
 import se.sugarest.jane.popularmovies.movie.Movie;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter.MovieAdapterOnClickHandler;
+import se.sugarest.jane.popularmovies.tasks.FetchMoviePostersTask;
 import se.sugarest.jane.popularmovies.tasks.FetchMovieTask;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapterOnClickHandler, android.app.LoaderManager.LoaderCallbacks<Cursor> {
@@ -119,7 +120,14 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         // If there is a network connection, fetch data
         if (networkInfo != null && networkInfo.isConnected()) {
             /**
-             * Once all of the views are setup, movie data can be load.
+             * Because there are lots of background tasks happening in this app, we use these 2 methods
+             * to quickly load pictures first. So users won't wait for the first time they install the
+             * app. 
+             */
+            loadMoviePostersData();
+
+            /**
+             * Load movie data and store them in the database.
              */
             loadMovieData();
         } else {
@@ -127,27 +135,43 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        // Get a reference to the ConnectivityManager to check state of network connectivity.
-        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        // Get details on the currently active default data network
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        if (networkInfo != null && networkInfo.isConnected()) {
-            showMovieDataView();
-            /**
-             * Once all of the views are setup, movie data can be load.
-             */
-            loadMovieData();
-        }
-    }
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//
+//        // Get a reference to the ConnectivityManager to check state of network connectivity.
+//        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+//
+//        // Get details on the currently active default data network
+//        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+//
+//        if (networkInfo != null && networkInfo.isConnected()) {
+//            showMovieDataView();
+//            /**
+//             * Once all of the views are setup, movie data can be load.
+//             */
+//            loadMovieData();
+//        }
+//    }
 
     public void initCursorLoader() {
         getLoaderManager().initLoader(MOVIE_LOADER, null, this);
+    }
+
+    private void loadMoviePostersData() {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String orderBy = sharedPrefs.getString(
+                getString(R.string.settings_order_by_key),
+                getString(R.string.settings_order_by_default)
+        );
+
+        if (!"favorites".equals(orderBy)) {
+            orderBy = "movie/" + orderBy;
+            new FetchMoviePostersTask(this).execute(orderBy);
+        } else {
+            initCursorLoader();
+        }
+
     }
 
     /**
