@@ -16,21 +16,21 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import se.sugarest.jane.popularmovies.R;
-import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularPosterEntry;
+import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedPosterEntry;
 
 /**
- * Created by jane on 17-5-31.
+ * Created by jane on 17-6-15.
  */
 
-public class FetchExternalStorageMoviePosterImagesTask extends AsyncTask<String, Void, String> {
+public class FetchExternalStorageTopMoviePosterImagesTask extends AsyncTask<String, Void, String> {
 
     Context mContext;
 
-    public FetchExternalStorageMoviePosterImagesTask(Context context) {
+    public FetchExternalStorageTopMoviePosterImagesTask(Context context) {
         mContext = context;
     }
 
-    private static final String TAG = FetchExternalStorageMoviePosterImagesTask.class.getSimpleName();
+    private static final String TAG = FetchExternalStorageTopMoviePosterImagesTask.class.getSimpleName();
 
     String urlToBeDownloaded;
 
@@ -65,7 +65,7 @@ public class FetchExternalStorageMoviePosterImagesTask extends AsyncTask<String,
             Log.i(TAG, mContext.getString(R.string.log_information_message_download_poster_filename) + filename);
 
             File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
-                    + "/popularmovies/" + filename);
+                    + "/topratedmovies/" + filename);
 
             if (!file.exists()) {
                 file.getParentFile().mkdirs();
@@ -106,11 +106,9 @@ public class FetchExternalStorageMoviePosterImagesTask extends AsyncTask<String,
     protected void onPostExecute(String s) {
 
         ContentValues values = new ContentValues();
-
-        values.put(CacheMovieMostPopularPosterEntry.COLUMN_POSTER_PATH, s);
-
-        Uri newUri = mContext.getContentResolver().insert(CacheMovieMostPopularPosterEntry.CONTENT_URI, values);
-
+        values.put(CacheMovieTopRatedPosterEntry.COLUMN_POSTER_PATH, s);
+        Uri newUri = mContext.getContentResolver().insert(CacheMovieTopRatedPosterEntry.CONTENT_URI, values);
         Log.i(TAG, "inserting uri: " + values + "result: " + newUri.toString());
+
     }
 }

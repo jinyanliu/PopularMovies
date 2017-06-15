@@ -18,6 +18,7 @@ import se.sugarest.jane.popularmovies.data.MovieContract.TrailerEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularPosterEntry;
+import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedPosterEntry;
 
 /**
  * Created by jane on 17-4-11.
@@ -76,6 +77,11 @@ public class MovieProvider extends ContentProvider {
     private static final int CACHE_MOVIES_MOST_POPULAR_POSTER = 401;
 
     /**
+     * URI matcher code for the content URI for the cache movie top rated poster table
+     */
+    private static final int CACHE_MOVIES_TOP_RATED_POSTER = 501;
+
+    /**
      * UriMatcher object to match a content URI to a corresponding code.
      * The input passed into the constructor represents the code to return for the root URI.
      * It's common to use NO_MATCH as the input for this case.
@@ -113,6 +119,7 @@ public class MovieProvider extends ContentProvider {
         sUriMatcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_CACHE_MOVIE_TOP_RATED, CACHE_MOVIES_TOP_RATED);
 
         sUriMatcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_CACHE_MOVIE_MOST_POPULAR_POSTER, CACHE_MOVIES_MOST_POPULAR_POSTER);
+        sUriMatcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_CACHE_MOVIE_TOP_RATED_POSTER, CACHE_MOVIES_TOP_RATED_POSTER);
     }
 
     /**
@@ -217,17 +224,19 @@ public class MovieProvider extends ContentProvider {
                         null, null, sortOrder);
                 break;
             case CACHE_MOVIES_MOST_POPULAR:
-                // selection = selection + "=?";
                 cursor = database.query(CacheMovieMostPopularEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
             case CACHE_MOVIES_TOP_RATED:
-                // selection = selection + "=?";
                 cursor = database.query(CacheMovieTopRatedEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
             case CACHE_MOVIES_MOST_POPULAR_POSTER:
                 cursor = database.query(CacheMovieMostPopularPosterEntry.TABLE_NAME, projection, selection, selectionArgs,
+                        null, null, sortOrder);
+                break;
+            case CACHE_MOVIES_TOP_RATED_POSTER:
+                cursor = database.query(CacheMovieTopRatedPosterEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
             default:
@@ -299,6 +308,9 @@ public class MovieProvider extends ContentProvider {
             case CACHE_MOVIES_MOST_POPULAR_POSTER:
                 id = database.insert(CacheMovieMostPopularPosterEntry.TABLE_NAME, null, values);
                 break;
+            case CACHE_MOVIES_TOP_RATED_POSTER:
+                id = database.insert(CacheMovieTopRatedPosterEntry.TABLE_NAME, null, values);
+                break;
             default:
                 throw new IllegalArgumentException(getContext().getResources().getString(R.string.insert_default_illegal_argument_exception_message) + uri);
         }
@@ -368,6 +380,9 @@ public class MovieProvider extends ContentProvider {
                 break;
             case CACHE_MOVIES_MOST_POPULAR_POSTER:
                 rowsDeleted = database.delete(CacheMovieMostPopularPosterEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            case CACHE_MOVIES_TOP_RATED_POSTER:
+                rowsDeleted = database.delete(CacheMovieTopRatedPosterEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             default:
                 throw new IllegalArgumentException(getContext().getString(R.string.unknown_uri_for_deletion) + uri);

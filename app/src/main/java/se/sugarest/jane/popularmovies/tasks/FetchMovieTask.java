@@ -16,9 +16,10 @@ import java.util.Vector;
 
 import se.sugarest.jane.popularmovies.MainActivity;
 import se.sugarest.jane.popularmovies.R;
-import se.sugarest.jane.popularmovies.data.MovieContract;
+import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularPosterEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedEntry;
+import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedPosterEntry;
 import se.sugarest.jane.popularmovies.movie.Movie;
 import se.sugarest.jane.popularmovies.utilities.MovieJsonUtils;
 import se.sugarest.jane.popularmovies.utilities.NetworkUtils;
@@ -91,11 +92,11 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
                 // When latest movie data fetches, delete CacheMovieMostPopularPosterTable
                 this.mainActivity.getContentResolver().delete(
-                        MovieContract.CacheMovieMostPopularPosterEntry.CONTENT_URI,
+                        CacheMovieMostPopularPosterEntry.CONTENT_URI,
                         null,
                         null);
 
-                // When latest movie data fetches, delete External Storage Folder
+                // When latest movie data fetches, delete External Storage Folder popularmovies
                 File popularMoviePicsFolder
                         = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
                         + "/popularmovies/");
@@ -103,7 +104,6 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
                 int count = movieData.size();
                 Vector<ContentValues> cVVector = new Vector<ContentValues>(count);
-                // ContentValues[] cvArray = new ContentValues[count];
                 for (int i = 0; i < count; i++) {
                     ContentValues values = new ContentValues();
                     values.put(CacheMovieMostPopularEntry.COLUMN_A_PLOT_SYNOPSIS, movieData.get(i).getAPlotSynopsis());
@@ -116,14 +116,12 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<Movie>> {
                     String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
                             .concat(movieData.get(i).getPosterPath());
 
-                    new FetchExternalStorageMoviePosterImagesTask(this.mainActivity).execute(fullMoviePosterForOneMovie);
+                    new FetchExternalStoragePopMoviePosterImagesTask(this.mainActivity).execute(fullMoviePosterForOneMovie);
 
                     values.put(CacheMovieMostPopularEntry.COLUMN_RELEASE_DATE, movieData.get(i).getReleaseDate());
                     values.put(CacheMovieMostPopularEntry.COLUMN_USER_RATING, movieData.get(i).getUserRating());
 
                     cVVector.add(values);
-
-                    //cvArray[i] = values;
                 }
 
                 if (cVVector.size() > 0) {
@@ -139,40 +137,46 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<Movie>> {
                     }
                 }
 
-
-                // this.mainActivity.restartLoader();
-
-
-//                for (int i = 0; i < count; i++) {
-//                    String urlToBeDownLoaded = movieData.get(i).getMoviePosterImageThumbnail();
-//                    new FetchExternalStorageMoviePosterImagesTask(this.mainActivity).execute(urlToBeDownLoaded);
-//                }
-
-                // showDataBaseCacheMovieMostPopularPoster();
-
-
             } else {
 
+                // When latest movie data fetches, delete CacheMovieTopRatedTable
                 this.mainActivity.getContentResolver().delete(
                         CacheMovieTopRatedEntry.CONTENT_URI,
                         null,
                         null);
 
+                // When latest movie data fetches, delete CacheMovieTopRatedPosterTable
+                this.mainActivity.getContentResolver().delete(
+                        CacheMovieTopRatedPosterEntry.CONTENT_URI,
+                        null,
+                        null);
+
+                // When latest movie data fetches, delete External Storage Folder topratedmovies
+                File topRatedMoviePicsFolder
+                        = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+                        + "/topratedmovies/");
+                topRatedMoviePicsFolder.delete();
+
                 int count = movieData.size();
                 Vector<ContentValues> cVVector = new Vector<ContentValues>(count);
-                // ContentValues[] cvArray = new ContentValues[count];
                 for (int i = 0; i < count; i++) {
                     ContentValues values = new ContentValues();
                     values.put(CacheMovieTopRatedEntry.COLUMN_A_PLOT_SYNOPSIS, movieData.get(i).getAPlotSynopsis());
                     values.put(CacheMovieTopRatedEntry.COLUMN_MOVIE_ID, movieData.get(i).getId());
                     values.put(CacheMovieTopRatedEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL, movieData.get(i).getMoviePosterImageThumbnail());
                     values.put(CacheMovieTopRatedEntry.COLUMN_ORIGINAL_TITLE, movieData.get(i).getOriginalTitle());
+
                     values.put(CacheMovieTopRatedEntry.COLUMN_POSTER_PATH, movieData.get(i).getPosterPath());
+
+                    String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
+                            .concat(movieData.get(i).getPosterPath());
+
+                    new FetchExternalStorageTopMoviePosterImagesTask(this.mainActivity).execute(fullMoviePosterForOneMovie);
+
                     values.put(CacheMovieTopRatedEntry.COLUMN_RELEASE_DATE, movieData.get(i).getReleaseDate());
                     values.put(CacheMovieTopRatedEntry.COLUMN_USER_RATING, movieData.get(i).getUserRating());
 
                     cVVector.add(values);
-                    // cvArray[i] = values;
                 }
 
                 if (cVVector.size() > 0) {
@@ -187,26 +191,11 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<Movie>> {
                         Log.i(TAG, "bulkInsertCacheMovie TopRated unsuccessful.");
                     }
                 }
-
-
-//                this.mainActivity.getContentResolver().bulkInsert(
-//                        CacheMovieTopRatedEntry.CONTENT_URI,
-//                        cvArray);
-
-//                for (int i = 0; i < count; i++) {
-//                    String urlToBeDownLoaded = movieData.get(i).getMoviePosterImageThumbnail();
-//                    new FetchExternalStorageMoviePosterImagesTask(this.mainActivity).execute(urlToBeDownLoaded);
-//                }
             }
-
         }
 
-
         this.mainActivity.initCursorLoader();
-
-
     }
-
 
 
 //    private void showDataBaseCacheMovieMostPopularPoster() {

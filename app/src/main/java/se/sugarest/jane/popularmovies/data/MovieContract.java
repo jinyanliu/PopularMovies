@@ -54,6 +54,8 @@ public class MovieContract {
 
     public static final String PATH_CACHE_MOVIE_MOST_POPULAR_POSTER = "cache_movie_most_popular_poster";
 
+    public static final String PATH_CACHE_MOVIE_TOP_RATED_POSTER = "cache_movie_top_rated_poster";
+
     /**
      * Inner class that defines the table contents of the movie table.
      */
@@ -350,9 +352,41 @@ public class MovieContract {
         public static final String TABLE_NAME = "cache_movie_most_popular_poster";
 
         /**
-         * PosterPath is stored as a String representing movie's poster_path url, used for
+         * PosterPath is stored as a String representing movie's extertal storage poster_path url, used for
          * display on main screen when user setting sortOrder by most popular.
          */
-        public static final String COLUMN_POSTER_PATH = "poster_path";
+        public static final String COLUMN_POSTER_PATH = "external_storage_poster_path";
+    }
+
+    /**
+     * Inner class that defines the table contents of the cache movie top rated poster table.
+     */
+    public static final class CacheMovieTopRatedPosterEntry implements BaseColumns {
+
+        /* The base CONTENT_URI used to query the cache movie top rated poster table from the content provider */
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_CACHE_MOVIE_TOP_RATED_POSTER)
+                .build();
+
+        /**
+         * The MIME type of the {@link #CONTENT_URI} for a list of movie posters.
+         */
+        public static final String CONTENT_LIST_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_CACHE_MOVIE_TOP_RATED_POSTER;
+
+        /**
+         * The MIME type of the {@link #CONTENT_URI} for a single movie poster.
+         */
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_CACHE_MOVIE_TOP_RATED_POSTER;
+
+        /* Used internally as the name of the cache movie top rated poster table. */
+        public static final String TABLE_NAME = "cache_movie_top_rated_poster";
+
+        /**
+         * PosterPath is stored as a String representing movie's extertal storage poster_path url, used for
+         * display on main screen when user setting sortOrder by most popular.
+         */
+        public static final String COLUMN_POSTER_PATH = "external_storage_poster_path";
     }
 }
