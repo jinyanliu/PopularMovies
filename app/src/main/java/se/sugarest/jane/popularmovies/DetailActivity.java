@@ -98,6 +98,8 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
 
     private String mFirstTrailerSourceKey;
 
+    private FloatingActionButton mFabButton;
+
     /**
      * Movie Database helper that will provide access to the movie database
      */
@@ -162,7 +164,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         // Set current movie original title on the detail activity menu bar as activity's title.
         setTitle(mCurrentMovie.getOriginalTitle());
 
-         // Set current movie poster image thumbnail
+        // Set current movie poster image thumbnail
         String currentMoviePosterImageThumbnail = BASE_IMAGE_URL.concat(IMAGE_SIZE_W780)
                 .concat(mCurrentMovie.getMoviePosterImageThumbnail());
 
@@ -240,22 +242,22 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
 
         // Setup fab_favorite to add favorite movies into database and change FAB color to yellow
         View primaryLayout = findViewById(R.id.primary_info);
-        final FloatingActionButton fab_favorite = (FloatingActionButton) primaryLayout.findViewById(R.id.fab_favorite);
+        mFabButton = (FloatingActionButton) primaryLayout.findViewById(R.id.fab_favorite);
 
-        fab_favorite.setColorFilter(ContextCompat.getColor(DetailActivity.this, setFabButtonStarColor()));
+        mFabButton.setColorFilter(ContextCompat.getColor(DetailActivity.this, setFabButtonStarColor()));
 
-        fab_favorite.setOnClickListener(new View.OnClickListener() {
+        mFabButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (setFabButtonStarColor() == R.color.colorWhiteFavoriteStar) {
-                    fab_favorite.setColorFilter(ContextCompat.getColor(DetailActivity.this, R.color.colorYellowFavoriteStar));
+                    mFabButton.setColorFilter(ContextCompat.getColor(DetailActivity.this, R.color.colorYellowFavoriteStar));
                     try {
                         saveMovie();
                     } catch (IllegalArgumentException e) {
                         Toast.makeText(DetailActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    fab_favorite.setColorFilter(ContextCompat.getColor(DetailActivity.this, R.color.colorWhiteFavoriteStar));
+                    mFabButton.setColorFilter(ContextCompat.getColor(DetailActivity.this, R.color.colorWhiteFavoriteStar));
                     deleteMovie();
                 }
             }
@@ -325,39 +327,47 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
      * Save movie, review and trailer into database.
      */
     private void saveMovie() {
-        if (mCurrentMovieReviews.size() > 0) {
-            saveFavoriteMovie();
-            saveFavoriteTrailer();
-            saveFavoriteReview();
-            if (mToast != null) {
-                mToast.cancel();
-            }
-            if (saveMovieRecordNumber == SAVE_MOVIE_SUCCESS && saveReviewRecordNumber == SAVE_REVIEW_SUCCESS
-                    && saveTrailerRecordNumber == SAVE_TRAILER_SUCCESS) {
-                mToast = Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT);
-                mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                mToast.show();
+        if (mCurrentMovieReviews != null) {
+            if (mCurrentMovieReviews.size() > 0) {
+                saveFavoriteMovie();
+                saveFavoriteTrailer();
+                saveFavoriteReview();
+                if (mToast != null) {
+                    mToast.cancel();
+                }
+                if (saveMovieRecordNumber == SAVE_MOVIE_SUCCESS && saveReviewRecordNumber == SAVE_REVIEW_SUCCESS
+                        && saveTrailerRecordNumber == SAVE_TRAILER_SUCCESS) {
+                    mToast = Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT);
+                    mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                    mToast.show();
+                } else {
+                    mToast = Toast.makeText(this, getString(R.string.insert_movie_failed), Toast.LENGTH_SHORT);
+                    mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                    mToast.show();
+                }
             } else {
-                mToast = Toast.makeText(this, getString(R.string.insert_movie_failed), Toast.LENGTH_SHORT);
-                mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                mToast.show();
+                saveFavoriteMovie();
+                saveFavoriteTrailer();
+                if (mToast != null) {
+                    mToast.cancel();
+                }
+                if (saveMovieRecordNumber == SAVE_MOVIE_SUCCESS && saveTrailerRecordNumber == SAVE_TRAILER_SUCCESS) {
+                    mToast = Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT);
+                    mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                    mToast.show();
+                } else {
+                    mToast = Toast.makeText(this, getString(R.string.insert_movie_failed), Toast.LENGTH_SHORT);
+                    mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                    mToast.show();
+                }
             }
         } else {
-            saveFavoriteMovie();
-            saveFavoriteTrailer();
-            if (mToast != null) {
-                mToast.cancel();
-            }
-            if (saveMovieRecordNumber == SAVE_MOVIE_SUCCESS && saveTrailerRecordNumber == SAVE_TRAILER_SUCCESS) {
-                mToast = Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT);
-                mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                mToast.show();
-            } else {
-                mToast = Toast.makeText(this, getString(R.string.insert_movie_failed), Toast.LENGTH_SHORT);
-                mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                mToast.show();
-            }
+            mFabButton.setColorFilter(ContextCompat.getColor(DetailActivity.this, R.color.colorWhiteFavoriteStar));
+            mToast = Toast.makeText(this, getString(R.string.review_not_loaded_yet), Toast.LENGTH_SHORT);
+            mToast.setGravity(Gravity.BOTTOM, 0, 0);
+            mToast.show();
         }
+
     }
 
     /**

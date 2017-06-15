@@ -21,8 +21,9 @@ import java.util.List;
 
 import se.sugarest.jane.popularmovies.R;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
-import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedPosterEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularPosterEntry;
+import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedPosterEntry;
+import se.sugarest.jane.popularmovies.data.MovieContract.MovieEntry;
 
 /**
  * Created by jane on 2/26/17.
@@ -103,43 +104,51 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         ConnectivityManager connMgr = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         // Get details on the currently active default data network
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
         if (networkInfo != null && networkInfo.isConnected()) {
 
+            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+            String orderBy = sharedPrefs.getString(
+                    mContext.getString(R.string.settings_order_by_key),
+                    mContext.getString(R.string.settings_order_by_default)
+            );
 
-            String moviePosterForOneMovie = mMoviePostersUrlStrings[position];
-            Picasso.with(mContext).load(moviePosterForOneMovie).into(movieAdapterViewHolder.mMoviePosterImageView);
+            if (!"favorites".equals(orderBy)) {
+                String moviePosterForOneMovie = mMoviePostersUrlStrings[position];
+                Picasso.with(mContext).load(moviePosterForOneMovie).into(movieAdapterViewHolder.mMoviePosterImageView);
+            } else {
+                mCursor.moveToPosition(position);
 
+//                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+//                String orderBy = sharedPrefs.getString(
+//                        mContext.getString(R.string.settings_order_by_key),
+//                        mContext.getString(R.string.settings_order_by_default));
 
-//            mCursor.moveToPosition(position);
-//
-//            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-//            String orderBy = sharedPrefs.getString(
-//                    mContext.getString(R.string.settings_order_by_key),
-//                    mContext.getString(R.string.settings_order_by_default));
-//
-//            int moviePosterColumnIndex;
-//
-//            if ("popular".equals(orderBy)) {
-//                moviePosterColumnIndex = mCursor
-//                        .getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH);
-//            } else if ("top_rated".equals(orderBy)) {
-//                moviePosterColumnIndex = mCursor
-//                        .getColumnIndex(CacheMovieTopRatedEntry.COLUMN_POSTER_PATH);
-//            } else {
-//                moviePosterColumnIndex = mCursor
-//                        .getColumnIndex(MovieEntry.COLUMN_POSTER_PATH);
-//            }
-//
-//            String moviePosterForOneMovie = mCursor.getString(moviePosterColumnIndex);
-//            String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
-//                    .concat(moviePosterForOneMovie);
-//
-//            // If there is a network connection, fetch poster data from web
-//            Picasso.with(mContext)
-//                    .load(fullMoviePosterForOneMovie)
-//                    .error(R.drawable.picasso_placeholder_error)
-//                    //.placeholder(R.drawable.picasso_placeholder_loading)
-//                    .into(movieAdapterViewHolder.mMoviePosterImageView);
+                int moviePosterColumnIndex;
+
+//                if ("popular".equals(orderBy)) {
+//                    moviePosterColumnIndex = mCursor
+//                            .getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH);
+//                } else if ("top_rated".equals(orderBy)) {
+//                    moviePosterColumnIndex = mCursor
+//                            .getColumnIndex(CacheMovieTopRatedEntry.COLUMN_POSTER_PATH);
+//                } else {
+                moviePosterColumnIndex = mCursor
+                        .getColumnIndex(MovieEntry.COLUMN_POSTER_PATH);
+//                }
+
+                String moviePosterForOneMovie = mCursor.getString(moviePosterColumnIndex);
+                String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
+                        .concat(moviePosterForOneMovie);
+
+                // If there is a network connection, fetch poster data from web
+                Picasso.with(mContext)
+                        .load(fullMoviePosterForOneMovie)
+                        //.error(R.drawable.picasso_placeholder_error)
+                        //.placeholder(R.drawable.picasso_placeholder_loading)
+                        .into(movieAdapterViewHolder.mMoviePosterImageView);
+            }
+
 
         } else {
             // setMoviePosterData();
