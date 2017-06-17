@@ -230,6 +230,12 @@ public class MovieContract {
         public static final String COLUMN_POSTER_PATH = "poster_path";
 
         /**
+         * External Storage poster path is stored as a String representing movie's external poster_path
+         * url, used for display on main screen when it is offline.
+         */
+        public static final String COLUMN_EXTERNAL_STORAGE_POSTER_PATH = "external_storage_poster_path";
+
+        /**
          * OriginalTitle is stored as a String representing movie's original title.
          */
         public static final String COLUMN_ORIGINAL_TITLE = "original_title";
@@ -292,6 +298,12 @@ public class MovieContract {
          * display on main screen when user setting sortOrder by top rated.
          */
         public static final String COLUMN_POSTER_PATH = "poster_path";
+
+        /**
+         * External Storage poster path is stored as a String representing movie's external poster_path
+         * url, used for display on main screen when it is offline.
+         */
+        public static final String COLUMN_EXTERNAL_STORAGE_POSTER_PATH = "external_storage_poster_path";
 
         /**
          * OriginalTitle is stored as a String representing movie's original title.

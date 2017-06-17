@@ -118,37 +118,18 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                 Picasso.with(mContext).load(moviePosterForOneMovie).into(movieAdapterViewHolder.mMoviePosterImageView);
             } else {
                 mCursor.moveToPosition(position);
-
-//                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-//                String orderBy = sharedPrefs.getString(
-//                        mContext.getString(R.string.settings_order_by_key),
-//                        mContext.getString(R.string.settings_order_by_default));
-
-                int moviePosterColumnIndex;
-
-//                if ("popular".equals(orderBy)) {
-//                    moviePosterColumnIndex = mCursor
-//                            .getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH);
-//                } else if ("top_rated".equals(orderBy)) {
-//                    moviePosterColumnIndex = mCursor
-//                            .getColumnIndex(CacheMovieTopRatedEntry.COLUMN_POSTER_PATH);
-//                } else {
-                moviePosterColumnIndex = mCursor
-                        .getColumnIndex(MovieEntry.COLUMN_POSTER_PATH);
-//                }
-
-                String moviePosterForOneMovie = mCursor.getString(moviePosterColumnIndex);
+                String moviePosterForOneMovie = mCursor.getString(mCursor
+                        .getColumnIndex(MovieEntry.COLUMN_POSTER_PATH));
                 String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
                         .concat(moviePosterForOneMovie);
 
-                // If there is a network connection, fetch poster data from web
                 Picasso.with(mContext)
+                        // PosterPath from web
                         .load(fullMoviePosterForOneMovie)
                         //.error(R.drawable.picasso_placeholder_error)
                         //.placeholder(R.drawable.picasso_placeholder_loading)
                         .into(movieAdapterViewHolder.mMoviePosterImageView);
             }
-
 
         } else {
             // setMoviePosterData();

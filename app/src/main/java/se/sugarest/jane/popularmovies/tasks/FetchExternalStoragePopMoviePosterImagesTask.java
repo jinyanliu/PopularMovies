@@ -16,13 +16,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import se.sugarest.jane.popularmovies.R;
+import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularPosterEntry;
+import se.sugarest.jane.popularmovies.movie.MovieBasicInfo;
 
 /**
  * Created by jane on 17-5-31.
  */
 
-public class FetchExternalStoragePopMoviePosterImagesTask extends AsyncTask<String, Void, String> {
+public class FetchExternalStoragePopMoviePosterImagesTask extends AsyncTask<MovieBasicInfo, Void, String> {
 
     Context mContext;
 
@@ -34,13 +36,15 @@ public class FetchExternalStoragePopMoviePosterImagesTask extends AsyncTask<Stri
 
     String urlToBeDownloaded;
 
+    String movieId;
+
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
     }
 
     @Override
-    protected String doInBackground(String... params) {
+    protected String doInBackground(MovieBasicInfo... params) {
 
         String filepath = Environment.getExternalStorageDirectory().getAbsolutePath();
 
@@ -48,7 +52,9 @@ public class FetchExternalStoragePopMoviePosterImagesTask extends AsyncTask<Stri
             return null;
         }
 
-        urlToBeDownloaded = params[0];
+        urlToBeDownloaded = params[0].getmExternalUrl();
+
+        movieId = params[0].getmId();
 
         try {
 
@@ -109,6 +115,23 @@ public class FetchExternalStoragePopMoviePosterImagesTask extends AsyncTask<Stri
         values.put(CacheMovieMostPopularPosterEntry.COLUMN_POSTER_PATH, s);
         Uri newUri = mContext.getContentResolver().insert(CacheMovieMostPopularPosterEntry.CONTENT_URI, values);
         Log.i(TAG, "inserting uri: " + values + "result: " + newUri.toString());
+
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(CacheMovieMostPopularEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH, s);
+        String selection = CacheMovieMostPopularEntry.COLUMN_MOVIE_ID;
+        selection = selection + " =?";
+        String[] selectionArgs = {movieId};
+        Log.i(TAG, "This is movie Id: " + movieId + ", external path: " + s);
+        int rowsUpdated = mContext.getContentResolver()
+                .update(CacheMovieMostPopularEntry.CONTENT_URI,
+                        contentValues,
+                        selection,
+                        selectionArgs);
+
+        if (rowsUpdated > 0) {
+            Log.i(TAG, "Insert external poster path into cache popular movie table successful.");
+        }
 
     }
 }

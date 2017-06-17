@@ -402,7 +402,7 @@ public class MovieProvider extends ContentProvider {
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
 
         // Logically be more efficient if placed before the data validation
-        // If there are no valuds to update, then don't try to update the database
+        // If there are no values to update, then don't try to update the database
         if (values.size() == 0) {
             return 0;
         }
@@ -417,11 +417,9 @@ public class MovieProvider extends ContentProvider {
 
         switch (match) {
             case CACHE_MOVIES_MOST_POPULAR:
-                selection = selection + "=?";
                 rowsUpdated = database.update(CacheMovieMostPopularEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
             case CACHE_MOVIES_TOP_RATED:
-                selection = selection + "=?";
                 rowsUpdated = database.update(CacheMovieTopRatedEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
             default:

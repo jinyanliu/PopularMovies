@@ -139,6 +139,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                          */
                         CacheMovieMostPopularEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         CacheMovieMostPopularEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
+                        CacheMovieMostPopularEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH + " TEXT NOT NULL, " +
                         CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE + " TEXT NOT NULL, " +
                         CacheMovieMostPopularEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL + " TEXT NOT NULL, " +
                         CacheMovieMostPopularEntry.COLUMN_A_PLOT_SYNOPSIS + " TEXT NOT NULL, " +
@@ -173,6 +174,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                          */
                         CacheMovieTopRatedEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         CacheMovieTopRatedEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
+                        CacheMovieTopRatedEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH + " TEXT NOT NULL, " +
                         CacheMovieTopRatedEntry.COLUMN_ORIGINAL_TITLE + " TEXT NOT NULL, " +
                         CacheMovieTopRatedEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL + " TEXT NOT NULL, " +
                         CacheMovieTopRatedEntry.COLUMN_A_PLOT_SYNOPSIS + " TEXT NOT NULL, " +
