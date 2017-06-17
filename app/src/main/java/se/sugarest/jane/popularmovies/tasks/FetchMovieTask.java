@@ -16,10 +16,8 @@ import java.util.Vector;
 
 import se.sugarest.jane.popularmovies.MainActivity;
 import se.sugarest.jane.popularmovies.R;
-import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularPosterEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedEntry;
-import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedPosterEntry;
 import se.sugarest.jane.popularmovies.movie.Movie;
 import se.sugarest.jane.popularmovies.movie.MovieBasicInfo;
 import se.sugarest.jane.popularmovies.utilities.MovieJsonUtils;
@@ -91,11 +89,11 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<Movie>> {
                         null,
                         null);
 
-                // When latest movie data fetches, delete CacheMovieMostPopularPosterTable
-                this.mainActivity.getContentResolver().delete(
-                        CacheMovieMostPopularPosterEntry.CONTENT_URI,
-                        null,
-                        null);
+//                // When latest movie data fetches, delete CacheMovieMostPopularPosterTable
+//                this.mainActivity.getContentResolver().delete(
+//                        CacheMovieMostPopularPosterEntry.CONTENT_URI,
+//                        null,
+//                        null);
 
                 // When latest movie data fetches, delete External Storage Folder popularmovies
                 File popularMoviePicsFolder
@@ -152,11 +150,11 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<Movie>> {
                         null,
                         null);
 
-                // When latest movie data fetches, delete CacheMovieTopRatedPosterTable
-                this.mainActivity.getContentResolver().delete(
-                        CacheMovieTopRatedPosterEntry.CONTENT_URI,
-                        null,
-                        null);
+//                // When latest movie data fetches, delete CacheMovieTopRatedPosterTable
+//                this.mainActivity.getContentResolver().delete(
+//                        CacheMovieTopRatedPosterEntry.CONTENT_URI,
+//                        null,
+//                        null);
 
                 // When latest movie data fetches, delete External Storage Folder topratedmovies
                 File topRatedMoviePicsFolder
@@ -209,55 +207,4 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
         this.mainActivity.initCursorLoader();
     }
-
-
-//    private void showDataBaseCacheMovieMostPopularPoster() {
-//
-//        this.mainActivity.getmLoadingIndicator().setVisibility(View.INVISIBLE);
-//
-//        // Create an empty ArrayList that can start adding movies to
-//        List<Movie> movies = new ArrayList<>();
-//
-//        // Perform a query on the provider using the ContentResolver.
-//        // Use the {@link CacheMovieMostPopularEntry#CONTENT_URI} to access the movie data.
-//        Cursor cursor = this.mainActivity.getContentResolver().query(
-//                CacheMovieMostPopularEntry.CONTENT_URI, // The content URI of the cache movie most popular table
-//                null,                                   // The columns to return for each row
-//                null,
-//                null,
-//                null);
-//
-//        if (cursor != null && cursor.getCount() > 0) {
-//
-//            cursor.moveToFirst();
-//            while (!cursor.isAfterLast()) {
-//                String poster_path = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH));
-//                String original_title = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE));
-//                String movie_poster_image_thumbnail =
-//                        cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
-//                String a_plot_synopsis = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_A_PLOT_SYNOPSIS));
-//                String user_rating = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_USER_RATING));
-//                String release_date = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_RELEASE_DATE));
-//                String id = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_MOVIE_ID));
-//
-//                // Create a new {@link Movie} object with the poster_path, original_title,
-//                // movie_poster_image_thumbnail, a_plot_synopsis, user_rating, release_date,id
-//                // from the cursor response.
-//                Movie movie = new Movie(poster_path, original_title, movie_poster_image_thumbnail
-//                        , a_plot_synopsis, user_rating, release_date, id);
-//
-//                // Add the new {@link Movie} to the list of movies.
-//                movies.add(movie);
-//                cursor.moveToNext();
-//            }
-//            cursor.close();
-//            this.mainActivity.getmLoadingIndicator().setVisibility(View.INVISIBLE);
-//            this.mainActivity.getmMovieAdapter().setMoviePosterData(movies);
-//        } else {
-//            this.mainActivity.getmLoadingIndicator().setVisibility(View.INVISIBLE);
-//            this.mainActivity.showErrorMessage();
-//            this.mainActivity.getmErrorMessageDisplay().setText(this.mainActivity.getString(R.string.error_message_no_popular_movie));
-//        }
-//    }
-
 }

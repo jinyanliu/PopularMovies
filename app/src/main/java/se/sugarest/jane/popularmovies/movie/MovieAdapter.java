@@ -17,12 +17,12 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import se.sugarest.jane.popularmovies.R;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
-import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularPosterEntry;
-import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedPosterEntry;
+import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.MovieEntry;
 
 /**
@@ -41,6 +41,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     private final String IMAGE_SIZE_W185 = "w185/";
 
     private Cursor mCursor;
+    private boolean mLoadFromDb;
 
     /**
      * An On-click handler that we've defined to make it easy for an Activity to interface with
@@ -48,7 +49,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
      */
     private final MovieAdapterOnClickHandler mClickHandler;
 
-    private String[] mMoviePostersUrlStrings;
+    private ArrayList<String> mMoviePostersUrlStrings = new ArrayList<>();
 
     private Context mContext;
 
@@ -114,8 +115,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
             );
 
             if (!"favorites".equals(orderBy)) {
-                String moviePosterForOneMovie = mMoviePostersUrlStrings[position];
-                Picasso.with(mContext).load(moviePosterForOneMovie).into(movieAdapterViewHolder.mMoviePosterImageView);
+                String moviePosterForOneMovie = mMoviePostersUrlStrings.get(position);
+                Picasso.with(mContext)
+                        .load(moviePosterForOneMovie)
+                        .error(R.drawable.picasso_placeholder_error)
+                        .placeholder(R.drawable.picasso_placeholder_loading).into(movieAdapterViewHolder.mMoviePosterImageView);
             } else {
                 mCursor.moveToPosition(position);
                 String moviePosterForOneMovie = mCursor.getString(mCursor
@@ -126,23 +130,21 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                 Picasso.with(mContext)
                         // PosterPath from web
                         .load(fullMoviePosterForOneMovie)
-                        //.error(R.drawable.picasso_placeholder_error)
-                        //.placeholder(R.drawable.picasso_placeholder_loading)
+                        .error(R.drawable.picasso_placeholder_error)
+                        .placeholder(R.drawable.picasso_placeholder_loading)
                         .into(movieAdapterViewHolder.mMoviePosterImageView);
             }
 
         } else {
-            // setMoviePosterData();
-
             SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
             String orderBy = sharedPrefs.getString(
                     mContext.getString(R.string.settings_order_by_key),
                     mContext.getString(R.string.settings_order_by_default));
 
             if ("popular".equals(orderBy)) {
-                String[] projection = {CacheMovieMostPopularPosterEntry.COLUMN_POSTER_PATH};
+                String[] projection = {CacheMovieMostPopularEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH};
                 Cursor cursor = mContext.getContentResolver().query(
-                        CacheMovieMostPopularPosterEntry.CONTENT_URI,
+                        CacheMovieMostPopularEntry.CONTENT_URI,
                         projection,
                         null,
                         null,
@@ -150,20 +152,21 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                 if (cursor != null && cursor.getCount() > 0 && position < cursor.getCount()) {
                     cursor.moveToPosition(position);
                     String moviePosterForOneMovie = cursor
-                            .getString(cursor.getColumnIndex(CacheMovieMostPopularPosterEntry.COLUMN_POSTER_PATH));
+                            .getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH));
                     File pathToPic = new File(moviePosterForOneMovie);
                     Log.i(TAG, "Loading pic exists at " + moviePosterForOneMovie + " ? " + pathToPic.exists());
                     Picasso.with(mContext)
+                            // Load from external storage on the phone
                             .load(pathToPic)
                             .error(R.drawable.picasso_placeholder_error)
-                            //.placeholder(R.drawable.picasso_placeholder_loading)
+                            .placeholder(R.drawable.picasso_placeholder_loading)
                             .into(movieAdapterViewHolder.mMoviePosterImageView);
                 }
                 cursor.close();
             } else if ("top_rated".equals(orderBy)) {
-                String[] projection = {CacheMovieTopRatedPosterEntry.COLUMN_POSTER_PATH};
+                String[] projection = {CacheMovieTopRatedEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH};
                 Cursor cursor = mContext.getContentResolver().query(
-                        CacheMovieTopRatedPosterEntry.CONTENT_URI,
+                        CacheMovieTopRatedEntry.CONTENT_URI,
                         projection,
                         null,
                         null,
@@ -172,23 +175,50 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                     Log.i(TAG, "Cursor size: " + cursor.getCount() + ", moving to position: " + position);
                     cursor.moveToPosition(position);
                     String moviePosterForOneMovie = cursor
-                            .getString(cursor.getColumnIndex(CacheMovieTopRatedPosterEntry.COLUMN_POSTER_PATH));
+                            .getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH));
                     File pathToPic = new File(moviePosterForOneMovie);
                     Log.i(TAG, "Loading pic exists at " + moviePosterForOneMovie + " ? " + pathToPic.exists());
                     Picasso.with(mContext)
+                            // Load from external storage on the phone
                             .load(pathToPic)
                             .error(R.drawable.picasso_placeholder_error)
-                            //.placeholder(R.drawable.picasso_placeholder_loading)
+                            .placeholder(R.drawable.picasso_placeholder_loading)
                             .into(movieAdapterViewHolder.mMoviePosterImageView);
                 }
                 cursor.close();
             } else {
-                /******************************************************************************************
-                 * TODO: Favorite movie table needs to download pictures and restore in external storage. *
-                 * This function is not done.                                                             *
-                 ******************************************************************************************/
+                String[] projection = {MovieEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH};
+                Cursor cursor = mContext.getContentResolver().query(
+                        MovieEntry.CONTENT_URI,
+                        projection,
+                        null,
+                        null,
+                        null);
+                if (cursor != null && cursor.getCount() > 0 && position < cursor.getCount()) {
+                    Log.i(TAG, "Cursor size: " + cursor.getCount() + ", moving to position: " + position);
+                    cursor.moveToPosition(position);
+                    String moviePosterForOneMovie = cursor
+                            .getString(cursor.getColumnIndex(MovieEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH));
+                    File pathToPic = new File(moviePosterForOneMovie);
+                    Log.i(TAG, "Loading pic exists at " + moviePosterForOneMovie + " ? " + pathToPic.exists());
+                    Picasso.with(mContext)
+                            // Load from external storage on the phone
+                            .load(pathToPic)
+                            .error(R.drawable.picasso_placeholder_error)
+                            .placeholder(R.drawable.picasso_placeholder_loading)
+                            .into(movieAdapterViewHolder.mMoviePosterImageView);
+                }
+                cursor.close();
             }
         }
+    }
+
+    public boolean ismLoadFromDb() {
+        return mLoadFromDb;
+    }
+
+    public void setmLoadFromDb(boolean mLoadFromDb) {
+        this.mLoadFromDb = mLoadFromDb;
     }
 
     /**
@@ -198,28 +228,33 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
      */
     @Override
     public int getItemCount() {
-//        if (mMoviePostersUrlStrings == null) return 0;
-//        return mMoviePostersUrlStrings.length;
 
-        if (null == mCursor) {
-            return 0;
+        if (mLoadFromDb) {
+            if (null == mCursor) {
+                return 0;
+            }
+            return mCursor.getCount();
+        } else {
+            return mMoviePostersUrlStrings.size();
         }
-        return mCursor.getCount();
     }
 
     /**
      * This method is used to set the movie posters on a MovieAdapter from very first time of installing.
      * Without store any information, just to display the posters fast.
      */
-    public void setMoviePosterData(String[] moviePostersUrls) {
-        mMoviePostersUrlStrings = moviePostersUrls;
+    public void setMoviePosterData(ArrayList<String> moviePostersUrls) {
+        mLoadFromDb = false;
+        mMoviePostersUrlStrings.clear();
+        mMoviePostersUrlStrings.addAll(moviePostersUrls);
+        notifyDataSetChanged();
     }
 
     /**
      * The interface that receives onClick messages.
      */
     public interface MovieAdapterOnClickHandler {
-        void onClick(Movie currentMovie);
+        void onClick(FullMovie currentMovie);
 
     }
 
@@ -238,28 +273,77 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
         @Override
         public void onClick(View v) {
-            int adapterPosition = getAdapterPosition();
-            mCursor.moveToPosition(adapterPosition);
+            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+            String orderBy = sharedPrefs.getString(
+                    mContext.getString(R.string.settings_order_by_key),
+                    mContext.getString(R.string.settings_order_by_default));
 
-            String poster_path = mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH));
-            String original_title = mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE));
-            String movie_poster_image_thumbnail =
-                    mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
-            String a_plot_synopsis = mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_A_PLOT_SYNOPSIS));
-            String user_rating = mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_USER_RATING));
-            String release_date = mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_RELEASE_DATE));
-            String id = mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_MOVIE_ID));
+            if ("popular".equals(orderBy)) {
+                int adapterPosition = getAdapterPosition();
+                mCursor.moveToPosition(adapterPosition);
 
-            // Create a new {@link Movie} object with the poster_path, original_title,
-            // movie_poster_image_thumbnail, a_plot_synopsis, user_rating, release_date,id
-            // from the cursor response.
-            Movie currentMovieData = new Movie(poster_path, original_title, movie_poster_image_thumbnail
-                    , a_plot_synopsis, user_rating, release_date, id);
-            mClickHandler.onClick(currentMovieData);
+                String poster_path = mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH));
+                String original_title = mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE));
+                String movie_poster_image_thumbnail =
+                        mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
+                String a_plot_synopsis = mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_A_PLOT_SYNOPSIS));
+                String user_rating = mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_USER_RATING));
+                String release_date = mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_RELEASE_DATE));
+                String id = mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_MOVIE_ID));
+                String externalUrl = mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH));
+
+                // Create a new {@link Movie} object with the poster_path, original_title,
+                // movie_poster_image_thumbnail, a_plot_synopsis, user_rating, release_date,id
+                // from the cursor response.
+                FullMovie currentMovieData = new FullMovie(poster_path, original_title, movie_poster_image_thumbnail
+                        , a_plot_synopsis, user_rating, release_date, id, externalUrl);
+                mClickHandler.onClick(currentMovieData);
+            } else if ("top_rated".equals(orderBy)) {
+                int adapterPosition = getAdapterPosition();
+                mCursor.moveToPosition(adapterPosition);
+
+                String poster_path = mCursor.getString(mCursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_POSTER_PATH));
+                String original_title = mCursor.getString(mCursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_ORIGINAL_TITLE));
+                String movie_poster_image_thumbnail =
+                        mCursor.getString(mCursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
+                String a_plot_synopsis = mCursor.getString(mCursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_A_PLOT_SYNOPSIS));
+                String user_rating = mCursor.getString(mCursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_USER_RATING));
+                String release_date = mCursor.getString(mCursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_RELEASE_DATE));
+                String id = mCursor.getString(mCursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_MOVIE_ID));
+                String externalUrl = mCursor.getString(mCursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH));
+
+                // Create a new {@link Movie} object with the poster_path, original_title,
+                // movie_poster_image_thumbnail, a_plot_synopsis, user_rating, release_date,id
+                // from the cursor response.
+                FullMovie currentMovieData = new FullMovie(poster_path, original_title, movie_poster_image_thumbnail
+                        , a_plot_synopsis, user_rating, release_date, id, externalUrl);
+                mClickHandler.onClick(currentMovieData);
+            } else {
+                int adapterPosition = getAdapterPosition();
+                mCursor.moveToPosition(adapterPosition);
+
+                String poster_path = mCursor.getString(mCursor.getColumnIndex(MovieEntry.COLUMN_POSTER_PATH));
+                String original_title = mCursor.getString(mCursor.getColumnIndex(MovieEntry.COLUMN_ORIGINAL_TITLE));
+                String movie_poster_image_thumbnail =
+                        mCursor.getString(mCursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
+                String a_plot_synopsis = mCursor.getString(mCursor.getColumnIndex(MovieEntry.COLUMN_A_PLOT_SYNOPSIS));
+                String user_rating = mCursor.getString(mCursor.getColumnIndex(MovieEntry.COLUMN_USER_RATING));
+                String release_date = mCursor.getString(mCursor.getColumnIndex(MovieEntry.COLUMN_RELEASE_DATE));
+                String id = mCursor.getString(mCursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_ID));
+                String externalUrl = mCursor.getString(mCursor.getColumnIndex(MovieEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH));
+
+                // Create a new {@link Movie} object with the poster_path, original_title,
+                // movie_poster_image_thumbnail, a_plot_synopsis, user_rating, release_date,id
+                // from the cursor response.
+                FullMovie currentMovieData = new FullMovie(poster_path, original_title, movie_poster_image_thumbnail
+                        , a_plot_synopsis, user_rating, release_date, id, externalUrl);
+                mClickHandler.onClick(currentMovieData);
+            }
         }
     }
 
     public void swapCursor(Cursor newCursor) {
+        mLoadFromDb = true;
         mCursor = newCursor;
         notifyDataSetChanged();
     }

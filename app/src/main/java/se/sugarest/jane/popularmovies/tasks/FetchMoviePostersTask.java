@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -69,7 +70,7 @@ public class FetchMoviePostersTask extends AsyncTask<String, Void, List<Movie>> 
     protected void onPostExecute(List<Movie> movieData) {
         if (movieData != null) {
             int count = movieData.size();
-            String[] array = new String[count];
+            ArrayList<String> array = new ArrayList<>(count);
             SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.mainActivity);
             String orderBy = sharedPrefs.getString(
                     this.mainActivity.getString(R.string.settings_order_by_key),
@@ -79,16 +80,21 @@ public class FetchMoviePostersTask extends AsyncTask<String, Void, List<Movie>> 
                 for (int i = 0; i < count; i++) {
                     String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
                             .concat(movieData.get(i).getPosterPath());
-                    array[i] = fullMoviePosterForOneMovie;
+                    array.add(i, fullMoviePosterForOneMovie);
                 }
             } else {
                 for (int i = 0; i < count; i++) {
                     String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
                             .concat(movieData.get(i).getPosterPath());
-                    array[i] = fullMoviePosterForOneMovie;
+                    array.add(i, fullMoviePosterForOneMovie);
                 }
             }
+            this.mainActivity.getmLoadingIndicator().setVisibility(View.INVISIBLE);
+            // this.mainActivity.showMovieDataView();
+            Log.i(TAG, "Pass movie data to main activity: " + array.size());
             this.mainActivity.getmMovieAdapter().setMoviePosterData(array);
+            // this.mainActivity.getmMovieAdapter().notifyDataSetChanged();
+
         }
     }
 }

@@ -10,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,10 +20,12 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.Date;
+
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.MovieEntry;
-import se.sugarest.jane.popularmovies.movie.Movie;
+import se.sugarest.jane.popularmovies.movie.FullMovie;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter.MovieAdapterOnClickHandler;
 import se.sugarest.jane.popularmovies.tasks.FetchMoviePostersTask;
@@ -41,6 +44,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     private TextView mErrorMessageDisplay;
 
     private ProgressBar mLoadingIndicator;
+
+    private Date mPopLatestRefreshed;
+
+    private Date mTopLatestRefreshed;
 
     public MovieAdapter getmMovieAdapter() {
         return mMovieAdapter;
@@ -98,12 +105,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
          * The MovieAdapter is responsible for linking the movie posters data with the Views that
          * will end up displaying the posters data.
          */
-        mMovieAdapter = new MovieAdapter(this, this);
-
-        /**
-         * Setting the adapter attaches it to the RecyclerView in the layout.
-         */
-        mRecyclerView.setAdapter(mMovieAdapter);
+        if(mMovieAdapter == null){
+            mMovieAdapter = new MovieAdapter(this, this);
+            /**
+             * Setting the adapter attaches it to the RecyclerView in the layout.
+             */
+            mRecyclerView.setAdapter(mMovieAdapter);
+        }
 
         /**
          * The ProgressBar that will indicate to the user that we are loading data. It will be
@@ -119,18 +127,68 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
 
         // If there is a network connection, fetch data
         if (networkInfo != null && networkInfo.isConnected()) {
-            /**
-             * Because there are lots of background tasks happening in this app, we use these 2 methods
-             * to quickly load pictures first. So users won't wait for the first time they install the
-             * app. 
-             */
-            loadMoviePostersData();
 
-            /**
-             * Load movie data and store them in the database.
-             */
-            loadMovieData();
+//            Calendar calendar = Calendar.getInstance();
+//            Date currentTime = calendar.getTime();
+//            calendar.roll(Calendar.DATE, -1);
+//            Date oneDayAgoThisTime = calendar.getTime();
+//
+//            boolean refreshPop = false;
+//            boolean refreshTop = false;
+//
+//            String orderBy = getPreference();
+//            if ("popular".equals(orderBy)) {
+//                if (mPopLatestRefreshed == null) {
+//                    mPopLatestRefreshed = currentTime;
+//                    refreshPop = true;
+//                } else {
+//                    if (mPopLatestRefreshed.before(oneDayAgoThisTime)) {
+//                        refreshPop = true;
+//                    }
+//                }
+//            } else {
+//                if (mTopLatestRefreshed == null) {
+//                    mTopLatestRefreshed = currentTime;
+//                    refreshTop = true;
+//                } else {
+//                    if (mTopLatestRefreshed.before(oneDayAgoThisTime)) {
+//                        refreshTop = true;
+//                    }
+//                }
+//            }
+//
+//            this.mMovieAdapter.setmLoadFromDb(false);
+//
+//            /**
+//             * Because there are lots of background tasks happening in this app, we use these 2 methods
+//             * to quickly load pictures first. So users won't wait for the first time they install the
+//             * app.
+//             */
+//            if (refreshPop || refreshTop) {
+//                loadMoviePostersDataFromWeb();
+//                saveMovieDataToDb();
+//
+//                if (refreshPop) {
+//                    Log.i(TAG, "Refreshed and stored popular movies from net.");
+//                    mPopLatestRefreshed = currentTime;
+//                }
+//                if (refreshTop) {
+//                    Log.i(TAG, "Refreshed and stored top-rated movies from net.");
+//                    mTopLatestRefreshed = currentTime;
+//                }
+//            } else {
+//                Log.i(TAG, "Refreshed movies from net without storing.");
+//                loadMoviePostersDataFromWeb();
+//            }
+
+            loadMoviePostersDataFromWeb();
+            saveMovieDataToDb();
+
         } else {
+
+//            Log.i(TAG, "Loading data from DB.");
+//            this.mMovieAdapter.setmLoadFromDb(true);
+
             getLoaderManager().initLoader(MOVIE_LOADER, null, this);
         }
     }
@@ -150,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
 //            /**
 //             * Once all of the views are setup, movie data can be load.
 //             */
-//            loadMovieData();
+//            saveMovieDataToDb();
 //        }
 //    }
 
@@ -158,12 +216,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         getLoaderManager().initLoader(MOVIE_LOADER, null, this);
     }
 
-    private void loadMoviePostersData() {
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String orderBy = sharedPrefs.getString(
-                getString(R.string.settings_order_by_key),
-                getString(R.string.settings_order_by_default)
-        );
+    private void loadMoviePostersDataFromWeb() {
+        String orderBy = getPreference();
 
         if (!"favorites".equals(orderBy)) {
             orderBy = "movie/" + orderBy;
@@ -174,11 +228,20 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
 
     }
 
+    @NonNull
+    private String getPreference() {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPrefs.getString(
+                getString(R.string.settings_order_by_key),
+                getString(R.string.settings_order_by_default)
+        );
+    }
+
     /**
      * This method will get the user's preferred sortBy method for movies, and then tell some
      * background method to get the movie data in the background.
      */
-    private void loadMovieData() {
+    private void saveMovieDataToDb() {
 
         // showMovieDataView();
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -190,9 +253,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         if (!"favorites".equals(orderBy)) {
             orderBy = "movie/" + orderBy;
             new FetchMovieTask(this).execute(orderBy);
-        } else {
-            initCursorLoader();
         }
+//        else {
+//            initCursorLoader();
+//        }
 
 
 //        if ("favorites".equals(orderBy)) {
@@ -216,7 +280,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
      * clicks.
      */
     @Override
-    public void onClick(Movie movie) {
+    public void onClick(FullMovie movie) {
         Context context = this;
         Class destinationClass = DetailActivity.class;
         Intent intentToStartDetailActivity = new Intent(context, destinationClass);

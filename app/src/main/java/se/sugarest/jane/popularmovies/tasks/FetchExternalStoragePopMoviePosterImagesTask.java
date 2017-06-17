@@ -2,7 +2,6 @@ package se.sugarest.jane.popularmovies.tasks;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
@@ -17,7 +16,6 @@ import java.net.URL;
 
 import se.sugarest.jane.popularmovies.R;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
-import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularPosterEntry;
 import se.sugarest.jane.popularmovies.movie.MovieBasicInfo;
 
 /**
@@ -111,11 +109,10 @@ public class FetchExternalStoragePopMoviePosterImagesTask extends AsyncTask<Movi
     @Override
     protected void onPostExecute(String s) {
 
-        ContentValues values = new ContentValues();
-        values.put(CacheMovieMostPopularPosterEntry.COLUMN_POSTER_PATH, s);
-        Uri newUri = mContext.getContentResolver().insert(CacheMovieMostPopularPosterEntry.CONTENT_URI, values);
-        Log.i(TAG, "inserting uri: " + values + "result: " + newUri.toString());
-
+//        ContentValues values = new ContentValues();
+//        values.put(CacheMovieMostPopularPosterEntry.COLUMN_POSTER_PATH, s);
+//        Uri newUri = mContext.getContentResolver().insert(CacheMovieMostPopularPosterEntry.CONTENT_URI, values);
+//        Log.i(TAG, "inserting uri: " + values + "result: " + newUri.toString());
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(CacheMovieMostPopularEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH, s);
@@ -132,6 +129,5 @@ public class FetchExternalStoragePopMoviePosterImagesTask extends AsyncTask<Movi
         if (rowsUpdated > 0) {
             Log.i(TAG, "Insert external poster path into cache popular movie table successful.");
         }
-
     }
 }

@@ -8,13 +8,11 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
+import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.MovieEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.ReviewEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.TrailerEntry;
-import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
-import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedEntry;
-import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularPosterEntry;
-import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedPosterEntry;
 
 /**
  * Manages a local database for movie data
@@ -58,6 +56,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                          */
                         MovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         MovieEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
+                        MovieEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH + " TEXT NOT NULL, " +
                         MovieEntry.COLUMN_ORIGINAL_TITLE + " TEXT NOT NULL, " +
                         MovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL + " TEXT NOT NULL, " +
                         MovieEntry.COLUMN_A_PLOT_SYNOPSIS + " TEXT NOT NULL, " +
@@ -196,47 +195,47 @@ public class MovieDbHelper extends SQLiteOpenHelper {
          */
         sqLiteDatabase.execSQL(SQL_CREATE_CACHE_MOVIE_TOP_RATED_TABLE);
 
-         /*
-         * This String will contain a simple SQL statement that will create a table that will
-         * store the cache movie most popular poster data.
-         */
-        final String SQL_CREATE_CACHE_MOVIE_MOST_POPULAR_POSTER_TABLE =
-                "CREATE TABLE " + CacheMovieMostPopularPosterEntry.TABLE_NAME + " (" +
-                        /**
-                         * CacheMovieMostPopularPosterEntry did not explicitly declare a column called "_ID". However,
-                         * CacheMovieMostPopularPosterEntry implements the interface, "BaseColumns", which does have a field
-                         * named "_ID". We use that here to designate our table's primary key.
-                         */
-                        CacheMovieMostPopularPosterEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        CacheMovieMostPopularPosterEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
-                        " UNIQUE (" + CacheMovieMostPopularPosterEntry.COLUMN_POSTER_PATH + ") ON CONFLICT REPLACE);";
-
-        /*
-         * After spelling out the SQLite table creation statement above, actually execute
-         * that SQL with the execSQL method of the SQLite database object.
-         */
-        sqLiteDatabase.execSQL(SQL_CREATE_CACHE_MOVIE_MOST_POPULAR_POSTER_TABLE);
-
-        /*
-         * This String will contain a simple SQL statement that will create a table that will
-         * store the cache movie top rated poster data.
-         */
-        final String SQL_CREATE_CACHE_MOVIE_TOP_RATED_POSTER_TABLE =
-                "CREATE TABLE " + CacheMovieTopRatedPosterEntry.TABLE_NAME + " (" +
-                        /**
-                         * CacheMovieTopRatedPosterEntry did not explicitly declare a column called "_ID". However,
-                         * CacheMovieTopRatedPosterEntry implements the interface, "BaseColumns", which does have a field
-                         * named "_ID". We use that here to designate our table's primary key.
-                         */
-                        CacheMovieTopRatedPosterEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        CacheMovieTopRatedPosterEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
-                        " UNIQUE (" + CacheMovieTopRatedPosterEntry.COLUMN_POSTER_PATH + ") ON CONFLICT REPLACE);";
-
-        /*
-         * After spelling out the SQLite table creation statement above, actually execute
-         * that SQL with the execSQL method of the SQLite database object.
-         */
-        sqLiteDatabase.execSQL(SQL_CREATE_CACHE_MOVIE_TOP_RATED_POSTER_TABLE);
+//         /*
+//         * This String will contain a simple SQL statement that will create a table that will
+//         * store the cache movie most popular poster data.
+//         */
+//        final String SQL_CREATE_CACHE_MOVIE_MOST_POPULAR_POSTER_TABLE =
+//                "CREATE TABLE " + CacheMovieMostPopularPosterEntry.TABLE_NAME + " (" +
+//                        /**
+//                         * CacheMovieMostPopularPosterEntry did not explicitly declare a column called "_ID". However,
+//                         * CacheMovieMostPopularPosterEntry implements the interface, "BaseColumns", which does have a field
+//                         * named "_ID". We use that here to designate our table's primary key.
+//                         */
+//                        CacheMovieMostPopularPosterEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+//                        CacheMovieMostPopularPosterEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
+//                        " UNIQUE (" + CacheMovieMostPopularPosterEntry.COLUMN_POSTER_PATH + ") ON CONFLICT REPLACE);";
+//
+//        /*
+//         * After spelling out the SQLite table creation statement above, actually execute
+//         * that SQL with the execSQL method of the SQLite database object.
+//         */
+//        sqLiteDatabase.execSQL(SQL_CREATE_CACHE_MOVIE_MOST_POPULAR_POSTER_TABLE);
+//
+//        /*
+//         * This String will contain a simple SQL statement that will create a table that will
+//         * store the cache movie top rated poster data.
+//         */
+//        final String SQL_CREATE_CACHE_MOVIE_TOP_RATED_POSTER_TABLE =
+//                "CREATE TABLE " + CacheMovieTopRatedPosterEntry.TABLE_NAME + " (" +
+//                        /**
+//                         * CacheMovieTopRatedPosterEntry did not explicitly declare a column called "_ID". However,
+//                         * CacheMovieTopRatedPosterEntry implements the interface, "BaseColumns", which does have a field
+//                         * named "_ID". We use that here to designate our table's primary key.
+//                         */
+//                        CacheMovieTopRatedPosterEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+//                        CacheMovieTopRatedPosterEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
+//                        " UNIQUE (" + CacheMovieTopRatedPosterEntry.COLUMN_POSTER_PATH + ") ON CONFLICT REPLACE);";
+//
+//        /*
+//         * After spelling out the SQLite table creation statement above, actually execute
+//         * that SQL with the execSQL method of the SQLite database object.
+//         */
+//        sqLiteDatabase.execSQL(SQL_CREATE_CACHE_MOVIE_TOP_RATED_POSTER_TABLE);
     }
 
     @Override

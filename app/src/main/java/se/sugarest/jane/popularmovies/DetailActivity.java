@@ -33,7 +33,7 @@ import se.sugarest.jane.popularmovies.data.MovieContract.ReviewEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.TrailerEntry;
 import se.sugarest.jane.popularmovies.data.MovieDbHelper;
 import se.sugarest.jane.popularmovies.databinding.ActivityDetailBinding;
-import se.sugarest.jane.popularmovies.movie.Movie;
+import se.sugarest.jane.popularmovies.movie.FullMovie;
 import se.sugarest.jane.popularmovies.review.Review;
 import se.sugarest.jane.popularmovies.review.ReviewAdapter;
 import se.sugarest.jane.popularmovies.tasks.FetchReviewTask;
@@ -78,7 +78,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     private final String BASE_YOUTUBE_URL_APP = "vnd.youtube:";
     private final String BASE_YOUTUBE_URL_WEB = "http://www.youtube.com/watch?v=";
 
-    private Movie mCurrentMovie;
+    private FullMovie mCurrentMovie;
 
     private List<Review> mCurrentMovieReviews;
 
@@ -157,16 +157,16 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         Intent intentThatStartedThisActivity = getIntent();
         if (intentThatStartedThisActivity != null) {
             if (intentThatStartedThisActivity.hasExtra("movie")) {
-                mCurrentMovie = (Movie) getIntent().getExtras().getSerializable("movie");
+                mCurrentMovie = (FullMovie) getIntent().getExtras().getSerializable("movie");
             }
         }
 
         // Set current movie original title on the detail activity menu bar as activity's title.
-        setTitle(mCurrentMovie.getOriginalTitle());
+        setTitle(mCurrentMovie.getmOriginalTitle());
 
         // Set current movie poster image thumbnail
         String currentMoviePosterImageThumbnail = BASE_IMAGE_URL.concat(IMAGE_SIZE_W780)
-                .concat(mCurrentMovie.getMoviePosterImageThumbnail());
+                .concat(mCurrentMovie.getmMoviePosterImageThumbnail());
 
         Picasso.with(DetailActivity.this)
                 .load(currentMoviePosterImageThumbnail)
@@ -175,9 +175,9 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                 .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
 
         // Set current movie textViews content
-        mDetailBinding.primaryInfo.tvUserRating.setText(mCurrentMovie.getUserRating());
-        mDetailBinding.primaryInfo.tvReleaseDate.setText(mCurrentMovie.getReleaseDate());
-        mDetailBinding.primaryInfo.tvAPlotSynopsis.setText(mCurrentMovie.getAPlotSynopsis());
+        mDetailBinding.primaryInfo.tvUserRating.setText(mCurrentMovie.getmUserRating());
+        mDetailBinding.primaryInfo.tvReleaseDate.setText(mCurrentMovie.getmReleaseDate());
+        mDetailBinding.primaryInfo.tvAPlotSynopsis.setText(mCurrentMovie.getmAPlotSynopsis());
 
         // To access the database, instantiate the subclass of SQLiteOpenHelper
         // and pass the context, which is the current activity.
@@ -215,7 +215,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         /**
          * Once all of the views are setup, review data can be load.
          */
-        loadReviewData(mCurrentMovie.getId());
+        loadReviewData(mCurrentMovie.getmId());
 
         LinearLayoutManager layoutManagerTrailers = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,
                 false);
@@ -238,7 +238,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         /**
          * Once all of the views are setup, trailer data can be load.
          */
-        loadTrailerData(mCurrentMovie.getId());
+        loadTrailerData(mCurrentMovie.getmId());
 
         // Setup fab_favorite to add favorite movies into database and change FAB color to yellow
         View primaryLayout = findViewById(R.id.primary_info);
@@ -413,16 +413,18 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
      * Save movie into database.
      */
     private void saveFavoriteMovie() {
+
         // Create a ContentValues object where column names are the keys, and current movie
         // attributes are the values.
         ContentValues values = new ContentValues();
-        values.put(MovieEntry.COLUMN_POSTER_PATH, mCurrentMovie.getPosterPath());
-        values.put(MovieEntry.COLUMN_ORIGINAL_TITLE, mCurrentMovie.getOriginalTitle());
-        values.put(MovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL, mCurrentMovie.getMoviePosterImageThumbnail());
-        values.put(MovieEntry.COLUMN_A_PLOT_SYNOPSIS, mCurrentMovie.getAPlotSynopsis());
-        values.put(MovieEntry.COLUMN_USER_RATING, mCurrentMovie.getUserRating());
-        values.put(MovieEntry.COLUMN_RELEASE_DATE, mCurrentMovie.getReleaseDate());
-        values.put(MovieEntry.COLUMN_MOVIE_ID, mCurrentMovie.getId());
+        values.put(MovieEntry.COLUMN_POSTER_PATH, mCurrentMovie.getmPosterPath());
+        values.put(MovieEntry.COLUMN_ORIGINAL_TITLE, mCurrentMovie.getmOriginalTitle());
+        values.put(MovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL, mCurrentMovie.getmMoviePosterImageThumbnail());
+        values.put(MovieEntry.COLUMN_A_PLOT_SYNOPSIS, mCurrentMovie.getmAPlotSynopsis());
+        values.put(MovieEntry.COLUMN_USER_RATING, mCurrentMovie.getmUserRating());
+        values.put(MovieEntry.COLUMN_RELEASE_DATE, mCurrentMovie.getmReleaseDate());
+        values.put(MovieEntry.COLUMN_MOVIE_ID, mCurrentMovie.getmId());
+        values.put(MovieEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH, mCurrentMovie.getmExternalUrl());
 
         // Insert a new movie into the provider, returning the content URI for the new movie.
         Uri newUri = getContentResolver().insert(MovieEntry.CONTENT_URI, values);
@@ -444,7 +446,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
 
         for (int i = 0; i < Integer.valueOf(mNumberOfReviewString); i++) {
             ContentValues values = new ContentValues();
-            values.put(ReviewEntry.COLUMN_MOVIE_ID, mCurrentMovie.getId());
+            values.put(ReviewEntry.COLUMN_MOVIE_ID, mCurrentMovie.getmId());
             values.put(ReviewEntry.COLUMN_AUTHOR, mCurrentMovieReviews.get(i).getAuthor());
             values.put(ReviewEntry.COLUMN_REVIEW_CONTENT, mCurrentMovieReviews.get(i).getReviewContent());
 
@@ -467,7 +469,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
 
         for (int i = 0; i < Integer.valueOf(mNumberOfTrailerString); i++) {
             ContentValues values = new ContentValues();
-            values.put(TrailerEntry.COLUMN_MOVIE_ID, mCurrentMovie.getId());
+            values.put(TrailerEntry.COLUMN_MOVIE_ID, mCurrentMovie.getmId());
             values.put(TrailerEntry.COLUMN_KEY_OF_TRAILER, mCurrentMovieTrailers.get(i).getKeyString());
 
             Uri newUri = getContentResolver().insert(TrailerEntry.CONTENT_URI, values);
@@ -487,7 +489,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
      */
     private void deleteFavoriteMovie() {
         String selection = MovieEntry.COLUMN_MOVIE_ID;
-        String[] selectionArgs = {mCurrentMovie.getId()};
+        String[] selectionArgs = {mCurrentMovie.getmId()};
         int rowsDeleted = getContentResolver().delete(MovieEntry.CONTENT_URI, selection, selectionArgs);
 
         if (rowsDeleted == 0) {
@@ -504,7 +506,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
      */
     private void deleteFavoriteReview() {
         String selection = ReviewEntry.COLUMN_MOVIE_ID;
-        String[] selectionArgs = {mCurrentMovie.getId()};
+        String[] selectionArgs = {mCurrentMovie.getmId()};
         int rowsDeleted = getContentResolver().delete(ReviewEntry.CONTENT_URI, selection, selectionArgs);
 
         if (rowsDeleted == 0) {
@@ -521,7 +523,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
      */
     private void deleteFavoriteTrailer() {
         String selection = TrailerEntry.COLUMN_MOVIE_ID;
-        String[] selectionArgs = {mCurrentMovie.getId()};
+        String[] selectionArgs = {mCurrentMovie.getmId()};
         int rowsDeleted = getContentResolver().delete(TrailerEntry.CONTENT_URI, selection, selectionArgs);
 
         if (rowsDeleted == 0) {
@@ -614,7 +616,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     public int setFabButtonStarColor() {
         int colorOfStar = R.color.colorWhiteFavoriteStar;
         try {
-            boolean movieIsInDatabase = checkIsMovieAlreadyInFavDatabase(mCurrentMovie.getId());
+            boolean movieIsInDatabase = checkIsMovieAlreadyInFavDatabase(mCurrentMovie.getmId());
             if (movieIsInDatabase) {
                 colorOfStar = R.color.colorYellowFavoriteStar;
             }
