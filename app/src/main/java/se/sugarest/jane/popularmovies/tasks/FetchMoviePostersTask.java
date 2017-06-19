@@ -3,6 +3,7 @@ package se.sugarest.jane.popularmovies.tasks;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 
@@ -71,11 +72,9 @@ public class FetchMoviePostersTask extends AsyncTask<String, Void, List<Movie>> 
         if (movieData != null) {
             int count = movieData.size();
             ArrayList<String> array = new ArrayList<>(count);
-            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.mainActivity);
-            String orderBy = sharedPrefs.getString(
-                    this.mainActivity.getString(R.string.settings_order_by_key),
-                    this.mainActivity.getString(R.string.settings_order_by_default)
-            );
+
+            String orderBy = getPreference();
+
             if ("popular".equals(orderBy)) {
                 for (int i = 0; i < count; i++) {
                     String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
@@ -90,11 +89,20 @@ public class FetchMoviePostersTask extends AsyncTask<String, Void, List<Movie>> 
                 }
             }
             this.mainActivity.getmLoadingIndicator().setVisibility(View.INVISIBLE);
-            // this.mainActivity.showMovieDataView();
+            this.mainActivity.showMovieDataView();
             Log.i(TAG, "Pass movie data to main activity: " + array.size());
             this.mainActivity.getmMovieAdapter().setMoviePosterData(array);
             // this.mainActivity.getmMovieAdapter().notifyDataSetChanged();
 
         }
+    }
+
+    @NonNull
+    private String getPreference() {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.mainActivity);
+        return sharedPrefs.getString(
+                this.mainActivity.getString(R.string.settings_order_by_key),
+                this.mainActivity.getString(R.string.settings_order_by_default)
+        );
     }
 }

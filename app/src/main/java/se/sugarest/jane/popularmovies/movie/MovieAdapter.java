@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -100,19 +101,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     @Override
     public void onBindViewHolder(MovieAdapterViewHolder movieAdapterViewHolder, int position) {
 
-
-        // Get a reference to the ConnectivityManager to check state of network connectivity.
-        ConnectivityManager connMgr = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        // Get details on the currently active default data network
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
+        NetworkInfo networkInfo = getNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
 
-            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-            String orderBy = sharedPrefs.getString(
-                    mContext.getString(R.string.settings_order_by_key),
-                    mContext.getString(R.string.settings_order_by_default)
-            );
+            String orderBy = getPreference();
 
             if (!"favorites".equals(orderBy)) {
                 String moviePosterForOneMovie = mMoviePostersUrlStrings.get(position);
@@ -126,7 +118,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                         .getColumnIndex(MovieEntry.COLUMN_POSTER_PATH));
                 String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
                         .concat(moviePosterForOneMovie);
-
                 Picasso.with(mContext)
                         // PosterPath from web
                         .load(fullMoviePosterForOneMovie)
@@ -134,13 +125,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                         .placeholder(R.drawable.picasso_placeholder_loading)
                         .into(movieAdapterViewHolder.mMoviePosterImageView);
             }
-
         } else {
-            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-            String orderBy = sharedPrefs.getString(
-                    mContext.getString(R.string.settings_order_by_key),
-                    mContext.getString(R.string.settings_order_by_default));
-
+            String orderBy = getPreference();
             if ("popular".equals(orderBy)) {
                 String[] projection = {CacheMovieMostPopularEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH};
                 Cursor cursor = mContext.getContentResolver().query(
@@ -273,10 +259,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
         @Override
         public void onClick(View v) {
-            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-            String orderBy = sharedPrefs.getString(
-                    mContext.getString(R.string.settings_order_by_key),
-                    mContext.getString(R.string.settings_order_by_default));
+            String orderBy = getPreference();
 
             if ("popular".equals(orderBy)) {
                 int adapterPosition = getAdapterPosition();
@@ -350,6 +333,22 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
     public Cursor getCursor() {
         return mCursor;
+    }
+
+    @NonNull
+    private String getPreference() {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+        return sharedPrefs.getString(
+                mContext.getString(R.string.settings_order_by_key),
+                mContext.getString(R.string.settings_order_by_default)
+        );
+    }
+
+    private NetworkInfo getNetworkInfo() {
+        // Get a reference to the ConnectivityManager to check state of network connectivity.
+        ConnectivityManager connMgr = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        // Get details on the currently active default data network
+        return connMgr.getActiveNetworkInfo();
     }
 
 }

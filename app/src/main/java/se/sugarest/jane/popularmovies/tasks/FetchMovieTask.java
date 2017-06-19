@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 
@@ -75,11 +76,8 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<Movie>> {
     protected void onPostExecute(List<Movie> movieData) {
 
         if (movieData != null) {
-            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.mainActivity);
-            String orderBy = sharedPrefs.getString(
-                    this.mainActivity.getString(R.string.settings_order_by_key),
-                    this.mainActivity.getString(R.string.settings_order_by_default)
-            );
+
+            String orderBy = getPreference();
 
             if ("popular".equals(orderBy)) {
 
@@ -206,5 +204,14 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<Movie>> {
         }
 
         this.mainActivity.initCursorLoader();
+    }
+
+    @NonNull
+    private String getPreference() {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.mainActivity);
+        return sharedPrefs.getString(
+                this.mainActivity.getString(R.string.settings_order_by_key),
+                this.mainActivity.getString(R.string.settings_order_by_default)
+        );
     }
 }
