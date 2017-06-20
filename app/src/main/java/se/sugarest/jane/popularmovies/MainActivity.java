@@ -14,12 +14,15 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
@@ -35,6 +38,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
+    private final String IMAGE_SIZE_W185 = "w185/";
+
     public static final int MOVIE_LOADER = 0;
 
     private RecyclerView mRecyclerView;
@@ -44,10 +50,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     private TextView mErrorMessageDisplay;
 
     private ProgressBar mLoadingIndicator;
-
-    private Date mPopLatestRefreshed;
-
-    private Date mTopLatestRefreshed;
 
     public MovieAdapter getmMovieAdapter() {
         return mMovieAdapter;
@@ -122,65 +124,77 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         // If there is a network connection, fetch data
         if (getNetworkInfo() != null && getNetworkInfo().isConnected()) {
 
-//            Calendar calendar = Calendar.getInstance();
-//            Date currentTime = calendar.getTime();
-//            calendar.roll(Calendar.DATE, -1);
-//            Date oneDayAgoThisTime = calendar.getTime();
-//
-//            boolean refreshPop = false;
-//            boolean refreshTop = false;
-//
-//            String orderBy = getPreference();
-//            if ("popular".equals(orderBy)) {
-//                if (mPopLatestRefreshed == null) {
-//                    mPopLatestRefreshed = currentTime;
-//                    refreshPop = true;
-//                } else {
-//                    if (mPopLatestRefreshed.before(oneDayAgoThisTime)) {
-//                        refreshPop = true;
-//                    }
-//                }
-//            } else {
-//                if (mTopLatestRefreshed == null) {
-//                    mTopLatestRefreshed = currentTime;
-//                    refreshTop = true;
-//                } else {
-//                    if (mTopLatestRefreshed.before(oneDayAgoThisTime)) {
-//                        refreshTop = true;
-//                    }
-//                }
-//            }
-//
-//            this.mMovieAdapter.setmLoadFromDb(false);
-//
-//            /**
-//             * Because there are lots of background tasks happening in this app, we use these 2 methods
-//             * to quickly load pictures first. So users won't wait for the first time they install the
-//             * app.
-//             */
-//            if (refreshPop || refreshTop) {
-//                loadMoviePostersDataFromWeb();
-//                saveMovieDataToDb();
-//
-//                if (refreshPop) {
-//                    Log.i(TAG, "Refreshed and stored popular movies from net.");
-//                    mPopLatestRefreshed = currentTime;
-//                }
-//                if (refreshTop) {
-//                    Log.i(TAG, "Refreshed and stored top-rated movies from net.");
-//                    mTopLatestRefreshed = currentTime;
-//                }
-//            } else {
-//                Log.i(TAG, "Refreshed movies from net without storing.");
-//                loadMoviePostersDataFromWeb();
-//            }
+            Calendar calendar = Calendar.getInstance();
+            Date currentTime = calendar.getTime();
+            calendar.roll(Calendar.MINUTE, -10);
+            Date tenMinAgoThisTime = calendar.getTime();
 
             String orderBy = getPreference();
 
             if (!"favorites".equals(orderBy)) {
-                orderBy = "movie/" + orderBy;
-                new FetchMoviePostersTask(this).execute(orderBy);
-                new PersistMovieTask(this).execute(orderBy);
+
+                boolean refreshPop = false;
+                boolean refreshTop = false;
+
+
+                if ("popular".equals(orderBy)) {
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+                    Long default_time = new Date().getTime();
+                    long mPopLatestRefreshed = preferences.getLong
+                            (getString(R.string.pref_pop_date_key), default_time);
+
+
+                    if (mPopLatestRefreshed == default_time) {
+                        refreshPop = true;
+                    } else {
+                        if (new Date(mPopLatestRefreshed).before(tenMinAgoThisTime)) {
+                            refreshPop = true;
+                        }
+                    }
+                } else {
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+                    Long default_time = new Date().getTime();
+                    long mTopLatestRefreshed = preferences.getLong
+                            (getString(R.string.pref_top_date_key), default_time);
+
+                    if (mTopLatestRefreshed == default_time) {
+                        refreshTop = true;
+                    } else {
+                        if (new Date(mTopLatestRefreshed).before(tenMinAgoThisTime)) {
+                            refreshTop = true;
+                        }
+                    }
+                }
+
+                if (refreshPop || refreshTop) {
+                    orderBy = "movie/" + orderBy;
+                    new FetchMoviePostersTask(this).execute(orderBy);
+                    new PersistMovieTask(this).execute(orderBy);
+
+                    if (refreshPop) {
+                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putLong(getString(R.string.pref_pop_date_key), currentTime.getTime());
+                        editor.apply();
+
+                        Log.i(TAG, "Refreshed and stored popular movies from net.");
+                    }
+                    if (refreshTop) {
+                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putLong(getString(R.string.pref_top_date_key), currentTime.getTime());
+                        editor.apply();
+                        Log.i(TAG, "Refreshed and stored top-rated movies from net.");
+                    }
+                } else {
+//                    orderBy = "movie/" + orderBy;
+//                    new FetchMoviePostersTask(this).execute(orderBy);
+//                    Log.i(TAG, "Refreshed movies from net without storing.");
+//                    ArrayList<String> moviePostersUrlStrings = getPosterImagesHttpUrlsFromDatabase();
+//                    mMovieAdapter.setMoviePosterData(moviePostersUrlStrings);
+                    initCursorLoader();
+                }
+
             } else {
                 initCursorLoader();
             }
@@ -329,6 +343,54 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
 
     public void restartLoader() {
         getLoaderManager().restartLoader(MOVIE_LOADER, null, this);
+    }
+
+
+    private ArrayList<String> getPosterImagesHttpUrlsFromDatabase() {
+        String orderBy = getPreference();
+        if ("popular".equals(orderBy)) {
+            String[] projection = {CacheMovieMostPopularEntry.COLUMN_POSTER_PATH};
+            Cursor cursor = getContentResolver().query(
+                    CacheMovieMostPopularEntry.CONTENT_URI,
+                    projection,
+                    null,
+                    null,
+                    null);
+            ArrayList<String> array = new ArrayList<>(cursor.getCount());
+            if (cursor != null && cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                while (!cursor.isAfterLast()) {
+                    String post_path = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH));
+                    String full_post_path = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
+                            .concat(post_path);
+                    array.add(full_post_path);
+                    cursor.moveToNext();
+                }
+                cursor.close();
+            }
+            return array;
+        } else {
+            String[] projection = {CacheMovieTopRatedEntry.COLUMN_POSTER_PATH};
+            Cursor cursor = getContentResolver().query(
+                    CacheMovieTopRatedEntry.CONTENT_URI,
+                    projection,
+                    null,
+                    null,
+                    null);
+            ArrayList<String> array = new ArrayList<>(cursor.getCount());
+            if (cursor != null && cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                while (!cursor.isAfterLast()) {
+                    String post_path = cursor.getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_POSTER_PATH));
+                    String full_post_path = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
+                            .concat(post_path);
+                    array.add(full_post_path);
+                    cursor.moveToNext();
+                }
+                cursor.close();
+            }
+            return array;
+        }
     }
 
     @NonNull

@@ -108,11 +108,40 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
             String orderBy = getPreference();
 
             if (!"favorites".equals(orderBy)) {
-                String moviePosterForOneMovie = mMoviePostersUrlStrings.get(position);
-                Picasso.with(mContext)
-                        .load(moviePosterForOneMovie)
-                        .error(R.drawable.picasso_placeholder_error)
-                        .placeholder(R.drawable.picasso_placeholder_loading).into(movieAdapterViewHolder.mMoviePosterImageView);
+                if (mLoadFromDb == false) {
+                    String moviePosterForOneMovie = mMoviePostersUrlStrings.get(position);
+                    Picasso.with(mContext)
+                            .load(moviePosterForOneMovie)
+                            .error(R.drawable.picasso_placeholder_error)
+                            .placeholder(R.drawable.picasso_placeholder_loading).into(movieAdapterViewHolder.mMoviePosterImageView);
+                } else {
+                    if ("popular".equals(orderBy)) {
+                        mCursor.moveToPosition(position);
+                        String moviePosterForOneMovie = mCursor.getString(mCursor
+                                .getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH));
+                        String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
+                                .concat(moviePosterForOneMovie);
+                        Picasso.with(mContext)
+                                // PosterPath from web
+                                .load(fullMoviePosterForOneMovie)
+                                .error(R.drawable.picasso_placeholder_error)
+                                .placeholder(R.drawable.picasso_placeholder_loading)
+                                .into(movieAdapterViewHolder.mMoviePosterImageView);
+                    } else {
+                        mCursor.moveToPosition(position);
+                        String moviePosterForOneMovie = mCursor.getString(mCursor
+                                .getColumnIndex(CacheMovieTopRatedEntry.COLUMN_POSTER_PATH));
+                        String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
+                                .concat(moviePosterForOneMovie);
+                        Picasso.with(mContext)
+                                // PosterPath from web
+                                .load(fullMoviePosterForOneMovie)
+                                .error(R.drawable.picasso_placeholder_error)
+                                .placeholder(R.drawable.picasso_placeholder_loading)
+                                .into(movieAdapterViewHolder.mMoviePosterImageView);
+                    }
+                }
+
             } else {
                 mCursor.moveToPosition(position);
                 String moviePosterForOneMovie = mCursor.getString(mCursor
