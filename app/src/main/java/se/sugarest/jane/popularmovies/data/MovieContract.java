@@ -10,7 +10,7 @@ import android.provider.BaseColumns;
 
 /**
  * Defines tables and column names for the movie database.
- * It contains MovieEntry, ReviewEntry and TrailerEntry.
+ * It contains FavMovieEntry, ReviewEntry and TrailerEntry.
  */
 public class MovieContract {
 
@@ -59,7 +59,7 @@ public class MovieContract {
     /**
      * Inner class that defines the table contents of the movie table.
      */
-    public static final class MovieEntry implements BaseColumns {
+    public static final class FavMovieEntry implements BaseColumns {
 
         /* The base CONTENT_URI used to query the Movie table from the content provider */
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
@@ -104,7 +104,6 @@ public class MovieContract {
          */
         public static final String COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL
                 = "movie_poster_image_thumbnail";
-
         /**
          * APlotSynopsis is stored as a String representing movie's plot synopsis.
          */
@@ -254,6 +253,12 @@ public class MovieContract {
                 = "movie_poster_image_thumbnail";
 
         /**
+         * External Storage image thumbnail is stored as a String representing movie's external image
+         * thumbnail path url, used for display on detail screen when it is offline.
+         */
+        public static final String COLUMN_EXTERNAL_STORAGE_IMAGE_THUMBNAIL = "external_storage_image_thumbnail";
+
+        /**
          * APlotSynopsis is stored as a String representing movie's plot synopsis.
          */
         public static final String COLUMN_A_PLOT_SYNOPSIS = "a_plot_synopsis";
@@ -324,6 +329,12 @@ public class MovieContract {
                 = "movie_poster_image_thumbnail";
 
         /**
+         * External Storage image thumbnail is stored as a String representing movie's external image
+         * thumbnail path url, used for display on detail screen when it is offline.
+         */
+        public static final String COLUMN_EXTERNAL_STORAGE_IMAGE_THUMBNAIL = "external_storage_image_thumbnail";
+
+        /**
          * APlotSynopsis is stored as a String representing movie's plot synopsis.
          */
         public static final String COLUMN_A_PLOT_SYNOPSIS = "a_plot_synopsis";
@@ -343,68 +354,4 @@ public class MovieContract {
          */
         public static final String COLUMN_MOVIE_ID = "movie_id";
     }
-
-//    /**
-//     * Inner class that defines the table contents of the cache movie most popular poster table.
-//     */
-//    public static final class CacheMovieMostPopularPosterEntry implements BaseColumns {
-//
-//        /* The base CONTENT_URI used to query the cache movie most popular poster table from the content provider */
-//        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
-//                .appendPath(PATH_CACHE_MOVIE_MOST_POPULAR_POSTER)
-//                .build();
-//
-//        /**
-//         * The MIME type of the {@link #CONTENT_URI} for a list of movie posters.
-//         */
-//        public static final String CONTENT_LIST_TYPE =
-//                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_CACHE_MOVIE_MOST_POPULAR_POSTER;
-//
-//        /**
-//         * The MIME type of the {@link #CONTENT_URI} for a single movie poster.
-//         */
-//        public static final String CONTENT_ITEM_TYPE =
-//                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_CACHE_MOVIE_MOST_POPULAR_POSTER;
-//
-//        /* Used internally as the name of the cache movie most popular poster table. */
-//        public static final String TABLE_NAME = "cache_movie_most_popular_poster";
-//
-//        /**
-//         * PosterPath is stored as a String representing movie's extertal storage poster_path url, used for
-//         * display on main screen when user setting sortOrder by most popular.
-//         */
-//        public static final String COLUMN_POSTER_PATH = "external_storage_poster_path";
-//    }
-
-//    /**
-//     * Inner class that defines the table contents of the cache movie top rated poster table.
-//     */
-//    public static final class CacheMovieTopRatedPosterEntry implements BaseColumns {
-//
-//        /* The base CONTENT_URI used to query the cache movie top rated poster table from the content provider */
-//        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
-//                .appendPath(PATH_CACHE_MOVIE_TOP_RATED_POSTER)
-//                .build();
-//
-//        /**
-//         * The MIME type of the {@link #CONTENT_URI} for a list of movie posters.
-//         */
-//        public static final String CONTENT_LIST_TYPE =
-//                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_CACHE_MOVIE_TOP_RATED_POSTER;
-//
-//        /**
-//         * The MIME type of the {@link #CONTENT_URI} for a single movie poster.
-//         */
-//        public static final String CONTENT_ITEM_TYPE =
-//                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_CACHE_MOVIE_TOP_RATED_POSTER;
-//
-//        /* Used internally as the name of the cache movie top rated poster table. */
-//        public static final String TABLE_NAME = "cache_movie_top_rated_poster";
-//
-//        /**
-//         * PosterPath is stored as a String representing movie's extertal storage poster_path url, used for
-//         * display on main screen when user setting sortOrder by most popular.
-//         */
-//        public static final String COLUMN_POSTER_PATH = "external_storage_poster_path";
-//    }
 }

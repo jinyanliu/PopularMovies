@@ -24,7 +24,7 @@ import se.sugarest.jane.popularmovies.movie.MovieBasicInfo;
 
 public class FetchExternalStoragePopMoviePosterImagesTask extends AsyncTask<MovieBasicInfo, Void, String> {
 
-    Context mContext;
+    private Context mContext;
 
     public FetchExternalStoragePopMoviePosterImagesTask(Context context) {
         mContext = context;
@@ -108,11 +108,6 @@ public class FetchExternalStoragePopMoviePosterImagesTask extends AsyncTask<Movi
 
     @Override
     protected void onPostExecute(String s) {
-
-//        ContentValues values = new ContentValues();
-//        values.put(CacheMovieMostPopularPosterEntry.COLUMN_POSTER_PATH, s);
-//        Uri newUri = mContext.getContentResolver().insert(CacheMovieMostPopularPosterEntry.CONTENT_URI, values);
-//        Log.i(TAG, "inserting uri: " + values + "result: " + newUri.toString());
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(CacheMovieMostPopularEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH, s);

@@ -28,7 +28,8 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-import se.sugarest.jane.popularmovies.data.MovieContract.MovieEntry;
+import se.sugarest.jane.popularmovies.data.MovieContract;
+import se.sugarest.jane.popularmovies.data.MovieContract.FavMovieEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.ReviewEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.TrailerEntry;
 import se.sugarest.jane.popularmovies.data.MovieDbHelper;
@@ -417,17 +418,17 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         // Create a ContentValues object where column names are the keys, and current movie
         // attributes are the values.
         ContentValues values = new ContentValues();
-        values.put(MovieEntry.COLUMN_POSTER_PATH, mCurrentMovie.getmPosterPath());
-        values.put(MovieEntry.COLUMN_ORIGINAL_TITLE, mCurrentMovie.getmOriginalTitle());
-        values.put(MovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL, mCurrentMovie.getmMoviePosterImageThumbnail());
-        values.put(MovieEntry.COLUMN_A_PLOT_SYNOPSIS, mCurrentMovie.getmAPlotSynopsis());
-        values.put(MovieEntry.COLUMN_USER_RATING, mCurrentMovie.getmUserRating());
-        values.put(MovieEntry.COLUMN_RELEASE_DATE, mCurrentMovie.getmReleaseDate());
-        values.put(MovieEntry.COLUMN_MOVIE_ID, mCurrentMovie.getmId());
-        values.put(MovieEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH, mCurrentMovie.getmExternalUrl());
+        values.put(MovieContract.FavMovieEntry.COLUMN_POSTER_PATH, mCurrentMovie.getmPosterPath());
+        values.put(MovieContract.FavMovieEntry.COLUMN_ORIGINAL_TITLE, mCurrentMovie.getmOriginalTitle());
+        values.put(MovieContract.FavMovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL, mCurrentMovie.getmMoviePosterImageThumbnail());
+        values.put(FavMovieEntry.COLUMN_A_PLOT_SYNOPSIS, mCurrentMovie.getmAPlotSynopsis());
+        values.put(MovieContract.FavMovieEntry.COLUMN_USER_RATING, mCurrentMovie.getmUserRating());
+        values.put(FavMovieEntry.COLUMN_RELEASE_DATE, mCurrentMovie.getmReleaseDate());
+        values.put(MovieContract.FavMovieEntry.COLUMN_MOVIE_ID, mCurrentMovie.getmId());
+        values.put(MovieContract.FavMovieEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH, mCurrentMovie.getmExternalUrl());
 
         // Insert a new movie into the provider, returning the content URI for the new movie.
-        Uri newUri = getContentResolver().insert(MovieEntry.CONTENT_URI, values);
+        Uri newUri = getContentResolver().insert(MovieContract.FavMovieEntry.CONTENT_URI, values);
 
         // Show a toast message depending on whether or not the insertion was successful
         if (newUri == null) {
@@ -488,9 +489,9 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
      * Delete movie from database.
      */
     private void deleteFavoriteMovie() {
-        String selection = MovieEntry.COLUMN_MOVIE_ID;
+        String selection = FavMovieEntry.COLUMN_MOVIE_ID;
         String[] selectionArgs = {mCurrentMovie.getmId()};
-        int rowsDeleted = getContentResolver().delete(MovieEntry.CONTENT_URI, selection, selectionArgs);
+        int rowsDeleted = getContentResolver().delete(MovieContract.FavMovieEntry.CONTENT_URI, selection, selectionArgs);
 
         if (rowsDeleted == 0) {
             deleteMovieRecordNumber = DELETE_MOVIE_FAIL;
@@ -604,8 +605,8 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
 
     public boolean checkIsMovieAlreadyInFavDatabase(String movieId) {
         SQLiteDatabase database = mMovieDbHelper.getReadableDatabase();
-        String selectString = "SELECT * FROM " + MovieEntry.TABLE_NAME + " WHERE "
-                + MovieEntry.COLUMN_MOVIE_ID + " =?";
+        String selectString = "SELECT * FROM " + FavMovieEntry.TABLE_NAME + " WHERE "
+                + FavMovieEntry.COLUMN_MOVIE_ID + " =?";
         Cursor cursor = database.rawQuery(selectString, new String[]{movieId});
         int count = cursor.getCount();
         cursor.close();

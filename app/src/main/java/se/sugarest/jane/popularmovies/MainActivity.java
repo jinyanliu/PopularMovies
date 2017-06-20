@@ -24,12 +24,12 @@ import java.util.Date;
 
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedEntry;
-import se.sugarest.jane.popularmovies.data.MovieContract.MovieEntry;
+import se.sugarest.jane.popularmovies.data.MovieContract.FavMovieEntry;
 import se.sugarest.jane.popularmovies.movie.FullMovie;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter.MovieAdapterOnClickHandler;
 import se.sugarest.jane.popularmovies.tasks.FetchMoviePostersTask;
-import se.sugarest.jane.popularmovies.tasks.FetchMovieTask;
+import se.sugarest.jane.popularmovies.tasks.PersistMovieTask;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapterOnClickHandler, android.app.LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
             if (!"favorites".equals(orderBy)) {
                 orderBy = "movie/" + orderBy;
                 new FetchMoviePostersTask(this).execute(orderBy);
-                new FetchMovieTask(this).execute(orderBy);
+                new PersistMovieTask(this).execute(orderBy);
             } else {
                 initCursorLoader();
             }
@@ -279,7 +279,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         } else {
             return new CursorLoader(
                     this,
-                    MovieEntry.CONTENT_URI,
+                    FavMovieEntry.CONTENT_URI,
                     null,
                     null,
                     null,

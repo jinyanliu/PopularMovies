@@ -14,7 +14,7 @@ import android.util.Log;
 import se.sugarest.jane.popularmovies.R;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedEntry;
-import se.sugarest.jane.popularmovies.data.MovieContract.MovieEntry;
+import se.sugarest.jane.popularmovies.data.MovieContract.FavMovieEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.ReviewEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.TrailerEntry;
 
@@ -69,16 +69,6 @@ public class MovieProvider extends ContentProvider {
      */
     private static final int CACHE_MOVIES_TOP_RATED = 500;
 
-//    /**
-//     * URI matcher code for the content URI for the cache movie most popular poster table
-//     */
-//    private static final int CACHE_MOVIES_MOST_POPULAR_POSTER = 401;
-//
-//    /**
-//     * URI matcher code for the content URI for the cache movie top rated poster table
-//     */
-//    private static final int CACHE_MOVIES_TOP_RATED_POSTER = 501;
-
     /**
      * UriMatcher object to match a content URI to a corresponding code.
      * The input passed into the constructor represents the code to return for the root URI.
@@ -115,9 +105,6 @@ public class MovieProvider extends ContentProvider {
 
         sUriMatcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_CACHE_MOVIE_MOST_POPULAR, CACHE_MOVIES_MOST_POPULAR);
         sUriMatcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_CACHE_MOVIE_TOP_RATED, CACHE_MOVIES_TOP_RATED);
-
-//        sUriMatcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_CACHE_MOVIE_MOST_POPULAR_POSTER, CACHE_MOVIES_MOST_POPULAR_POSTER);
-//        sUriMatcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_CACHE_MOVIE_TOP_RATED_POSTER, CACHE_MOVIES_TOP_RATED_POSTER);
     }
 
     /**
@@ -162,7 +149,7 @@ public class MovieProvider extends ContentProvider {
                 // could contain multiple rows of the movie table.
                 // Perform database query on movie table.
                 cursor = database.query(
-                        MovieEntry.TABLE_NAME, // The table to query
+                        MovieContract.FavMovieEntry.TABLE_NAME, // The table to query
                         projection,            // The columns to return
                         selection,             // The columns for the WHERE clause
                         selectionArgs,         // The values for the WHERE clause
@@ -179,12 +166,12 @@ public class MovieProvider extends ContentProvider {
                 // For every "?" in the selection, we need to have an element in the selection
                 // argument that will fill in the "?". Since we have 1 question mark in the
                 // selection, we have 1 String in the selection arguments' String array.
-                selection = MovieEntry._ID + "=?";
+                selection = FavMovieEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
 
                 // This will perform a query on the movie table where the _id equals 3 to return a
                 // Cursor containing that row of the table.
-                cursor = database.query(MovieEntry.TABLE_NAME, projection, selection, selectionArgs,
+                cursor = database.query(FavMovieEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
             case REVIEWS:
@@ -229,14 +216,6 @@ public class MovieProvider extends ContentProvider {
                 cursor = database.query(CacheMovieTopRatedEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
-//            case CACHE_MOVIES_MOST_POPULAR_POSTER:
-//                cursor = database.query(CacheMovieMostPopularPosterEntry.TABLE_NAME, projection, selection, selectionArgs,
-//                        null, null, sortOrder);
-//                break;
-//            case CACHE_MOVIES_TOP_RATED_POSTER:
-//                cursor = database.query(CacheMovieTopRatedPosterEntry.TABLE_NAME, projection, selection, selectionArgs,
-//                        null, null, sortOrder);
-//                break;
             default:
                 throw new IllegalArgumentException(getContext().getResources().getString(R.string.query_default_illegal_argument_exception_message) + uri);
         }
@@ -259,9 +238,9 @@ public class MovieProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case MOVIES:
-                return MovieEntry.CONTENT_LIST_TYPE;
+                return MovieContract.FavMovieEntry.CONTENT_LIST_TYPE;
             case MOVIE_ID:
-                return MovieEntry.CONTENT_ITEM_TYPE;
+                return FavMovieEntry.CONTENT_ITEM_TYPE;
             case REVIEWS:
                 return ReviewEntry.CONTENT_LIST_TYPE;
             case REVIEW_ID:
@@ -295,7 +274,7 @@ public class MovieProvider extends ContentProvider {
         switch (match) {
             case MOVIES:
                 // Insert a new movie into the pets database table with the given ContentValues
-                id = database.insert(MovieEntry.TABLE_NAME, null, values);
+                id = database.insert(FavMovieEntry.TABLE_NAME, null, values);
                 break;
             case REVIEWS:
                 id = database.insert(ReviewEntry.TABLE_NAME, null, values);
@@ -303,12 +282,6 @@ public class MovieProvider extends ContentProvider {
             case TRAILERS:
                 id = database.insert(TrailerEntry.TABLE_NAME, null, values);
                 break;
-//            case CACHE_MOVIES_MOST_POPULAR_POSTER:
-//                id = database.insert(CacheMovieMostPopularPosterEntry.TABLE_NAME, null, values);
-//                break;
-//            case CACHE_MOVIES_TOP_RATED_POSTER:
-//                id = database.insert(CacheMovieTopRatedPosterEntry.TABLE_NAME, null, values);
-//                break;
             default:
                 throw new IllegalArgumentException(getContext().getResources().getString(R.string.insert_default_illegal_argument_exception_message) + uri);
         }
@@ -344,13 +317,13 @@ public class MovieProvider extends ContentProvider {
             case MOVIES:
                 // Delete all rows that match the selection and selection args
                 selection = selection + "=?";
-                rowsDeleted = database.delete(MovieEntry.TABLE_NAME, selection, selectionArgs);
+                rowsDeleted = database.delete(FavMovieEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             case MOVIE_ID:
                 // Delete a single row given by the ID the URI
-                selection = MovieEntry._ID + "=?";
+                selection = FavMovieEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
-                rowsDeleted = database.delete(MovieEntry.TABLE_NAME, selection, selectionArgs);
+                rowsDeleted = database.delete(FavMovieEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             case REVIEWS:
                 selection = selection + "=?";
@@ -376,12 +349,6 @@ public class MovieProvider extends ContentProvider {
             case CACHE_MOVIES_TOP_RATED:
                 rowsDeleted = database.delete(CacheMovieTopRatedEntry.TABLE_NAME, selection, selectionArgs);
                 break;
-//            case CACHE_MOVIES_MOST_POPULAR_POSTER:
-//                rowsDeleted = database.delete(CacheMovieMostPopularPosterEntry.TABLE_NAME, selection, selectionArgs);
-//                break;
-//            case CACHE_MOVIES_TOP_RATED_POSTER:
-//                rowsDeleted = database.delete(CacheMovieTopRatedPosterEntry.TABLE_NAME, selection, selectionArgs);
-//                break;
             default:
                 throw new IllegalArgumentException(getContext().getString(R.string.unknown_uri_for_deletion) + uri);
         }

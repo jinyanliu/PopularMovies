@@ -19,18 +19,18 @@ import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedEntry
 import se.sugarest.jane.popularmovies.movie.MovieBasicInfo;
 
 /**
- * Created by jane on 17-6-15.
+ * Created by jane on 17-6-20.
  */
 
-public class FetchExternalStorageTopMoviePosterImagesTask extends AsyncTask<MovieBasicInfo, Void, String> {
+public class FetchExternalStorageTopMovieImageThumbnailsTask extends AsyncTask<MovieBasicInfo, Void, String> {
 
     private Context mContext;
 
-    public FetchExternalStorageTopMoviePosterImagesTask(Context context) {
+    public FetchExternalStorageTopMovieImageThumbnailsTask(Context context) {
         mContext = context;
     }
 
-    private static final String TAG = FetchExternalStorageTopMoviePosterImagesTask.class.getSimpleName();
+    private static final String TAG = FetchExternalStorageTopMovieImageThumbnailsTask.class.getSimpleName();
 
     String urlToBeDownloaded;
 
@@ -43,7 +43,6 @@ public class FetchExternalStorageTopMoviePosterImagesTask extends AsyncTask<Movi
 
     @Override
     protected String doInBackground(MovieBasicInfo... params) {
-
         String filepath = Environment.getExternalStorageDirectory().getAbsolutePath();
 
         if (params.length == 0) {
@@ -69,7 +68,7 @@ public class FetchExternalStorageTopMoviePosterImagesTask extends AsyncTask<Movi
             Log.i(TAG, mContext.getString(R.string.log_information_message_download_poster_filename) + filename);
 
             File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
-                    + "/topratedmovies/" + filename);
+                    + "/topthumbnails/" + filename);
 
             if (!file.exists()) {
                 file.getParentFile().mkdirs();
@@ -109,16 +108,12 @@ public class FetchExternalStorageTopMoviePosterImagesTask extends AsyncTask<Movi
     @Override
     protected void onPostExecute(String s) {
 
-//        ContentValues values = new ContentValues();
-//        values.put(CacheMovieTopRatedPosterEntry.COLUMN_POSTER_PATH, s);
-//        Uri newUri = mContext.getContentResolver().insert(CacheMovieTopRatedPosterEntry.CONTENT_URI, values);
-//        Log.i(TAG, "inserting uri: " + values + "result: " + newUri.toString());
-
         ContentValues contentValues = new ContentValues();
-        contentValues.put(CacheMovieTopRatedEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH, s);
+        contentValues.put(CacheMovieTopRatedEntry.COLUMN_EXTERNAL_STORAGE_IMAGE_THUMBNAIL, s);
         String selection = CacheMovieTopRatedEntry.COLUMN_MOVIE_ID;
-        selection = selection + "=?";
+        selection = selection + " =?";
         String[] selectionArgs = {movieId};
+        Log.i(TAG, "This is movie Id: " + movieId + ", image thumbnail external path: " + s);
         int rowsUpdated = mContext.getContentResolver()
                 .update(CacheMovieTopRatedEntry.CONTENT_URI,
                         contentValues,
@@ -126,7 +121,7 @@ public class FetchExternalStorageTopMoviePosterImagesTask extends AsyncTask<Movi
                         selectionArgs);
 
         if (rowsUpdated > 0) {
-            Log.i(TAG, "Insert external poster path into cache popular movie table successful.");
+            Log.i(TAG, "Insert external image thumbnail poster path into cache popular movie table successful.");
         }
     }
 }
