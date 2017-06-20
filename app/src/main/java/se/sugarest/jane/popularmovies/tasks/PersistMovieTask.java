@@ -93,6 +93,11 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                         + "/popularmovies/");
                 popularMoviePicsFolder.delete();
 
+                File popularMovieThumbnailImagesFolder
+                        = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+                        + "/popthumbnails/");
+                popularMovieThumbnailImagesFolder.delete();
+
                 int count = movieData.size();
                 Vector<ContentValues> cVVector = new Vector<ContentValues>(count);
                 for (int i = 0; i < count; i++) {
@@ -151,17 +156,16 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                         null,
                         null);
 
-//                // When latest movie data fetches, delete CacheMovieTopRatedPosterTable
-//                this.mainActivity.getContentResolver().delete(
-//                        CacheMovieTopRatedPosterEntry.CONTENT_URI,
-//                        null,
-//                        null);
-
                 // When latest movie data fetches, delete External Storage Folder topratedmovies
                 File topRatedMoviePicsFolder
                         = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
                         + "/topratedmovies/");
                 topRatedMoviePicsFolder.delete();
+
+                File topRatedMovieThumbnailImagesFolder
+                        = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+                        + "/topthumbnails/");
+                topRatedMovieThumbnailImagesFolder.delete();
 
                 int count = movieData.size();
                 Vector<ContentValues> cVVector = new Vector<ContentValues>(count);
