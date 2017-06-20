@@ -21,7 +21,6 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -136,13 +135,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                 boolean refreshPop = false;
                 boolean refreshTop = false;
 
-
                 if ("popular".equals(orderBy)) {
                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
                     Long default_time = new Date().getTime();
                     long mPopLatestRefreshed = preferences.getLong
                             (getString(R.string.pref_pop_date_key), default_time);
-
 
                     if (mPopLatestRefreshed == default_time) {
                         refreshPop = true;
@@ -187,23 +184,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                         Log.i(TAG, "Refreshed and stored top-rated movies from net.");
                     }
                 } else {
-//                    orderBy = "movie/" + orderBy;
-//                    new FetchMoviePostersTask(this).execute(orderBy);
-//                    Log.i(TAG, "Refreshed movies from net without storing.");
-//                    ArrayList<String> moviePostersUrlStrings = getPosterImagesHttpUrlsFromDatabase();
-//                    mMovieAdapter.setMoviePosterData(moviePostersUrlStrings);
                     initCursorLoader();
                 }
-
             } else {
                 initCursorLoader();
             }
-
         } else {
-
-//            Log.i(TAG, "Loading data from DB.");
-//            this.mMovieAdapter.setmLoadFromDb(true);
-
             initCursorLoader();
         }
     }
@@ -345,61 +331,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         getLoaderManager().restartLoader(MOVIE_LOADER, null, this);
     }
 
-
-    private ArrayList<String> getPosterImagesHttpUrlsFromDatabase() {
-        String orderBy = getPreference();
-        if ("popular".equals(orderBy)) {
-            String[] projection = {CacheMovieMostPopularEntry.COLUMN_POSTER_PATH};
-            Cursor cursor = getContentResolver().query(
-                    CacheMovieMostPopularEntry.CONTENT_URI,
-                    projection,
-                    null,
-                    null,
-                    null);
-            ArrayList<String> array = new ArrayList<>(cursor.getCount());
-            if (cursor != null && cursor.getCount() > 0) {
-                cursor.moveToFirst();
-                while (!cursor.isAfterLast()) {
-                    String post_path = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH));
-                    String full_post_path = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
-                            .concat(post_path);
-                    array.add(full_post_path);
-                    cursor.moveToNext();
-                }
-                cursor.close();
-            }
-            return array;
-        } else {
-            String[] projection = {CacheMovieTopRatedEntry.COLUMN_POSTER_PATH};
-            Cursor cursor = getContentResolver().query(
-                    CacheMovieTopRatedEntry.CONTENT_URI,
-                    projection,
-                    null,
-                    null,
-                    null);
-            ArrayList<String> array = new ArrayList<>(cursor.getCount());
-            if (cursor != null && cursor.getCount() > 0) {
-                cursor.moveToFirst();
-                while (!cursor.isAfterLast()) {
-                    String post_path = cursor.getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_POSTER_PATH));
-                    String full_post_path = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
-                            .concat(post_path);
-                    array.add(full_post_path);
-                    cursor.moveToNext();
-                }
-                cursor.close();
-            }
-            return array;
-        }
-    }
-
     @NonNull
     private String getPreference() {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         return sharedPrefs.getString(
                 getString(R.string.settings_order_by_key),
-                getString(R.string.settings_order_by_default)
-        );
+                getString(R.string.settings_order_by_default));
     }
 
     private NetworkInfo getNetworkInfo() {
@@ -408,5 +345,4 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         // Get details on the currently active default data network
         return connMgr.getActiveNetworkInfo();
     }
-
 }
