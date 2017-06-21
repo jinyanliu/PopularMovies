@@ -11,6 +11,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -36,7 +37,6 @@ import se.sugarest.jane.popularmovies.tasks.PersistMovieTask;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapterOnClickHandler
         , android.app.LoaderManager.LoaderCallbacks<Cursor> {
-    //, SwipeRefreshLayout.OnRefreshListener
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -147,6 +147,14 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
 //        });
 
 
+//        mSwipeRefreshLayout.setOnChildScrollUpCallback(new SwipeRefreshLayout.OnChildScrollUpCallback() {
+//            @Override
+//            public boolean canChildScrollUp(SwipeRefreshLayout parent, @Nullable View child) {
+//                return true;
+//            }
+//        });
+
+
         mSwipeRefreshLayout.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
 
@@ -160,9 +168,28 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                     }
 
 
-
                 }
         );
+
+        int swipeRefreshBgColor = ContextCompat.getColor(this, R.color.colorPrimaryDark);
+        mSwipeRefreshLayout.setProgressBackgroundColorSchemeColor(swipeRefreshBgColor);
+
+        mSwipeRefreshLayout.setColorSchemeResources(
+                // if the loading is fast, it shows white from the beginning and finish
+                R.color.colorWhiteFavoriteStar,
+                // if the loading is slow, it shows different blue
+                R.color.trailer10,
+                R.color.trailer9,
+                R.color.trailer8,
+                R.color.trailer7,
+                R.color.trailer6,
+                R.color.trailer5,
+                R.color.trailer4,
+                R.color.trailer3,
+                R.color.trailer2,
+                R.color.trailer1,
+                R.color.trailer0);
+
 
         // If there is a network connection, fetch data
         if (getNetworkInfo() != null && getNetworkInfo().isConnected()) {
@@ -336,11 +363,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 
         if (cursor != null && cursor.getCount() > 0) {
-            mLoadingIndicator.setVisibility(View.INVISIBLE);
+            // mLoadingIndicator.setVisibility(View.INVISIBLE);
             showMovieDataView();
             // this setRefreshing method is controlling the visible or invisible of the loading
             // indicator of the swipeRefreshlayout
-            mSwipeRefreshLayout.setRefreshing(false);
+            // mSwipeRefreshLayout.setRefreshing(false);
             mMovieAdapter.swapCursor(cursor);
 
         } else {
