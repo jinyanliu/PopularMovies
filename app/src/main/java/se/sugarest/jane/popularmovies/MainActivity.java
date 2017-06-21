@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -119,55 +120,83 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
          */
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
 
-//        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-////                int topRowVerticalPosition =
-////                        (recyclerView == null || recyclerView.getChildCount() == 0) ? 0 : recyclerView.getChildAt(0).getTop();
-////                mSwipeRefreshLayout.setEnabled(topRowVerticalPosition >= 0);
-//                mSwipeRefreshLayout.setEnabled(layoutManager.findFirstCompletelyVisibleItemPosition() == 0);
-//            }
-//
-//            @Override
-//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                super.onScrollStateChanged(recyclerView, newState);
-//            }
-//        });
-
-//        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                int scrollY = recyclerView.getScrollY();
-//                if (scrollY == 0) {
-//                    mSwipeRefreshLayout.setEnabled(true);
-//                } else {
-//                    mSwipeRefreshLayout.setEnabled(false);
-//                }
-//            }
-//        });
-
-
-//        mSwipeRefreshLayout.setOnChildScrollUpCallback(new SwipeRefreshLayout.OnChildScrollUpCallback() {
-//            @Override
-//            public boolean canChildScrollUp(SwipeRefreshLayout parent, @Nullable View child) {
-//                return true;
-//            }
-//        });
-
-
         mSwipeRefreshLayout.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
 
                     @Override
                     public void onRefresh() {
-                        String orderBy = getPreference();
-                        orderBy = "movie/" + orderBy;
-                        new FetchMoviePostersTask(MainActivity.this).execute(orderBy);
-                        new PersistMovieTask(MainActivity.this).execute(orderBy);
 
+                        if (getNetworkInfo() != null && getNetworkInfo().isConnected()) {
+
+                            Calendar calendar = Calendar.getInstance();
+                            Date currentTime = calendar.getTime();
+
+                            calendar.roll(Calendar.MINUTE, -1);
+                            Date oneMinuteAgo = calendar.getTime();
+
+                            String orderBy = getPreference();
+
+                            if (!"favorites".equals(orderBy)) {
+
+                                boolean refreshPop = false;
+                                boolean refreshTop = false;
+
+                                if ("popular".equals(orderBy)) {
+                                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                                    Long default_time = new Date().getTime();
+                                    long mPopLatestRefreshed = preferences.getLong
+                                            (getString(R.string.pref_pop_date_key), default_time);
+
+                                    if (mPopLatestRefreshed == default_time) {
+                                        refreshPop = true;
+                                    } else {
+                                        if (new Date(mPopLatestRefreshed).before(oneMinuteAgo)) {
+                                            refreshPop = true;
+                                        }
+                                    }
+                                } else {
+                                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                                    Long default_time = new Date().getTime();
+                                    long mTopLatestRefreshed = preferences.getLong
+                                            (getString(R.string.pref_top_date_key), default_time);
+
+                                    if (mTopLatestRefreshed == default_time) {
+                                        refreshTop = true;
+                                    } else {
+                                        if (new Date(mTopLatestRefreshed).before(oneMinuteAgo)) {
+                                            refreshTop = true;
+                                        }
+                                    }
+                                }
+
+                                if (refreshPop || refreshTop) {
+                                    orderBy = "movie/" + orderBy;
+                                    new FetchMoviePostersTask(MainActivity.this).execute(orderBy);
+                                    new PersistMovieTask(MainActivity.this).execute(orderBy);
+
+                                    if (refreshPop) {
+                                        Log.i(TAG, "Refreshed and stored popular movies from net.");
+                                    }
+                                    if (refreshTop) {
+                                        Log.i(TAG, "Refreshed and stored top-rated movies from net.");
+                                    }
+                                } else {
+                                    initCursorLoader();
+                                }
+                            } else {
+                                initCursorLoader();
+                            }
+                        } else {
+                            String orderBy = getPreference();
+
+                            if (!"favorites".equals(orderBy)) {
+                                Toast.makeText(MainActivity.this, "Cannot refresh without internet connection.", Toast.LENGTH_SHORT).show();
+                                mSwipeRefreshLayout.setRefreshing(false);
+                            } else {
+                                initCursorLoader();
+                            }
+                        }
                     }
-
-
                 }
         );
 
@@ -241,18 +270,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                     new PersistMovieTask(this).execute(orderBy);
 
                     if (refreshPop) {
-                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-                        SharedPreferences.Editor editor = preferences.edit();
-                        editor.putLong(getString(R.string.pref_pop_date_key), currentTime.getTime());
-                        editor.apply();
-
                         Log.i(TAG, "Refreshed and stored popular movies from net.");
                     }
                     if (refreshTop) {
-                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-                        SharedPreferences.Editor editor = preferences.edit();
-                        editor.putLong(getString(R.string.pref_top_date_key), currentTime.getTime());
-                        editor.apply();
                         Log.i(TAG, "Refreshed and stored top-rated movies from net.");
                     }
                 } else {
@@ -363,11 +383,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 
         if (cursor != null && cursor.getCount() > 0) {
-            // mLoadingIndicator.setVisibility(View.INVISIBLE);
+            mLoadingIndicator.setVisibility(View.INVISIBLE);
             showMovieDataView();
             // this setRefreshing method is controlling the visible or invisible of the loading
             // indicator of the swipeRefreshlayout
-            // mSwipeRefreshLayout.setRefreshing(false);
+            mSwipeRefreshLayout.setRefreshing(false);
             mMovieAdapter.swapCursor(cursor);
 
         } else {

@@ -10,7 +10,9 @@ import android.util.Log;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
@@ -151,6 +153,14 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                     }
                 }
 
+                Calendar calendar = Calendar.getInstance();
+                Date currentTime = calendar.getTime();
+
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.mainActivity);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putLong(this.mainActivity.getString(R.string.pref_pop_date_key), currentTime.getTime());
+                editor.apply();
+
             } else {
 
                 // When latest movie data fetches, delete CacheMovieTopRatedTable
@@ -219,8 +229,17 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                         Log.i(TAG, "bulkInsertCacheMovie TopRated unsuccessful.");
                     }
                 }
+
+                Calendar calendar = Calendar.getInstance();
+                Date currentTime = calendar.getTime();
+
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.mainActivity);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putLong(this.mainActivity.getString(R.string.pref_top_date_key), currentTime.getTime());
+                editor.apply();
             }
         }
+
 
         this.mainActivity.initCursorLoader();
     }
