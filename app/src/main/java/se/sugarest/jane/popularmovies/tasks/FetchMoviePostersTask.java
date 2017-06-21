@@ -40,7 +40,11 @@ public class FetchMoviePostersTask extends AsyncTask<String, Void, List<Movie>> 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        this.mainActivity.getmLoadingIndicator().setVisibility(View.VISIBLE);
+        if (this.mainActivity.getmSwipeRefreshLayout().isRefreshing()) {
+            this.mainActivity.getmLoadingIndicator().setVisibility(View.INVISIBLE);
+        } else {
+            this.mainActivity.getmLoadingIndicator().setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -69,6 +73,10 @@ public class FetchMoviePostersTask extends AsyncTask<String, Void, List<Movie>> 
 
     @Override
     protected void onPostExecute(List<Movie> movieData) {
+        this.mainActivity.getmLoadingIndicator().setVisibility(View.INVISIBLE);
+        this.mainActivity.showMovieDataView();
+        this.mainActivity.getmSwipeRefreshLayout().setRefreshing(false);
+
         if (movieData != null) {
             int count = movieData.size();
             ArrayList<String> array = new ArrayList<>(count);
@@ -88,8 +96,7 @@ public class FetchMoviePostersTask extends AsyncTask<String, Void, List<Movie>> 
                     array.add(i, fullMoviePosterForOneMovie);
                 }
             }
-            this.mainActivity.getmLoadingIndicator().setVisibility(View.INVISIBLE);
-            this.mainActivity.showMovieDataView();
+
             Log.i(TAG, "Pass movie data to main activity: " + array.size());
             this.mainActivity.getmMovieAdapter().setMoviePosterData(array);
             // this.mainActivity.getmMovieAdapter().notifyDataSetChanged();

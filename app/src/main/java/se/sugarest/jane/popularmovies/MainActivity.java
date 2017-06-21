@@ -11,6 +11,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -33,7 +34,9 @@ import se.sugarest.jane.popularmovies.movie.MovieAdapter.MovieAdapterOnClickHand
 import se.sugarest.jane.popularmovies.tasks.FetchMoviePostersTask;
 import se.sugarest.jane.popularmovies.tasks.PersistMovieTask;
 
-public class MainActivity extends AppCompatActivity implements MovieAdapterOnClickHandler, android.app.LoaderManager.LoaderCallbacks<Cursor> {
+public class MainActivity extends AppCompatActivity implements MovieAdapterOnClickHandler
+        , android.app.LoaderManager.LoaderCallbacks<Cursor> {
+    //, SwipeRefreshLayout.OnRefreshListener
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -41,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     private final String IMAGE_SIZE_W185 = "w185/";
 
     public static final int MOVIE_LOADER = 0;
+
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private RecyclerView mRecyclerView;
 
@@ -54,20 +59,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         return mMovieAdapter;
     }
 
-    public TextView getmErrorMessageDisplay() {
-        return mErrorMessageDisplay;
-    }
-
-    public void setmMovieAdapter(MovieAdapter mMovieAdapter) {
-        this.mMovieAdapter = mMovieAdapter;
-    }
-
     public ProgressBar getmLoadingIndicator() {
         return mLoadingIndicator;
     }
 
-    public void setmLoadingIndicator(ProgressBar mLoadingIndicator) {
-        this.mLoadingIndicator = mLoadingIndicator;
+    public SwipeRefreshLayout getmSwipeRefreshLayout() {
+        return mSwipeRefreshLayout;
     }
 
     @Override
@@ -85,13 +82,15 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
          */
         mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+
         /**
          * this: Current context, will be used to access resources.
          * 4: The number of columns in the grid
          * GridLayoutManager.VERTICAL: Layout orientation.
          * false: When set to true, layouts from end to start.
          */
-        GridLayoutManager layoutManager
+        final GridLayoutManager layoutManager
                 = new GridLayoutManager(this, 4, GridLayoutManager.VERTICAL, false);
 
         mRecyclerView.setLayoutManager(layoutManager);
@@ -120,11 +119,57 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
          */
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
 
+//        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+////                int topRowVerticalPosition =
+////                        (recyclerView == null || recyclerView.getChildCount() == 0) ? 0 : recyclerView.getChildAt(0).getTop();
+////                mSwipeRefreshLayout.setEnabled(topRowVerticalPosition >= 0);
+//                mSwipeRefreshLayout.setEnabled(layoutManager.findFirstCompletelyVisibleItemPosition() == 0);
+//            }
+//
+//            @Override
+//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+//                super.onScrollStateChanged(recyclerView, newState);
+//            }
+//        });
+
+//        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+//                int scrollY = recyclerView.getScrollY();
+//                if (scrollY == 0) {
+//                    mSwipeRefreshLayout.setEnabled(true);
+//                } else {
+//                    mSwipeRefreshLayout.setEnabled(false);
+//                }
+//            }
+//        });
+
+
+        mSwipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+
+                    @Override
+                    public void onRefresh() {
+                        String orderBy = getPreference();
+                        orderBy = "movie/" + orderBy;
+                        new FetchMoviePostersTask(MainActivity.this).execute(orderBy);
+                        new PersistMovieTask(MainActivity.this).execute(orderBy);
+
+                    }
+
+
+
+                }
+        );
+
         // If there is a network connection, fetch data
         if (getNetworkInfo() != null && getNetworkInfo().isConnected()) {
 
             Calendar calendar = Calendar.getInstance();
             Date currentTime = calendar.getTime();
+
             calendar.roll(Calendar.MINUTE, -10);
             Date tenMinAgoThisTime = calendar.getTime();
 
@@ -293,6 +338,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         if (cursor != null && cursor.getCount() > 0) {
             mLoadingIndicator.setVisibility(View.INVISIBLE);
             showMovieDataView();
+            // this setRefreshing method is controlling the visible or invisible of the loading
+            // indicator of the swipeRefreshlayout
+            mSwipeRefreshLayout.setRefreshing(false);
             mMovieAdapter.swapCursor(cursor);
 
         } else {
@@ -345,4 +393,5 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         // Get details on the currently active default data network
         return connMgr.getActiveNetworkInfo();
     }
+
 }

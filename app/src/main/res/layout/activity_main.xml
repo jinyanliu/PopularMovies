@@ -8,10 +8,17 @@
         android:layout_height="match_parent"
         android:background="@android:color/black" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerview_movieposters"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerview_movieposters"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <TextView
         android:id="@+id/tv_error_message_display"
