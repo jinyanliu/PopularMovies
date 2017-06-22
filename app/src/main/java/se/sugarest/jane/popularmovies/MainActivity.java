@@ -126,74 +126,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
 
                     @Override
                     public void onRefresh() {
-
-                        if (getNetworkInfo() != null && getNetworkInfo().isConnected()) {
-
-                            Calendar calendar = Calendar.getInstance();
-                            calendar.roll(Calendar.MINUTE, -1);
-                            Date oneMinuteAgo = calendar.getTime();
-
-                            String orderBy = getPreference();
-
-                            if (!"favorites".equals(orderBy)) {
-
-                                boolean refreshPop = false;
-                                boolean refreshTop = false;
-
-                                if ("popular".equals(orderBy)) {
-                                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                                    Long default_time = new Date().getTime();
-                                    long mPopLatestRefreshed = preferences.getLong
-                                            (getString(R.string.pref_pop_date_key), default_time);
-
-                                    if (mPopLatestRefreshed == default_time) {
-                                        refreshPop = true;
-                                    } else {
-                                        if (new Date(mPopLatestRefreshed).before(oneMinuteAgo)) {
-                                            refreshPop = true;
-                                        }
-                                    }
-                                } else {
-                                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                                    Long default_time = new Date().getTime();
-                                    long mTopLatestRefreshed = preferences.getLong
-                                            (getString(R.string.pref_top_date_key), default_time);
-
-                                    if (mTopLatestRefreshed == default_time) {
-                                        refreshTop = true;
-                                    } else {
-                                        if (new Date(mTopLatestRefreshed).before(oneMinuteAgo)) {
-                                            refreshTop = true;
-                                        }
-                                    }
-                                }
-
-                                if (refreshPop || refreshTop) {
-                                    orderBy = "movie/" + orderBy;
-                                    new FetchMoviePostersTask(MainActivity.this).execute(orderBy);
-                                    new PersistMovieTask(MainActivity.this).execute(orderBy);
-
-                                    if (refreshPop) {
-                                        Log.i(TAG, getString(R.string.log_information_refreshPop_true));
-                                    }
-                                    if (refreshTop) {
-                                        Log.i(TAG, getString(R.string.log_information_refreshTop_true));
-                                    }
-                                } else {
-                                    initCursorLoader();
-                                }
-                            } else {
-                                initCursorLoader();
-                            }
-                        } else {
-                            String orderBy = getPreference();
-                            if (!"favorites".equals(orderBy)) {
-                                Toast.makeText(MainActivity.this, getString(R.string.toast_message_swipeRefreshLayout_no_internet), Toast.LENGTH_SHORT).show();
-                                mSwipeRefreshLayout.setRefreshing(false);
-                            } else {
-                                initCursorLoader();
-                            }
-                        }
+                        refreshMovie();
                     }
                 }
         );
@@ -285,6 +218,80 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         }
     }
 
+    private void refreshMovie() {
+        if (getNetworkInfo() != null && getNetworkInfo().isConnected()) {
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.roll(Calendar.MINUTE, -1);
+            Date oneMinuteAgo = calendar.getTime();
+
+            String orderBy = getPreference();
+
+            if (!"favorites".equals(orderBy)) {
+
+                boolean refreshPop = false;
+                boolean refreshTop = false;
+
+                if ("popular".equals(orderBy)) {
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                    Long default_time = new Date().getTime();
+                    long mPopLatestRefreshed = preferences.getLong
+                            (getString(R.string.pref_pop_date_key), default_time);
+
+                    if (mPopLatestRefreshed == default_time) {
+                        refreshPop = true;
+                    } else {
+                        if (new Date(mPopLatestRefreshed).before(oneMinuteAgo)) {
+                            refreshPop = true;
+                        } else {
+                            Toast.makeText(MainActivity.this, getString(R.string.toast_message_swipe_refresh_pop_in_one_minute), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                } else {
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                    Long default_time = new Date().getTime();
+                    long mTopLatestRefreshed = preferences.getLong
+                            (getString(R.string.pref_top_date_key), default_time);
+
+                    if (mTopLatestRefreshed == default_time) {
+                        refreshTop = true;
+                    } else {
+                        if (new Date(mTopLatestRefreshed).before(oneMinuteAgo)) {
+                            refreshTop = true;
+                        } else {
+                            Toast.makeText(MainActivity.this, getString(R.string.toast_message_swipe_refresh_top_in_one_minute), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+
+                if (refreshPop || refreshTop) {
+                    orderBy = "movie/" + orderBy;
+                    new FetchMoviePostersTask(MainActivity.this).execute(orderBy);
+                    new PersistMovieTask(MainActivity.this).execute(orderBy);
+
+                    if (refreshPop) {
+                        Log.i(TAG, getString(R.string.log_information_refreshPop_true));
+                    }
+                    if (refreshTop) {
+                        Log.i(TAG, getString(R.string.log_information_refreshTop_true));
+                    }
+                } else {
+                    initCursorLoader();
+                }
+            } else {
+                initCursorLoader();
+            }
+        } else {
+            String orderBy = getPreference();
+            if (!"favorites".equals(orderBy)) {
+                Toast.makeText(MainActivity.this, getString(R.string.toast_message_swipeRefreshLayout_no_internet), Toast.LENGTH_SHORT).show();
+                mSwipeRefreshLayout.setRefreshing(false);
+            } else {
+                initCursorLoader();
+            }
+        }
+    }
+
     public void initCursorLoader() {
         getLoaderManager().initLoader(MOVIE_LOADER, null, this);
     }
@@ -338,12 +345,20 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            Intent settingIntent = new Intent(this, SettingsActivity.class);
-            startActivity(settingIntent);
-            return true;
+        switch (id) {
+            // Have a refresh menu button to perform the refresh again, in case some device or some
+            // users cannot perform swipe to refresh.
+            case R.id.action_refresh:
+                mLoadingIndicator.setVisibility(View.VISIBLE);
+                refreshMovie();
+                return true;
+            case R.id.action_settings:
+                Intent settingIntent = new Intent(this, SettingsActivity.class);
+                startActivity(settingIntent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

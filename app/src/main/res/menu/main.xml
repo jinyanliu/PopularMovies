@@ -6,7 +6,13 @@
     <item
         android:id="@+id/action_settings"
         android:icon="@drawable/ic_filter"
-        android:orderInCategory="1"
+        android:orderInCategory="2"
         android:title="@string/settings_menu_item"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_refresh"
+        android:icon="@drawable/ic_refresh"
+        android:orderInCategory="1"
+        android:title="@string/refresh_menu_item"
+        app:showAsAction="always" />
 </menu>

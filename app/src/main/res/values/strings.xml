@@ -31,9 +31,17 @@
     <!-- The text for Log information message (display filepath) when downloading the poster thumbnail and put it into SD card storage. -->
     <string name="log_information_message_download_poster_thumbnail_filepath">filepath: </string>
 
-    <string name="log_information_refreshPop_true">Refreshed and stored popular movies from net.</string>
-    <string name="log_information_refreshTop_true">Refreshed and stored top-rated movies from net.</string>
+    <!-- The text for Log information message when checking refreshPop true. -->
+    <string name="log_information_refreshPop_true">Check refresh Pop true.</string>
+    <!-- The text for Log information message when checking refreshTop true. -->
+    <string name="log_information_refreshTop_true">Check refresh Top true.</string>
+
+    <!-- Toast message for swipeRefreshLayout swipe to refresh when there is no internet connection and not in fav preference. -->
     <string name="toast_message_swipeRefreshLayout_no_internet">Cannot refresh without internet connection.</string>
+    <!-- Toast message for swipeRefreshLayout swipe to refresh Pop movies in one minute, no need to refresh. List up to date. -->
+    <string name="toast_message_swipe_refresh_pop_in_one_minute">Your Popular Movies list is up-to-date.</string>
+    <!-- Toast message for swipeRefreshLayout swipe to refresh Top movies in one minute, no need to refresh. List up to date. -->
+    <string name="toast_message_swipe_refresh_top_in_one_minute">Your Top-rated Movies list is up-to-date.</string>
 
     <!-- The text for query method to throw an IllegalArgumentException message. -->
     <string name="query_default_illegal_argument_exception_message">Cannot query unknown URI </string>
@@ -85,9 +93,11 @@
     <!-- Log message for deleting error when deleting a trailer. [CHAR LIMIT=20] -->
     <string name="delete_trailer_failed">Error with deleting trailer</string>
 
-    <!-- Settings Menu Item [CHAR LIMIT=NONE] -->
+    <!-- Refresh Menu Item -->
+    <string name="refresh_menu_item">Refresh</string>
+    <!-- Settings Menu Item -->
     <string name="settings_menu_item">Settings</string>
-    <!-- Settings Activity Title [CHAR LIMIT=NONE] -->
+    <!-- Settings Activity Title -->
     <string name="settings_title">Movie Settings</string>
 
     <!-- Used to share the first trailer’s YouTube URL on a given movie from the DetailActivity -->
