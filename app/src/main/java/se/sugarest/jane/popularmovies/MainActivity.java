@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,6 +46,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     private final String IMAGE_SIZE_W185 = "w185/";
 
     public static final int MOVIE_LOADER = 0;
+
+    private Toast mToast;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -214,6 +217,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                 initCursorLoader();
             }
         } else {
+            hideLoadingIndicators();
             initCursorLoader();
         }
     }
@@ -244,7 +248,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                         if (new Date(mPopLatestRefreshed).before(oneMinuteAgo)) {
                             refreshPop = true;
                         } else {
-                            Toast.makeText(MainActivity.this, getString(R.string.toast_message_swipe_refresh_pop_in_one_minute), Toast.LENGTH_SHORT).show();
+                            if (mToast != null) {
+                                mToast.cancel();
+                            }
+                            mToast = Toast.makeText(MainActivity.this, getString(R.string.toast_message_swipe_refresh_pop_in_one_minute), Toast.LENGTH_SHORT);
+                            mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                            mToast.show();
                         }
                     }
                 } else {
@@ -259,7 +268,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                         if (new Date(mTopLatestRefreshed).before(oneMinuteAgo)) {
                             refreshTop = true;
                         } else {
-                            Toast.makeText(MainActivity.this, getString(R.string.toast_message_swipe_refresh_top_in_one_minute), Toast.LENGTH_SHORT).show();
+                            if (mToast != null) {
+                                mToast.cancel();
+                            }
+                            mToast = Toast.makeText(MainActivity.this, getString(R.string.toast_message_swipe_refresh_top_in_one_minute), Toast.LENGTH_SHORT);
+                            mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                            mToast.show();
                         }
                     }
                 }
@@ -282,9 +296,15 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                 initCursorLoader();
             }
         } else {
+            hideLoadingIndicators();
             String orderBy = getPreference();
             if (!"favorites".equals(orderBy)) {
-                Toast.makeText(MainActivity.this, getString(R.string.toast_message_swipeRefreshLayout_no_internet), Toast.LENGTH_SHORT).show();
+                if (mToast != null) {
+                    mToast.cancel();
+                }
+                mToast = Toast.makeText(MainActivity.this, getString(R.string.toast_message_swipeRefreshLayout_no_internet), Toast.LENGTH_SHORT);
+                mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                mToast.show();
                 mSwipeRefreshLayout.setRefreshing(false);
             } else {
                 initCursorLoader();
@@ -397,14 +417,14 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 
         if (cursor != null && cursor.getCount() > 0) {
-            HideLoadingIndicators();
+            hideLoadingIndicators();
             showMovieDataView();
             mMovieAdapter.swapCursor(cursor);
 
         } else {
 
             supportStartPostponedEnterTransition();
-            HideLoadingIndicators();
+            hideLoadingIndicators();
             showErrorMessage();
 
             String orderBy = getPreference();
@@ -427,7 +447,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         }
     }
 
-    private void HideLoadingIndicators() {
+    private void hideLoadingIndicators() {
         mLoadingIndicator.setVisibility(View.INVISIBLE);
         // this setRefreshing method is controlling the visible or invisible of the loading
         // indicator of the swipeRefreshlayout
