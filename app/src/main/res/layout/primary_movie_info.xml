@@ -9,8 +9,10 @@
 
         <FrameLayout
             android:id="@+id/fl_image"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="@dimen/image_height_detail"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
@@ -54,7 +56,7 @@
         <ImageView
             android:id="@+id/dividing_line_date_and_plot"
             android:layout_width="0dp"
-            android:layout_height="@dimen/image_height_dividing_line_single"
+            android:layout_height="1dp"
             android:layout_marginTop="@dimen/activity_detail_vertical_padding"
             android:background="@color/colorPrimaryLight"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -79,7 +81,7 @@
         <ImageView
             android:id="@+id/dividing_line_plot_and_rating"
             android:layout_width="0dp"
-            android:layout_height="@dimen/image_height_dividing_line_single"
+            android:layout_height="1dp"
             android:layout_marginTop="@dimen/activity_detail_vertical_padding"
             android:background="@color/colorPrimaryLight"
             app:layout_constraintLeft_toLeftOf="parent"

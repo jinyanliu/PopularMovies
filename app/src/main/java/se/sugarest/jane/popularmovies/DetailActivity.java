@@ -287,7 +287,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                 new FetchReviewTask(this).execute(id);
             }
         } catch (NullPointerException e) {
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
         }
     }
 
@@ -306,7 +306,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                 new FetchTrailerTask(this).execute(id);
             }
         } catch (NullPointerException e) {
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
         }
     }
 
