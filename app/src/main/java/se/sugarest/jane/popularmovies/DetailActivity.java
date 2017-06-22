@@ -171,7 +171,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
 
         Picasso.with(DetailActivity.this)
                 .load(currentMoviePosterImageThumbnail)
-                .placeholder(R.drawable.picasso_placeholder_loading)
+                .placeholder(R.drawable.progress_animation)
                 .error(R.drawable.picasso_placeholder_error)
                 .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
 

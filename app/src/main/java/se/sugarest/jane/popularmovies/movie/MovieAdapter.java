@@ -13,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
@@ -102,6 +104,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     @Override
     public void onBindViewHolder(MovieAdapterViewHolder movieAdapterViewHolder, int position) {
 
+
         NetworkInfo networkInfo = getNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
 
@@ -110,10 +113,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
             if (!"favorites".equals(orderBy)) {
                 if (mLoadFromDb == false) {
                     String moviePosterForOneMovie = mMoviePostersUrlStrings.get(position);
+
+                    // startLoadingAnimation(movieAdapterViewHolder);
+
                     Picasso.with(mContext)
                             .load(moviePosterForOneMovie)
                             .error(R.drawable.picasso_placeholder_error)
-                            .placeholder(R.drawable.picasso_placeholder_loading).into(movieAdapterViewHolder.mMoviePosterImageView);
+                            .placeholder(R.drawable.progress_animation)
+                            .into(movieAdapterViewHolder.mMoviePosterImageView);
                 } else {
                     if ("popular".equals(orderBy)) {
                         mCursor.moveToPosition(position);
@@ -121,11 +128,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                                 .getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH));
                         String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
                                 .concat(moviePosterForOneMovie);
+
+                       // startLoadingAnimation(movieAdapterViewHolder);
+
                         Picasso.with(mContext)
                                 // PosterPath from web
                                 .load(fullMoviePosterForOneMovie)
                                 .error(R.drawable.picasso_placeholder_error)
-                                .placeholder(R.drawable.picasso_placeholder_loading)
+                                .placeholder(R.drawable.progress_animation)
                                 .into(movieAdapterViewHolder.mMoviePosterImageView);
                     } else {
                         mCursor.moveToPosition(position);
@@ -133,11 +143,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                                 .getColumnIndex(CacheMovieTopRatedEntry.COLUMN_POSTER_PATH));
                         String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
                                 .concat(moviePosterForOneMovie);
+
+                        //startLoadingAnimation(movieAdapterViewHolder);
+
                         Picasso.with(mContext)
                                 // PosterPath from web
                                 .load(fullMoviePosterForOneMovie)
                                 .error(R.drawable.picasso_placeholder_error)
-                                .placeholder(R.drawable.picasso_placeholder_loading)
+                                .placeholder(R.drawable.progress_animation)
                                 .into(movieAdapterViewHolder.mMoviePosterImageView);
                     }
                 }
@@ -148,11 +161,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                         .getColumnIndex(MovieContract.FavMovieEntry.COLUMN_POSTER_PATH));
                 String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
                         .concat(moviePosterForOneMovie);
+
+                //startLoadingAnimation(movieAdapterViewHolder);
+
                 Picasso.with(mContext)
                         // PosterPath from web
                         .load(fullMoviePosterForOneMovie)
                         .error(R.drawable.picasso_placeholder_error)
-                        .placeholder(R.drawable.picasso_placeholder_loading)
+                        .placeholder(R.drawable.progress_animation)
                         .into(movieAdapterViewHolder.mMoviePosterImageView);
             }
         } else {
@@ -171,11 +187,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                             .getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH));
                     File pathToPic = new File(moviePosterForOneMovie);
                     Log.i(TAG, "Loading pic exists at " + moviePosterForOneMovie + " ? " + pathToPic.exists());
+
+                    // startLoadingAnimation(movieAdapterViewHolder);
+
                     Picasso.with(mContext)
                             // Load from external storage on the phone
                             .load(pathToPic)
                             .error(R.drawable.picasso_placeholder_error)
-                            .placeholder(R.drawable.picasso_placeholder_loading)
+                            .placeholder(R.drawable.progress_animation)
                             .into(movieAdapterViewHolder.mMoviePosterImageView);
                 }
                 cursor.close();
@@ -194,11 +213,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                             .getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH));
                     File pathToPic = new File(moviePosterForOneMovie);
                     Log.i(TAG, "Loading pic exists at " + moviePosterForOneMovie + " ? " + pathToPic.exists());
+
+                    // startLoadingAnimation(movieAdapterViewHolder);
+
                     Picasso.with(mContext)
                             // Load from external storage on the phone
                             .load(pathToPic)
                             .error(R.drawable.picasso_placeholder_error)
-                            .placeholder(R.drawable.picasso_placeholder_loading)
+                            .placeholder(R.drawable.progress_animation)
                             .into(movieAdapterViewHolder.mMoviePosterImageView);
                 }
                 cursor.close();
@@ -217,11 +239,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                             .getString(cursor.getColumnIndex(MovieContract.FavMovieEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH));
                     File pathToPic = new File(moviePosterForOneMovie);
                     Log.i(TAG, "Loading pic exists at " + moviePosterForOneMovie + " ? " + pathToPic.exists());
+
+                    // startLoadingAnimation(movieAdapterViewHolder);
+
                     Picasso.with(mContext)
                             // Load from external storage on the phone
                             .load(pathToPic)
                             .error(R.drawable.picasso_placeholder_error)
-                            .placeholder(R.drawable.picasso_placeholder_loading)
+                            .placeholder(R.drawable.progress_animation)
                             .into(movieAdapterViewHolder.mMoviePosterImageView);
                 }
                 cursor.close();
@@ -229,12 +254,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         }
     }
 
-    public boolean ismLoadFromDb() {
-        return mLoadFromDb;
-    }
-
-    public void setmLoadFromDb(boolean mLoadFromDb) {
-        this.mLoadFromDb = mLoadFromDb;
+    private void startLoadingAnimation(MovieAdapterViewHolder movieAdapterViewHolder) {
+        Animation a = AnimationUtils.loadAnimation(mContext, R.anim.progress_animation_main);
+        a.setDuration(500);
+        movieAdapterViewHolder.mMoviePosterImageView.startAnimation(a);
     }
 
     /**
@@ -380,7 +403,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         // Get details on the currently active default data network
         return connMgr.getActiveNetworkInfo();
     }
-
 }
 
 
