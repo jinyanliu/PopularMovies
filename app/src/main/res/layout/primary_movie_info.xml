@@ -7,24 +7,37 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/iv_movie_poster_image_thumbnail"
-            android:layout_width="0dp"
+        <FrameLayout
+            android:id="@+id/fl_image"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/image_height_detail"
-            android:scaleType="centerCrop"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/fake_detail_image" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/iv_loading"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/image_height_detail"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_loading_larger_detail"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/iv_movie_poster_image_thumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/image_height_detail"
+                android:scaleType="centerCrop"
+                app:layout_constraintLeft_toLeftOf="parent"
+                tools:src="@drawable/fake_detail_image" />
+        </FrameLayout>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_favorite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_star"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_movie_poster_image_thumbnail"
+            app:layout_constraintBottom_toBottomOf="@+id/fl_image"
             app:layout_constraintRight_toRightOf="@+id/tv_a_plot_synopsis"
-            app:layout_constraintTop_toBottomOf="@+id/iv_movie_poster_image_thumbnail" />
+            app:layout_constraintTop_toBottomOf="@+id/fl_image" />
 
         <TextView
             android:id="@+id/tv_release_date"
@@ -35,7 +48,7 @@
             android:layout_marginTop="@dimen/activity_detail_vertical_padding"
             android:textSize="12sp"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iv_movie_poster_image_thumbnail"
+            app:layout_constraintTop_toBottomOf="@+id/fl_image"
             tools:text="@string/fake_detail_movie_date" />
 
         <ImageView

@@ -104,6 +104,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     @Override
     public void onBindViewHolder(MovieAdapterViewHolder movieAdapterViewHolder, int position) {
 
+        // Those animation is a substitute for Picasso's placeholder.
+        Animation a = AnimationUtils.loadAnimation(mContext, R.anim.progress_animation_main);
+        a.setDuration(1000);
+        movieAdapterViewHolder.mLoadingImageView.startAnimation(a);
 
         NetworkInfo networkInfo = getNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
@@ -114,12 +118,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                 if (mLoadFromDb == false) {
                     String moviePosterForOneMovie = mMoviePostersUrlStrings.get(position);
 
-                    // startLoadingAnimation(movieAdapterViewHolder);
-
                     Picasso.with(mContext)
                             .load(moviePosterForOneMovie)
                             .error(R.drawable.picasso_placeholder_error)
-                            .placeholder(R.drawable.progress_animation)
                             .into(movieAdapterViewHolder.mMoviePosterImageView);
                 } else {
                     if ("popular".equals(orderBy)) {
@@ -129,13 +130,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                         String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
                                 .concat(moviePosterForOneMovie);
 
-                       // startLoadingAnimation(movieAdapterViewHolder);
-
                         Picasso.with(mContext)
                                 // PosterPath from web
                                 .load(fullMoviePosterForOneMovie)
                                 .error(R.drawable.picasso_placeholder_error)
-                                .placeholder(R.drawable.progress_animation)
                                 .into(movieAdapterViewHolder.mMoviePosterImageView);
                     } else {
                         mCursor.moveToPosition(position);
@@ -144,13 +142,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                         String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
                                 .concat(moviePosterForOneMovie);
 
-                        //startLoadingAnimation(movieAdapterViewHolder);
-
                         Picasso.with(mContext)
                                 // PosterPath from web
                                 .load(fullMoviePosterForOneMovie)
                                 .error(R.drawable.picasso_placeholder_error)
-                                .placeholder(R.drawable.progress_animation)
                                 .into(movieAdapterViewHolder.mMoviePosterImageView);
                     }
                 }
@@ -162,13 +157,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                 String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
                         .concat(moviePosterForOneMovie);
 
-                //startLoadingAnimation(movieAdapterViewHolder);
-
                 Picasso.with(mContext)
                         // PosterPath from web
                         .load(fullMoviePosterForOneMovie)
                         .error(R.drawable.picasso_placeholder_error)
-                        .placeholder(R.drawable.progress_animation)
                         .into(movieAdapterViewHolder.mMoviePosterImageView);
             }
         } else {
@@ -188,13 +180,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                     File pathToPic = new File(moviePosterForOneMovie);
                     Log.i(TAG, "Loading pic exists at " + moviePosterForOneMovie + " ? " + pathToPic.exists());
 
-                    // startLoadingAnimation(movieAdapterViewHolder);
-
                     Picasso.with(mContext)
                             // Load from external storage on the phone
                             .load(pathToPic)
                             .error(R.drawable.picasso_placeholder_error)
-                            .placeholder(R.drawable.progress_animation)
                             .into(movieAdapterViewHolder.mMoviePosterImageView);
                 }
                 cursor.close();
@@ -214,13 +203,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                     File pathToPic = new File(moviePosterForOneMovie);
                     Log.i(TAG, "Loading pic exists at " + moviePosterForOneMovie + " ? " + pathToPic.exists());
 
-                    // startLoadingAnimation(movieAdapterViewHolder);
-
                     Picasso.with(mContext)
                             // Load from external storage on the phone
                             .load(pathToPic)
                             .error(R.drawable.picasso_placeholder_error)
-                            .placeholder(R.drawable.progress_animation)
                             .into(movieAdapterViewHolder.mMoviePosterImageView);
                 }
                 cursor.close();
@@ -240,24 +226,15 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                     File pathToPic = new File(moviePosterForOneMovie);
                     Log.i(TAG, "Loading pic exists at " + moviePosterForOneMovie + " ? " + pathToPic.exists());
 
-                    // startLoadingAnimation(movieAdapterViewHolder);
-
                     Picasso.with(mContext)
                             // Load from external storage on the phone
                             .load(pathToPic)
                             .error(R.drawable.picasso_placeholder_error)
-                            .placeholder(R.drawable.progress_animation)
                             .into(movieAdapterViewHolder.mMoviePosterImageView);
                 }
                 cursor.close();
             }
         }
-    }
-
-    private void startLoadingAnimation(MovieAdapterViewHolder movieAdapterViewHolder) {
-        Animation a = AnimationUtils.loadAnimation(mContext, R.anim.progress_animation_main);
-        a.setDuration(500);
-        movieAdapterViewHolder.mMoviePosterImageView.startAnimation(a);
     }
 
     /**
@@ -304,9 +281,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
         public final ImageView mMoviePosterImageView;
 
+        public final ImageView mLoadingImageView;
+
         public MovieAdapterViewHolder(View view) {
             super(view);
             mMoviePosterImageView = (ImageView) view.findViewById(R.id.iv_movie_posters);
+            mLoadingImageView = (ImageView) view.findViewById(R.id.iv_loading);
             view.setOnClickListener(this);
         }
 

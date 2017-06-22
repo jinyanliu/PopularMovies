@@ -21,6 +21,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
@@ -155,6 +157,11 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
 
         mDetailBinding = DataBindingUtil.setContentView(this, R.layout.activity_detail);
 
+        // Those animation is a substitute for Picasso's placeholder.
+        Animation a = AnimationUtils.loadAnimation(this, R.anim.progress_animation_main);
+        a.setDuration(250);
+        mDetailBinding.primaryInfo.ivLoading.startAnimation(a);
+
         Intent intentThatStartedThisActivity = getIntent();
         if (intentThatStartedThisActivity != null) {
             if (intentThatStartedThisActivity.hasExtra("movie")) {
@@ -171,7 +178,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
 
         Picasso.with(DetailActivity.this)
                 .load(currentMoviePosterImageThumbnail)
-                .placeholder(R.drawable.progress_animation)
+                // .placeholder(R.drawable.progress_animation)
                 .error(R.drawable.picasso_placeholder_error)
                 .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
 
