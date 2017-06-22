@@ -108,11 +108,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
          */
         if (mMovieAdapter == null) {
             mMovieAdapter = new MovieAdapter(this, this);
-            /**
-             * Setting the adapter attaches it to the RecyclerView in the layout.
-             */
-            mRecyclerView.setAdapter(mMovieAdapter);
         }
+
+        /**
+         * Setting the adapter attaches it to the RecyclerView in the layout.
+         */
+        mRecyclerView.setAdapter(mMovieAdapter);
 
         /**
          * The ProgressBar that will indicate to the user that we are loading data. It will be
@@ -129,8 +130,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                         if (getNetworkInfo() != null && getNetworkInfo().isConnected()) {
 
                             Calendar calendar = Calendar.getInstance();
-                            Date currentTime = calendar.getTime();
-
                             calendar.roll(Calendar.MINUTE, -1);
                             Date oneMinuteAgo = calendar.getTime();
 
@@ -175,10 +174,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                                     new PersistMovieTask(MainActivity.this).execute(orderBy);
 
                                     if (refreshPop) {
-                                        Log.i(TAG, "Refreshed and stored popular movies from net.");
+                                        Log.i(TAG, getString(R.string.log_information_refreshPop_true));
                                     }
                                     if (refreshTop) {
-                                        Log.i(TAG, "Refreshed and stored top-rated movies from net.");
+                                        Log.i(TAG, getString(R.string.log_information_refreshTop_true));
                                     }
                                 } else {
                                     initCursorLoader();
@@ -188,9 +187,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                             }
                         } else {
                             String orderBy = getPreference();
-
                             if (!"favorites".equals(orderBy)) {
-                                Toast.makeText(MainActivity.this, "Cannot refresh without internet connection.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, getString(R.string.toast_message_swipeRefreshLayout_no_internet), Toast.LENGTH_SHORT).show();
                                 mSwipeRefreshLayout.setRefreshing(false);
                             } else {
                                 initCursorLoader();
@@ -200,9 +198,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                 }
         );
 
+        // Change swipeRefreshLayout 's loading indicator background color.
         int swipeRefreshBgColor = ContextCompat.getColor(this, R.color.colorPrimaryDark);
         mSwipeRefreshLayout.setProgressBackgroundColorSchemeColor(swipeRefreshBgColor);
 
+        // Change swipeRefreshLayout 's loading indicator loading circle color.
+        // You can have as many as colors you want.
         mSwipeRefreshLayout.setColorSchemeResources(
                 // if the loading is fast, it shows white from the beginning and finish
                 R.color.colorWhiteFavoriteStar,
@@ -224,8 +225,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         if (getNetworkInfo() != null && getNetworkInfo().isConnected()) {
 
             Calendar calendar = Calendar.getInstance();
-            Date currentTime = calendar.getTime();
-
             calendar.roll(Calendar.MINUTE, -10);
             Date tenMinAgoThisTime = calendar.getTime();
 
@@ -270,10 +269,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                     new PersistMovieTask(this).execute(orderBy);
 
                     if (refreshPop) {
-                        Log.i(TAG, "Refreshed and stored popular movies from net.");
+                        Log.i(TAG, getString(R.string.log_information_refreshPop_true));
                     }
                     if (refreshTop) {
-                        Log.i(TAG, "Refreshed and stored top-rated movies from net.");
+                        Log.i(TAG, getString(R.string.log_information_refreshTop_true));
                     }
                 } else {
                     initCursorLoader();
@@ -383,17 +382,14 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 
         if (cursor != null && cursor.getCount() > 0) {
-            mLoadingIndicator.setVisibility(View.INVISIBLE);
+            HideLoadingIndicators();
             showMovieDataView();
-            // this setRefreshing method is controlling the visible or invisible of the loading
-            // indicator of the swipeRefreshlayout
-            mSwipeRefreshLayout.setRefreshing(false);
             mMovieAdapter.swapCursor(cursor);
 
         } else {
 
             supportStartPostponedEnterTransition();
-            mLoadingIndicator.setVisibility(View.INVISIBLE);
+            HideLoadingIndicators();
             showErrorMessage();
 
             String orderBy = getPreference();
@@ -414,6 +410,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                 mErrorMessageDisplay.setText(getString(R.string.error_message_no_fav_movie));
             }
         }
+    }
+
+    private void HideLoadingIndicators() {
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
+        // this setRefreshing method is controlling the visible or invisible of the loading
+        // indicator of the swipeRefreshlayout
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override

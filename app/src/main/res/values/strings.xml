@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Popular Movies</string>
+    <string name="app_name" translatable="false">Popular Movies</string>
 
     <!-- The text for the TextView to display error message. -->
     <string name="error_message">An error has occurred.</string>
@@ -30,6 +30,10 @@
     <string name="log_information_message_download_poster_thumbnail_totalSize">totalSize: </string>
     <!-- The text for Log information message (display filepath) when downloading the poster thumbnail and put it into SD card storage. -->
     <string name="log_information_message_download_poster_thumbnail_filepath">filepath: </string>
+
+    <string name="log_information_refreshPop_true">Refreshed and stored popular movies from net.</string>
+    <string name="log_information_refreshTop_true">Refreshed and stored top-rated movies from net.</string>
+    <string name="toast_message_swipeRefreshLayout_no_internet">Cannot refresh without internet connection.</string>
 
     <!-- The text for query method to throw an IllegalArgumentException message. -->
     <string name="query_default_illegal_argument_exception_message">Cannot query unknown URI </string>
@@ -91,8 +95,8 @@
     <!-- The title of the ShareCompat to build a share action. -->
     <string name="title_share_url_string">Share the first Youtube Url</string>
 
-    <string name="pref_pop_date_key">refresh_pop_movie</string>
-    <string name="pref_top_date_key">refresh_top_movie</string>
+    <string name="pref_pop_date_key" translatable="false">refresh_pop_movie</string>
+    <string name="pref_top_date_key" translatable="false">refresh_top_movie</string>
 
     <!-- Strings For Order-By Preference [CHAR LIMIT=30] -->
     <string name="settings_order_by_label">Order By</string>
