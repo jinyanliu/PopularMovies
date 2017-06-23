@@ -144,6 +144,7 @@
     <string name="fake_datail_movie_plot">A koala named Buster recruits his best friend to help him drum up business for
     his theater by hosting a singing competition.</string>
     <string name="fake_detail_movie_number_of_review">4</string>
+    <string name="fake_detail_movie_number_of_trailer">3</string>
     <string name="fake_detail_movie_review_author_name">TopKek</string>
     <string name="fake_detail_movie_review">Featuring appealing covers of hit songs and an all-star cast,
         this cute animated comedy capitalizes on the craze for both talking-animal adventures and talent competitions.
@@ -153,6 +154,9 @@
         Hudson-voiced renditions of \"Golden Slumbers/Carry That Weight\" to the piggy duet of \"Shake It Off\" (by Witherspoon
         and comedian Nick Kroll as a German boar called Gunter) to Kelly\'s show-stopping version of "Hallelujah."</string>
 
-    <string name="review_not_loaded_yet">Please wait :p Reviews not loaded yet.</string>
+    <!-- Toast message when you want to save the movie to favDatabase but the movie's reviews and trailers haven't loader yet. -->
+    <string name="review_and_trailer_not_loaded_yet">Please wait :p Reviews and trailers not loaded yet.</string>
+    <!-- Toast message when you want to share the first trailer but the movie's trailers haven't loader yet. -->
+    <string name="trailer_not_loaded_yet">Please wait :P Trailers not loaded yet.</string>
 </resources>
 

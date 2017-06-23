@@ -335,7 +335,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
      * Save movie, review and trailer into database.
      */
     private void saveMovie() {
-        if (mCurrentMovieReviews != null) {
+        if (mCurrentMovieReviews != null && mCurrentMovieTrailers != null) {
             if (mCurrentMovieReviews.size() > 0) {
                 saveFavoriteMovie();
                 saveFavoriteTrailer();
@@ -371,7 +371,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             }
         } else {
             mFabButton.setColorFilter(ContextCompat.getColor(DetailActivity.this, R.color.colorWhiteFavoriteStar));
-            mToast = Toast.makeText(this, getString(R.string.review_not_loaded_yet), Toast.LENGTH_SHORT);
+            mToast = Toast.makeText(this, getString(R.string.review_and_trailer_not_loaded_yet), Toast.LENGTH_SHORT);
             mToast.setGravity(Gravity.BOTTOM, 0, 0);
             mToast.show();
         }
@@ -644,9 +644,20 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        // Share trailer
         if (id == R.id.action_share) {
-            String urlToShare = BASE_YOUTUBE_URL_WEB + mFirstTrailerSourceKey;
-            shareFirstYoutubeUrl(urlToShare);
+            if (mCurrentMovieTrailers != null) {
+                if (mFirstTrailerSourceKey != null) {
+                    String urlToShare = BASE_YOUTUBE_URL_WEB + mFirstTrailerSourceKey;
+                    shareFirstYoutubeUrl(urlToShare);
+                } else {
+                    mToast = Toast.makeText(this, "Sorry. This movie doesn't have a trailer to share.", Toast.LENGTH_SHORT);
+                    mToast.show();
+                }
+            } else {
+                mToast = Toast.makeText(this, getString(R.string.trailer_not_loaded_yet), Toast.LENGTH_SHORT);
+                mToast.show();
+            }
         }
         return super.onOptionsItemSelected(item);
     }

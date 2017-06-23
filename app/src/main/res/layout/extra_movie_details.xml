@@ -17,6 +17,18 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/tv_number_of_trailer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/activity_detail_horizontal_padding"
+            android:layout_marginStart="@dimen/activity_detail_horizontal_padding"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_trailers_label"
+            app:layout_constraintLeft_toRightOf="@+id/tv_trailers_label"
+            app:layout_constraintTop_toTopOf="@+id/tv_trailers_label"
+            tools:text="@string/fake_detail_movie_number_of_trailer" />
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerview_movie_trailers"
             android:layout_width="wrap_content"
