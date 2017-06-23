@@ -44,7 +44,8 @@ public class FetchTrailerTask extends AsyncTask<String, Void, List<Trailer>> {
 
     @Override
     protected void onPostExecute(List<Trailer> trailerData) {
-        if (trailerData != null) {
+        // Because we need to use trailerData.get(0), so when trailerData.size() = 0, we cannot pass it.
+        if (trailerData != null && trailerData.size() > 0) {
             this.detailActivity.setmFirstTrailerSourceKey(trailerData.get(0).getKeyString());
             this.detailActivity.setmCurrentMovieTrailers(trailerData);
             this.detailActivity.getmTrailerAdapter().setTrailerData(trailerData);

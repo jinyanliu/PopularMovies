@@ -159,7 +159,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
 
         // Those animation is a substitute for Picasso's placeholder.
         Animation a = AnimationUtils.loadAnimation(this, R.anim.progress_animation_main);
-        a.setDuration(250);
+        a.setDuration(1000);
         mDetailBinding.primaryInfo.ivLoading.startAnimation(a);
 
         Intent intentThatStartedThisActivity = getIntent();
