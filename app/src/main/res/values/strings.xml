@@ -158,5 +158,7 @@
     <string name="review_and_trailer_not_loaded_yet">Please wait :p Reviews and trailers not loaded yet.</string>
     <!-- Toast message when you want to share the first trailer but the movie's trailers haven't loader yet. -->
     <string name="trailer_not_loaded_yet">Please wait :P Trailers not loaded yet.</string>
+    <!-- Toast message when you want to share the first trailer but the movie has no trailers to share. -->
+    <string name="no_trailer_to_share">Sorry. This movie doesn\'t have a trailer to share.</string>
 </resources>
 

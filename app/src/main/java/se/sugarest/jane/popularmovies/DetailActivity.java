@@ -337,36 +337,70 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     private void saveMovie() {
         if (mCurrentMovieReviews != null && mCurrentMovieTrailers != null) {
             if (mCurrentMovieReviews.size() > 0) {
-                saveFavoriteMovie();
-                saveFavoriteTrailer();
-                saveFavoriteReview();
-                if (mToast != null) {
-                    mToast.cancel();
-                }
-                if (saveMovieRecordNumber == SAVE_MOVIE_SUCCESS && saveReviewRecordNumber == SAVE_REVIEW_SUCCESS
-                        && saveTrailerRecordNumber == SAVE_TRAILER_SUCCESS) {
-                    mToast = Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT);
-                    mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                    mToast.show();
+                if (mCurrentMovieTrailers.size() > 0) {
+                    saveFavoriteMovie();
+                    saveFavoriteTrailer();
+                    saveFavoriteReview();
+                    if (mToast != null) {
+                        mToast.cancel();
+                    }
+                    if (saveMovieRecordNumber == SAVE_MOVIE_SUCCESS && saveReviewRecordNumber == SAVE_REVIEW_SUCCESS
+                            && saveTrailerRecordNumber == SAVE_TRAILER_SUCCESS) {
+                        mToast = Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT);
+                        mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                        mToast.show();
+                    } else {
+                        mToast = Toast.makeText(this, getString(R.string.insert_movie_failed), Toast.LENGTH_SHORT);
+                        mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                        mToast.show();
+                    }
                 } else {
-                    mToast = Toast.makeText(this, getString(R.string.insert_movie_failed), Toast.LENGTH_SHORT);
-                    mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                    mToast.show();
+                    saveFavoriteMovie();
+                    saveFavoriteReview();
+                    if (mToast != null) {
+                        mToast.cancel();
+                    }
+                    if (saveMovieRecordNumber == SAVE_MOVIE_SUCCESS && saveReviewRecordNumber == SAVE_REVIEW_SUCCESS) {
+                        mToast = Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT);
+                        mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                        mToast.show();
+                    } else {
+                        mToast = Toast.makeText(this, getString(R.string.insert_movie_failed), Toast.LENGTH_SHORT);
+                        mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                        mToast.show();
+                    }
                 }
+
             } else {
-                saveFavoriteMovie();
-                saveFavoriteTrailer();
-                if (mToast != null) {
-                    mToast.cancel();
-                }
-                if (saveMovieRecordNumber == SAVE_MOVIE_SUCCESS && saveTrailerRecordNumber == SAVE_TRAILER_SUCCESS) {
-                    mToast = Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT);
-                    mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                    mToast.show();
+                if (mCurrentMovieTrailers.size() > 0) {
+                    saveFavoriteMovie();
+                    saveFavoriteTrailer();
+                    if (mToast != null) {
+                        mToast.cancel();
+                    }
+                    if (saveMovieRecordNumber == SAVE_MOVIE_SUCCESS && saveTrailerRecordNumber == SAVE_TRAILER_SUCCESS) {
+                        mToast = Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT);
+                        mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                        mToast.show();
+                    } else {
+                        mToast = Toast.makeText(this, getString(R.string.insert_movie_failed), Toast.LENGTH_SHORT);
+                        mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                        mToast.show();
+                    }
                 } else {
-                    mToast = Toast.makeText(this, getString(R.string.insert_movie_failed), Toast.LENGTH_SHORT);
-                    mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                    mToast.show();
+                    saveFavoriteMovie();
+                    if (mToast != null) {
+                        mToast.cancel();
+                    }
+                    if (saveMovieRecordNumber == SAVE_MOVIE_SUCCESS) {
+                        mToast = Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT);
+                        mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                        mToast.show();
+                    } else {
+                        mToast = Toast.makeText(this, getString(R.string.insert_movie_failed), Toast.LENGTH_SHORT);
+                        mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                        mToast.show();
+                    }
                 }
             }
         } else {
@@ -375,7 +409,6 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             mToast.setGravity(Gravity.BOTTOM, 0, 0);
             mToast.show();
         }
-
     }
 
     /**
@@ -651,7 +684,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                     String urlToShare = BASE_YOUTUBE_URL_WEB + mFirstTrailerSourceKey;
                     shareFirstYoutubeUrl(urlToShare);
                 } else {
-                    mToast = Toast.makeText(this, "Sorry. This movie doesn't have a trailer to share.", Toast.LENGTH_SHORT);
+                    mToast = Toast.makeText(this, getString(R.string.no_trailer_to_share), Toast.LENGTH_SHORT);
                     mToast.show();
                 }
             } else {
