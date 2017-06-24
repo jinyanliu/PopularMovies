@@ -36,7 +36,8 @@
     <!-- The text for Log information message when checking refreshTop true. -->
     <string name="log_information_refreshTop_true">Check refresh Top true.</string>
 
-    <!-- Toast message for swipeRefreshLayout swipe to refresh when there is no internet connection and not in fav preference. -->
+    <!-- Toast message for swipeRefreshLayout swipe to refresh when there is no internet connection and not in fav preference in MainActivity. -->
+    <!-- Toast message for swipeRefreshLayout swipe to refresh when there is no internet connection in DetailActivity. -->
     <string name="toast_message_swipeRefreshLayout_no_internet">Cannot refresh without internet connection.</string>
     <!-- Toast message for swipeRefreshLayout swipe to refresh Pop movies in one minute, no need to refresh. List up to date. -->
     <string name="toast_message_swipe_refresh_pop_in_one_minute">Your Most Popular Movies list is up-to-date.</string>
@@ -67,6 +68,8 @@
 
     <!-- Toast message for saving success when inserting a movie. [CHAR LIMIT=20] -->
     <string name="insert_movie_successful">Movie saved</string>
+    <!-- Toast message for saving success when inserting a movie offline. -->
+    <string name="insert_movie_successful_reviews_trailers_later">Trailers and Reviews will be saved later while online.</string>
     <!-- Toast message for saving error when inserting a movie. [CHAR LIMIT=20] -->
     <string name="insert_movie_failed">Error with saving movie</string>
     <!-- Toast message for deleting success when deleting a movie. [CHAR LIMIT=20] -->

@@ -1,6 +1,7 @@
 package se.sugarest.jane.popularmovies.tasks;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.net.URL;
 import java.util.List;
@@ -16,6 +17,9 @@ import se.sugarest.jane.popularmovies.utilities.TrailerJsonUtils;
 public class FetchTrailerTask extends AsyncTask<String, Void, List<Trailer>> {
 
     DetailActivity detailActivity;
+    String movieId;
+
+    private static final String TAG = FetchTrailerTask.class.getSimpleName();
 
     public FetchTrailerTask(DetailActivity detailActivity) {
         this.detailActivity = detailActivity;
@@ -28,6 +32,7 @@ public class FetchTrailerTask extends AsyncTask<String, Void, List<Trailer>> {
             return null;
         }
         String id = params[0];
+        movieId = id;
         URL movieTrailerRequestUrl = NetworkUtils.buildTrailerUrl(id);
 
         try {
@@ -44,6 +49,7 @@ public class FetchTrailerTask extends AsyncTask<String, Void, List<Trailer>> {
 
     @Override
     protected void onPostExecute(List<Trailer> trailerData) {
+        this.detailActivity.hideLoadingIndicators();
         // Because we need to use trailerData.get(0), so when trailerData.size() = 0, we cannot pass it.
         if (trailerData != null) {
             this.detailActivity.setmCurrentMovieTrailers(trailerData);
@@ -51,6 +57,13 @@ public class FetchTrailerTask extends AsyncTask<String, Void, List<Trailer>> {
             String numberOfTrailerString = Integer.toString(this.detailActivity.getmTrailerAdapter().getItemCount());
             this.detailActivity.setmNumberOfTrailerString(numberOfTrailerString);
             this.detailActivity.getmDetailBinding().extraDetails.tvNumberOfTrailer.setText(numberOfTrailerString);
+            // When movie is saved offline (no fetching reviews and trailers), and reopen online, reviews and trailers show.
+            // Save secretly reviews and trailers for user.
+            boolean movieIsInDatabase = this.detailActivity.checkIsMovieAlreadyInFavDatabase(movieId);
+            if (movieIsInDatabase) {
+                this.detailActivity.saveFavoriteTrailer();
+                Log.i(TAG, "Save Trailers.");
+            }
         }
         if (trailerData.size() > 0) {
             this.detailActivity.setmFirstTrailerSourceKey(trailerData.get(0).getKeyString());

@@ -1,34 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <ScrollView
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
-            <include
-                android:id="@+id/primary_info"
-                layout="@layout/primary_movie_info"
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/dividing_line_rating_and_trailers"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/image_height_dividing_line_triple"
-                android:layout_marginBottom="@dimen/activity_detail_vertical_padding"
-                android:layout_marginTop="@dimen/activity_detail_vertical_padding"
-                android:background="@color/colorPrimaryLight" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
-            <include
-                android:id="@+id/extra_details"
-                layout="@layout/extra_movie_details"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-    </ScrollView>
+                    <include
+                        android:id="@+id/primary_info"
+                        layout="@layout/primary_movie_info"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <ImageView
+                        android:id="@+id/dividing_line_rating_and_trailers"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/image_height_dividing_line_triple"
+                        android:layout_marginBottom="@dimen/activity_detail_vertical_padding"
+                        android:layout_marginTop="@dimen/activity_detail_vertical_padding"
+                        android:background="@color/colorPrimaryLight" />
+
+                    <include
+                        android:id="@+id/extra_details"
+                        layout="@layout/extra_movie_details"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </ScrollView>
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+        <ProgressBar
+            android:id="@+id/pb_loading_indicator"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_gravity="center"
+            android:visibility="invisible" />
+    </FrameLayout>
 </layout>

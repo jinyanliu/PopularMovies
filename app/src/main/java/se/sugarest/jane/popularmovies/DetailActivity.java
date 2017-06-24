@@ -15,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,6 +27,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
@@ -114,6 +116,8 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
 
     private FloatingActionButton mFabButton;
 
+    private ProgressBar mLoadingIndicator;
+
     /**
      * Movie Database helper that will provide access to the movie database
      */
@@ -129,6 +133,8 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     private ActivityDetailBinding mDetailBinding;
 
     private Toast mToast;
+
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public ActivityDetailBinding getmDetailBinding() {
         return mDetailBinding;
@@ -167,6 +173,14 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         super.onCreate(savedInstanceState);
 
         mDetailBinding = DataBindingUtil.setContentView(this, R.layout.activity_detail);
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+
+        /**
+         * The ProgressBar that will indicate to the user that we are loading data. It will be
+         * hidden when no data is loading.
+         */
+        mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
 
         Intent intentThatStartedThisActivity = getIntent();
         if (intentThatStartedThisActivity != null) {
@@ -295,6 +309,50 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                 }
             }
         });
+
+        mSwipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+
+                    @Override
+                    public void onRefresh() {
+                        refreshMovie();
+                    }
+                }
+        );
+
+        // Change swipeRefreshLayout 's loading indicator background color.
+        int swipeRefreshBgColor = ContextCompat.getColor(this, R.color.colorPrimaryDark);
+        mSwipeRefreshLayout.setProgressBackgroundColorSchemeColor(swipeRefreshBgColor);
+
+        // Change swipeRefreshLayout 's loading indicator loading circle color.
+        // You can have as many as colors you want.
+        mSwipeRefreshLayout.setColorSchemeResources(
+                // if the loading is fast, it shows white from the beginning and finish
+                R.color.colorWhiteFavoriteStar,
+                // if the loading is slow, it shows different blue
+                R.color.trailer10,
+                R.color.trailer9,
+                R.color.trailer8,
+                R.color.trailer7,
+                R.color.trailer6,
+                R.color.trailer5,
+                R.color.trailer4,
+                R.color.trailer3,
+                R.color.trailer2,
+                R.color.trailer1,
+                R.color.trailer0);
+    }
+
+    private void refreshMovie() {
+        NetworkInfo networkInfo = getNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            loadReviewData(mCurrentMovie.getmId());
+            loadTrailerData(mCurrentMovie.getmId());
+        } else {
+            mToast = Toast.makeText(DetailActivity.this, getString(R.string.toast_message_swipeRefreshLayout_no_internet), Toast.LENGTH_SHORT);
+            mToast.setGravity(Gravity.BOTTOM, 0, 0);
+            mToast.show();
+        }
     }
 
     /**
@@ -313,12 +371,18 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                 if (networkInfo != null && networkInfo.isConnected()) {
                     new FetchReviewTask(this).execute(id);
                 } else {
+                    hideLoadingIndicators();
                     mDetailBinding.extraDetails.tvNumberOfUserReview.setText(getString(R.string.detail_activity_offline_reminder_text));
                 }
             }
         } catch (NullPointerException e) {
             Log.e(TAG, e.getMessage());
         }
+    }
+
+    public void hideLoadingIndicators() {
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     /**
@@ -338,6 +402,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                 if (networkInfo != null && networkInfo.isConnected()) {
                     new FetchTrailerTask(this).execute(id);
                 } else {
+                    hideLoadingIndicators();
                     mDetailBinding.extraDetails.tvNumberOfTrailer.setText(getString(R.string.detail_activity_offline_reminder_text));
                 }
             }
@@ -461,7 +526,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                 mToast.cancel();
             }
             if (saveMovieRecordNumber == SAVE_MOVIE_SUCCESS) {
-                mToast = Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT);
+                mToast = Toast.makeText(this, getString(R.string.insert_movie_successful_reviews_trailers_later), Toast.LENGTH_SHORT);
                 mToast.setGravity(Gravity.BOTTOM, 0, 0);
                 mToast.show();
             } else {
@@ -596,7 +661,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     /**
      * Save review into database.
      */
-    private void saveFavoriteReview() {
+    public void saveFavoriteReview() {
 
         for (int i = 0; i < Integer.valueOf(mNumberOfReviewString); i++) {
             ContentValues values = new ContentValues();
@@ -619,7 +684,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     /**
      * Save trailer into database.
      */
-    private void saveFavoriteTrailer() {
+    public void saveFavoriteTrailer() {
 
         for (int i = 0; i < Integer.valueOf(mNumberOfTrailerString); i++) {
             ContentValues values = new ContentValues();
@@ -719,6 +784,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             cursor.close();
 
             if (reviews != null) {
+                hideLoadingIndicators();
                 mCurrentMovieReviews = reviews;
                 mReviewAdapter.setReviewData(reviews);
                 // Display total number of reviews in the detail activity, because some movies does
@@ -736,6 +802,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             if (networkInfo != null && networkInfo.isConnected()) {
                 new FetchReviewTask(this).execute(movieId);
             } else {
+                hideLoadingIndicators();
                 mDetailBinding.extraDetails.tvNumberOfUserReview.setText(getString(R.string.detail_activity_offline_reminder_text));
             }
         }
@@ -762,6 +829,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             }
             cursor.close();
             if (trailers != null) {
+                hideLoadingIndicators();
                 mCurrentMovieTrailers = trailers;
                 mTrailerAdapter.setTrailerData(trailers);
                 mNumberOfTrailerString = Integer.toString(mTrailerAdapter.getItemCount());
@@ -777,6 +845,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             if (networkInfo != null && networkInfo.isConnected()) {
                 new FetchTrailerTask(this).execute(movieId);
             } else {
+                hideLoadingIndicators();
                 mDetailBinding.extraDetails.tvNumberOfTrailer.setText(getString(R.string.detail_activity_offline_reminder_text));
             }
         }
@@ -816,34 +885,41 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        // Share trailer
-        if (id == R.id.action_share) {
 
-            NetworkInfo networkInfo = getNetworkInfo();
-            if (networkInfo != null && networkInfo.isConnected()) {
-                if (mCurrentMovieTrailers != null) {
-                    if (mFirstTrailerSourceKey != null) {
-                        String urlToShare = BASE_YOUTUBE_URL_WEB + mFirstTrailerSourceKey;
-                        shareFirstYoutubeUrl(urlToShare);
+        switch (id) {
+            // Have a refresh menu button to perform the refresh again, in case some device or some
+            // users cannot perform swipe to refresh.
+            case R.id.action_refresh:
+                mLoadingIndicator.setVisibility(View.VISIBLE);
+                refreshMovie();
+                return true;
+            // Share first trailer url
+            case R.id.action_share:
+                NetworkInfo networkInfo = getNetworkInfo();
+                if (networkInfo != null && networkInfo.isConnected()) {
+                    if (mCurrentMovieTrailers != null) {
+                        if (mFirstTrailerSourceKey != null) {
+                            String urlToShare = BASE_YOUTUBE_URL_WEB + mFirstTrailerSourceKey;
+                            shareFirstYoutubeUrl(urlToShare);
+                        } else {
+                            mToast = Toast.makeText(this, getString(R.string.no_trailer_to_share), Toast.LENGTH_SHORT);
+                            mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                            mToast.show();
+                        }
                     } else {
-                        mToast = Toast.makeText(this, getString(R.string.no_trailer_to_share), Toast.LENGTH_SHORT);
+                        mToast = Toast.makeText(this, getString(R.string.trailer_not_loaded_yet), Toast.LENGTH_SHORT);
                         mToast.setGravity(Gravity.BOTTOM, 0, 0);
                         mToast.show();
                     }
                 } else {
-                    mToast = Toast.makeText(this, getString(R.string.trailer_not_loaded_yet), Toast.LENGTH_SHORT);
+                    mToast = Toast.makeText(this, getString(R.string.detail_activity_offline_reminder_text), Toast.LENGTH_SHORT);
                     mToast.setGravity(Gravity.BOTTOM, 0, 0);
                     mToast.show();
                 }
-            } else {
-                mToast = Toast.makeText(this, getString(R.string.detail_activity_offline_reminder_text), Toast.LENGTH_SHORT);
-                mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                mToast.show();
-            }
-
-
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
     private void shareFirstYoutubeUrl(String urlToShare) {

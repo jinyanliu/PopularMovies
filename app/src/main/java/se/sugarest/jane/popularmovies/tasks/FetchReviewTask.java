@@ -1,6 +1,7 @@
 package se.sugarest.jane.popularmovies.tasks;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.net.URL;
 import java.util.List;
@@ -15,7 +16,10 @@ import se.sugarest.jane.popularmovies.utilities.ReviewJsonUtils;
  */
 public class FetchReviewTask extends AsyncTask<String, Void, List<Review>> {
 
+    private static final String TAG = FetchReviewTask.class.getSimpleName();
+
     DetailActivity detailActivity;
+    String movieId;
 
     public FetchReviewTask(DetailActivity detailActivity) {
         this.detailActivity = detailActivity;
@@ -28,6 +32,7 @@ public class FetchReviewTask extends AsyncTask<String, Void, List<Review>> {
             return null;
         }
         String id = params[0];
+        movieId = id;
         URL movieReviewRequestUrl = NetworkUtils.buildReviewUrl(id);
 
         try {
@@ -37,13 +42,14 @@ public class FetchReviewTask extends AsyncTask<String, Void, List<Review>> {
                     .extractResultsFromMovieReviewJson(jsonMovieReviewResponse);
             return simpleJsonReviewData;
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
             return null;
         }
     }
 
     @Override
     protected void onPostExecute(List<Review> reviewData) {
+        this.detailActivity.hideLoadingIndicators();
         if (reviewData != null) {
             this.detailActivity.setmCurrentMovieReviews(reviewData);
             this.detailActivity.getmReviewAdapter().setReviewData(reviewData);
@@ -52,6 +58,11 @@ public class FetchReviewTask extends AsyncTask<String, Void, List<Review>> {
             String numberOfReviewString = Integer.toString(this.detailActivity.getmReviewAdapter().getItemCount());
             this.detailActivity.setmNumberOfReviewString(numberOfReviewString);
             this.detailActivity.getmDetailBinding().extraDetails.tvNumberOfUserReview.setText(numberOfReviewString);
+            boolean movieIsInDatabase = this.detailActivity.checkIsMovieAlreadyInFavDatabase(movieId);
+            if (movieIsInDatabase) {
+                this.detailActivity.saveFavoriteReview();
+                Log.i(TAG, "Save Reviews.");
+            }
         }
     }
 }
