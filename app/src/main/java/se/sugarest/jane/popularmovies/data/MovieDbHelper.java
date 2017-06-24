@@ -48,21 +48,22 @@ public class MovieDbHelper extends SQLiteOpenHelper {
          * store the movie data.
          */
         final String SQL_CREATE_MOVIE_TABLE =
-                "CREATE TABLE " + MovieContract.FavMovieEntry.TABLE_NAME + " (" +
+                "CREATE TABLE " + FavMovieEntry.TABLE_NAME + " (" +
                         /**
                          * FavMovieEntry did not explicitly declare a column called "_ID". However,
                          * FavMovieEntry implements the interface, "BaseColumns", which does have a field
                          * named "_ID". We use that here to designate our table's primary key.
                          */
-                        MovieContract.FavMovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        MovieContract.FavMovieEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
-                        MovieContract.FavMovieEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH + " TEXT NOT NULL, " +
+                        FavMovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        FavMovieEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
+                        FavMovieEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH + " TEXT NOT NULL, " +
                         FavMovieEntry.COLUMN_ORIGINAL_TITLE + " TEXT NOT NULL, " +
-                        MovieContract.FavMovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL + " TEXT NOT NULL, " +
-                        MovieContract.FavMovieEntry.COLUMN_A_PLOT_SYNOPSIS + " TEXT NOT NULL, " +
-                        MovieContract.FavMovieEntry.COLUMN_USER_RATING + " TEXT NOT NULL, " +
-                        MovieContract.FavMovieEntry.COLUMN_RELEASE_DATE + " TEXT NOT NULL, " +
-                        MovieContract.FavMovieEntry.COLUMN_MOVIE_ID + " TEXT NOT NULL, " +
+                        FavMovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL + " TEXT NOT NULL, " +
+                        FavMovieEntry.COLUMN_EXTERNAL_STORAGE_IMAGE_THUMBNAIL + " TEXT NOT NULL, " +
+                        FavMovieEntry.COLUMN_A_PLOT_SYNOPSIS + " TEXT NOT NULL, " +
+                        FavMovieEntry.COLUMN_USER_RATING + " TEXT NOT NULL, " +
+                        FavMovieEntry.COLUMN_RELEASE_DATE + " TEXT NOT NULL, " +
+                        FavMovieEntry.COLUMN_MOVIE_ID + " TEXT NOT NULL, " +
                         /**
                          * To ensure this table can only contain one movie entry per movie, declaring
                          * the movie_id column to bu unique. Also specify "ON CONFLICT REPLACE". This

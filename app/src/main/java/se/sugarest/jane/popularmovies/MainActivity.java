@@ -76,6 +76,15 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        String titleOrderBy = getPreference();
+        if ("popular".equals(titleOrderBy)) {
+            setTitle(getString(R.string.main_activity_title_most_popular));
+        } else if ("top_rated".equals(titleOrderBy)) {
+            setTitle(getString(R.string.main_activity_title_top_rated));
+        } else {
+            setTitle(getString(R.string.main_activity_title_favorite));
+        }
+
         /**
          * Using findViewById, get a reference to the RecyclerView from xml.
          */

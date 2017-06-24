@@ -27,9 +27,12 @@ public class FullMovie implements Serializable {
 
     private String mId;
 
-    private String mExternalUrl;
+    private String mExternalUrlPosterPath;
 
-    public FullMovie(String mPosterPath, String mOriginalTitle, String mMoviePosterImageThumbnail, String mAPlotSynopsis, String mUserRating, String mReleaseDate, String mId, String mExternalUrl) {
+    private String mExternalUrlImageThumbnail;
+
+
+    public FullMovie(String mPosterPath, String mOriginalTitle, String mMoviePosterImageThumbnail, String mAPlotSynopsis, String mUserRating, String mReleaseDate, String mId, String mExternalUrlPosterPath, String mExternalUrlImageThumbnail) {
         this.mPosterPath = mPosterPath;
         this.mOriginalTitle = mOriginalTitle;
         this.mMoviePosterImageThumbnail = mMoviePosterImageThumbnail;
@@ -37,7 +40,8 @@ public class FullMovie implements Serializable {
         this.mUserRating = mUserRating;
         this.mReleaseDate = mReleaseDate;
         this.mId = mId;
-        this.mExternalUrl = mExternalUrl;
+        this.mExternalUrlPosterPath = mExternalUrlPosterPath;
+        this.mExternalUrlImageThumbnail = mExternalUrlImageThumbnail;
     }
 
     public String getmPosterPath() {
@@ -68,8 +72,12 @@ public class FullMovie implements Serializable {
         return mId;
     }
 
-    public String getmExternalUrl() {
-        return mExternalUrl;
+    public String getmExternalUrlPosterPath() {
+        return mExternalUrlPosterPath;
+    }
+
+    public String getmExternalUrlImageThumbnail() {
+        return mExternalUrlImageThumbnail;
     }
 
     @Override
@@ -92,7 +100,9 @@ public class FullMovie implements Serializable {
         if (mReleaseDate != null ? !mReleaseDate.equals(fullMovie.mReleaseDate) : fullMovie.mReleaseDate != null)
             return false;
         if (mId != null ? !mId.equals(fullMovie.mId) : fullMovie.mId != null) return false;
-        return mExternalUrl != null ? mExternalUrl.equals(fullMovie.mExternalUrl) : fullMovie.mExternalUrl == null;
+        if (mExternalUrlPosterPath != null ? !mExternalUrlPosterPath.equals(fullMovie.mExternalUrlPosterPath) : fullMovie.mExternalUrlPosterPath != null)
+            return false;
+        return mExternalUrlImageThumbnail != null ? mExternalUrlImageThumbnail.equals(fullMovie.mExternalUrlImageThumbnail) : fullMovie.mExternalUrlImageThumbnail == null;
 
     }
 
@@ -105,7 +115,8 @@ public class FullMovie implements Serializable {
         result = 31 * result + (mUserRating != null ? mUserRating.hashCode() : 0);
         result = 31 * result + (mReleaseDate != null ? mReleaseDate.hashCode() : 0);
         result = 31 * result + (mId != null ? mId.hashCode() : 0);
-        result = 31 * result + (mExternalUrl != null ? mExternalUrl.hashCode() : 0);
+        result = 31 * result + (mExternalUrlPosterPath != null ? mExternalUrlPosterPath.hashCode() : 0);
+        result = 31 * result + (mExternalUrlImageThumbnail != null ? mExternalUrlImageThumbnail.hashCode() : 0);
         return result;
     }
 
@@ -119,9 +130,8 @@ public class FullMovie implements Serializable {
                 ", mUserRating='" + mUserRating + '\'' +
                 ", mReleaseDate='" + mReleaseDate + '\'' +
                 ", mId='" + mId + '\'' +
-                ", mExternalUrl='" + mExternalUrl + '\'' +
+                ", mExternalUrlPosterPath='" + mExternalUrlPosterPath + '\'' +
+                ", mExternalUrlImageThumbnail='" + mExternalUrlImageThumbnail + '\'' +
                 '}';
     }
-
-
 }

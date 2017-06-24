@@ -2,10 +2,13 @@ package se.sugarest.jane.popularmovies;
 
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.databinding.DataBindingUtil;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -27,6 +30,7 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,6 +90,13 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     private List<Review> mCurrentMovieReviews;
 
     private List<Trailer> mCurrentMovieTrailers;
+
+    /*****************************************************************************************************
+     * mCurrentMovieReviews == null , mCurrentMovieTrailers == null : Haven't loaded yet.                *
+     * (slow internet speed).                                                                            *
+     * mCurrentMovieReviews.size() == 0 , mCurrentMovieTrailers.size() == 0 : No reviews or no trailers. *
+     * (Loaded finished successfully.)                                                                   *
+     *****************************************************************************************************/
 
     private RecyclerView mReviewRecyclerView;
 
@@ -157,11 +168,6 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
 
         mDetailBinding = DataBindingUtil.setContentView(this, R.layout.activity_detail);
 
-        // Those animation is a substitute for Picasso's placeholder.
-        Animation a = AnimationUtils.loadAnimation(this, R.anim.progress_animation_main);
-        a.setDuration(1000);
-        mDetailBinding.primaryInfo.ivLoading.startAnimation(a);
-
         Intent intentThatStartedThisActivity = getIntent();
         if (intentThatStartedThisActivity != null) {
             if (intentThatStartedThisActivity.hasExtra("movie")) {
@@ -172,15 +178,34 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         // Set current movie original title on the detail activity menu bar as activity's title.
         setTitle(mCurrentMovie.getmOriginalTitle());
 
-        // Set current movie poster image thumbnail
-        String currentMoviePosterImageThumbnail = BASE_IMAGE_URL.concat(IMAGE_SIZE_W780)
-                .concat(mCurrentMovie.getmMoviePosterImageThumbnail());
+        // Those animation is a substitute for Picasso's placeholder.
+        Animation a = AnimationUtils.loadAnimation(this, R.anim.progress_animation_main);
+        a.setDuration(1000);
+        mDetailBinding.primaryInfo.ivLoading.startAnimation(a);
 
-        Picasso.with(DetailActivity.this)
-                .load(currentMoviePosterImageThumbnail)
-                // .placeholder(R.drawable.progress_animation)
-                .error(R.drawable.picasso_placeholder_error)
-                .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
+        /**
+         * While online, picasso load url string which starts with "http://";
+         * While offline, picasso load file path on external storage which starts with "/storage"
+         */
+
+        NetworkInfo networkInfo = getNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            // Set current movie poster image thumbnail
+            String currentMoviePosterImageThumbnail = BASE_IMAGE_URL.concat(IMAGE_SIZE_W780)
+                    .concat(mCurrentMovie.getmMoviePosterImageThumbnail());
+            Picasso.with(DetailActivity.this)
+                    .load(currentMoviePosterImageThumbnail)
+                    // .placeholder(R.drawable.progress_animation)
+                    .error(R.drawable.picasso_placeholder_error)
+                    .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
+        } else {
+            String currentMoviePosterImageThumbnail = mCurrentMovie.getmExternalUrlImageThumbnail();
+            File pathToPic = new File(currentMoviePosterImageThumbnail);
+            Picasso.with(DetailActivity.this)
+                    .load(pathToPic)
+                    .error(R.drawable.picasso_placeholder_error)
+                    .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
+        }
 
         // Set current movie textViews content
         mDetailBinding.primaryInfo.tvUserRating.setText(mCurrentMovie.getmUserRating());
@@ -284,7 +309,12 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             if (movieIsInDatabase) {
                 loadReviewDataFromDatabase(id);
             } else {
-                new FetchReviewTask(this).execute(id);
+                NetworkInfo networkInfo = getNetworkInfo();
+                if (networkInfo != null && networkInfo.isConnected()) {
+                    new FetchReviewTask(this).execute(id);
+                } else {
+                    mDetailBinding.extraDetails.tvNumberOfUserReview.setText(getString(R.string.detail_activity_offline_reminder_text));
+                }
             }
         } catch (NullPointerException e) {
             Log.e(TAG, e.getMessage());
@@ -300,10 +330,16 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     private void loadTrailerData(String id) {
         try {
             boolean movieIsInDatabase = checkIsMovieAlreadyInFavDatabase(id);
+            // When saved offline, trailers haven't loaded yet.
             if (movieIsInDatabase) {
                 loadTrailerDataFromDatabase(id);
             } else {
-                new FetchTrailerTask(this).execute(id);
+                NetworkInfo networkInfo = getNetworkInfo();
+                if (networkInfo != null && networkInfo.isConnected()) {
+                    new FetchTrailerTask(this).execute(id);
+                } else {
+                    mDetailBinding.extraDetails.tvNumberOfTrailer.setText(getString(R.string.detail_activity_offline_reminder_text));
+                }
             }
         } catch (NullPointerException e) {
             Log.e(TAG, e.getMessage());
@@ -321,13 +357,20 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
      */
     @Override
     public void onClick(String trailerSourceKey) {
-        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(BASE_YOUTUBE_URL_APP + trailerSourceKey));
-        Intent webIntent = new Intent(Intent.ACTION_VIEW,
-                Uri.parse(BASE_YOUTUBE_URL_WEB + trailerSourceKey));
-        try {
-            startActivity(appIntent);
-        } catch (ActivityNotFoundException ex) {
-            startActivity(webIntent);
+        NetworkInfo networkInfo = getNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(BASE_YOUTUBE_URL_APP + trailerSourceKey));
+            Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse(BASE_YOUTUBE_URL_WEB + trailerSourceKey));
+            try {
+                startActivity(appIntent);
+            } catch (ActivityNotFoundException ex) {
+                startActivity(webIntent);
+            }
+        } else {
+            mToast = Toast.makeText(this, getString(R.string.detail_activity_offline_reminder_text), Toast.LENGTH_SHORT);
+            mToast.setGravity(Gravity.BOTTOM, 0, 0);
+            mToast.show();
         }
     }
 
@@ -335,79 +378,97 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
      * Save movie, review and trailer into database.
      */
     private void saveMovie() {
-        if (mCurrentMovieReviews != null && mCurrentMovieTrailers != null) {
-            if (mCurrentMovieReviews.size() > 0) {
-                if (mCurrentMovieTrailers.size() > 0) {
-                    saveFavoriteMovie();
-                    saveFavoriteTrailer();
-                    saveFavoriteReview();
-                    if (mToast != null) {
-                        mToast.cancel();
-                    }
-                    if (saveMovieRecordNumber == SAVE_MOVIE_SUCCESS && saveReviewRecordNumber == SAVE_REVIEW_SUCCESS
-                            && saveTrailerRecordNumber == SAVE_TRAILER_SUCCESS) {
-                        mToast = Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT);
-                        mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                        mToast.show();
+        NetworkInfo networkInfo = getNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            if (mCurrentMovieReviews != null && mCurrentMovieTrailers != null) {
+                if (mCurrentMovieReviews.size() > 0) {
+                    if (mCurrentMovieTrailers.size() > 0) {
+                        saveFavoriteMovie();
+                        saveFavoriteTrailer();
+                        saveFavoriteReview();
+                        Log.i(TAG, "mCurrentMovieReviews.size() = " + mCurrentMovieReviews.size());
+                        if (mToast != null) {
+                            mToast.cancel();
+                        }
+                        if (saveMovieRecordNumber == SAVE_MOVIE_SUCCESS && saveReviewRecordNumber == SAVE_REVIEW_SUCCESS
+                                && saveTrailerRecordNumber == SAVE_TRAILER_SUCCESS) {
+                            mToast = Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT);
+                            mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                            mToast.show();
+                        } else {
+                            mToast = Toast.makeText(this, getString(R.string.insert_movie_failed), Toast.LENGTH_SHORT);
+                            mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                            mToast.show();
+                        }
                     } else {
-                        mToast = Toast.makeText(this, getString(R.string.insert_movie_failed), Toast.LENGTH_SHORT);
-                        mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                        mToast.show();
+                        saveFavoriteMovie();
+                        saveFavoriteReview();
+                        if (mToast != null) {
+                            mToast.cancel();
+                        }
+                        if (saveMovieRecordNumber == SAVE_MOVIE_SUCCESS && saveReviewRecordNumber == SAVE_REVIEW_SUCCESS) {
+                            mToast = Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT);
+                            mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                            mToast.show();
+                        } else {
+                            mToast = Toast.makeText(this, getString(R.string.insert_movie_failed), Toast.LENGTH_SHORT);
+                            mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                            mToast.show();
+                        }
                     }
-                } else {
-                    saveFavoriteMovie();
-                    saveFavoriteReview();
-                    if (mToast != null) {
-                        mToast.cancel();
-                    }
-                    if (saveMovieRecordNumber == SAVE_MOVIE_SUCCESS && saveReviewRecordNumber == SAVE_REVIEW_SUCCESS) {
-                        mToast = Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT);
-                        mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                        mToast.show();
-                    } else {
-                        mToast = Toast.makeText(this, getString(R.string.insert_movie_failed), Toast.LENGTH_SHORT);
-                        mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                        mToast.show();
-                    }
-                }
 
-            } else {
-                if (mCurrentMovieTrailers.size() > 0) {
-                    saveFavoriteMovie();
-                    saveFavoriteTrailer();
-                    if (mToast != null) {
-                        mToast.cancel();
-                    }
-                    if (saveMovieRecordNumber == SAVE_MOVIE_SUCCESS && saveTrailerRecordNumber == SAVE_TRAILER_SUCCESS) {
-                        mToast = Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT);
-                        mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                        mToast.show();
-                    } else {
-                        mToast = Toast.makeText(this, getString(R.string.insert_movie_failed), Toast.LENGTH_SHORT);
-                        mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                        mToast.show();
-                    }
                 } else {
-                    saveFavoriteMovie();
-                    if (mToast != null) {
-                        mToast.cancel();
-                    }
-                    if (saveMovieRecordNumber == SAVE_MOVIE_SUCCESS) {
-                        mToast = Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT);
-                        mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                        mToast.show();
+                    if (mCurrentMovieTrailers.size() > 0) {
+                        saveFavoriteMovie();
+                        saveFavoriteTrailer();
+                        if (mToast != null) {
+                            mToast.cancel();
+                        }
+                        if (saveMovieRecordNumber == SAVE_MOVIE_SUCCESS && saveTrailerRecordNumber == SAVE_TRAILER_SUCCESS) {
+                            mToast = Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT);
+                            mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                            mToast.show();
+                        } else {
+                            mToast = Toast.makeText(this, getString(R.string.insert_movie_failed), Toast.LENGTH_SHORT);
+                            mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                            mToast.show();
+                        }
                     } else {
-                        mToast = Toast.makeText(this, getString(R.string.insert_movie_failed), Toast.LENGTH_SHORT);
-                        mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                        mToast.show();
+                        saveFavoriteMovie();
+                        if (mToast != null) {
+                            mToast.cancel();
+                        }
+                        if (saveMovieRecordNumber == SAVE_MOVIE_SUCCESS) {
+                            mToast = Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT);
+                            mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                            mToast.show();
+                        } else {
+                            mToast = Toast.makeText(this, getString(R.string.insert_movie_failed), Toast.LENGTH_SHORT);
+                            mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                            mToast.show();
+                        }
                     }
                 }
+            } else {
+                mFabButton.setColorFilter(ContextCompat.getColor(DetailActivity.this, R.color.colorWhiteFavoriteStar));
+                mToast = Toast.makeText(this, getString(R.string.review_and_trailer_not_loaded_yet), Toast.LENGTH_SHORT);
+                mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                mToast.show();
             }
         } else {
-            mFabButton.setColorFilter(ContextCompat.getColor(DetailActivity.this, R.color.colorWhiteFavoriteStar));
-            mToast = Toast.makeText(this, getString(R.string.review_and_trailer_not_loaded_yet), Toast.LENGTH_SHORT);
-            mToast.setGravity(Gravity.BOTTOM, 0, 0);
-            mToast.show();
+            saveFavoriteMovie();
+            if (mToast != null) {
+                mToast.cancel();
+            }
+            if (saveMovieRecordNumber == SAVE_MOVIE_SUCCESS) {
+                mToast = Toast.makeText(this, getString(R.string.insert_movie_successful), Toast.LENGTH_SHORT);
+                mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                mToast.show();
+            } else {
+                mToast = Toast.makeText(this, getString(R.string.insert_movie_failed), Toast.LENGTH_SHORT);
+                mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                mToast.show();
+            }
         }
     }
 
@@ -415,69 +476,87 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
      * Delete movie, review and trailer from database.
      */
     private void deleteMovie() {
-        if (mCurrentMovieReviews.size() > 0) {
-            if (mCurrentMovieTrailers.size() > 0) {
-                deleteFavoriteMovie();
-                deleteFavoriteTrailer();
-                deleteFavoriteReview();
-                if (mToast != null) {
-                    mToast.cancel();
-                }
-                if (deleteMovieRecordNumber == DELETE_MOVIE_SUCCESS && deleteReviewRecordNumber == DELETE_REVIEW_SUCCESS
-                        && deleteTrailerRecordNumber == DELETE_TRAILER_SUCCESS) {
-                    mToast = Toast.makeText(this, getString(R.string.delete_movie_successful), Toast.LENGTH_SHORT);
-                    mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                    mToast.show();
-                } else {
-                    mToast = Toast.makeText(this, getString(R.string.delete_movie_failed), Toast.LENGTH_SHORT);
-                    mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                    mToast.show();
-                }
+        // Happens when movie was saved when offline. So reviews and trailers are both null.
+        if (mCurrentMovieReviews == null && mCurrentMovieTrailers == null) {
+            deleteFavoriteMovie();
+            if (mToast != null) {
+                mToast.cancel();
+            }
+            if (deleteMovieRecordNumber == DELETE_MOVIE_SUCCESS) {
+                mToast = Toast.makeText(this, getString(R.string.delete_movie_successful), Toast.LENGTH_SHORT);
+                mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                mToast.show();
             } else {
-                deleteFavoriteMovie();
-                deleteFavoriteReview();
-                if (mToast != null) {
-                    mToast.cancel();
-                }
-                if (deleteMovieRecordNumber == DELETE_MOVIE_SUCCESS && deleteReviewRecordNumber == DELETE_REVIEW_SUCCESS) {
-                    mToast = Toast.makeText(this, getString(R.string.delete_movie_successful), Toast.LENGTH_SHORT);
-                    mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                    mToast.show();
-                } else {
-                    mToast = Toast.makeText(this, getString(R.string.delete_movie_failed), Toast.LENGTH_SHORT);
-                    mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                    mToast.show();
-                }
+                mToast = Toast.makeText(this, getString(R.string.delete_movie_failed), Toast.LENGTH_SHORT);
+                mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                mToast.show();
             }
         } else {
-            if (mCurrentMovieTrailers.size() > 0) {
-                deleteFavoriteMovie();
-                deleteFavoriteTrailer();
-                if (mToast != null) {
-                    mToast.cancel();
-                }
-                if (deleteMovieRecordNumber == DELETE_MOVIE_SUCCESS && deleteTrailerRecordNumber == DELETE_TRAILER_SUCCESS) {
-                    mToast = Toast.makeText(this, getString(R.string.delete_movie_successful), Toast.LENGTH_SHORT);
-                    mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                    mToast.show();
+            // Happens when movie was saved when online. So reviews and trailers couldn't be null.
+            if (mCurrentMovieReviews.size() > 0) {
+                if (mCurrentMovieTrailers.size() > 0) {
+                    deleteFavoriteMovie();
+                    deleteFavoriteTrailer();
+                    deleteFavoriteReview();
+                    if (mToast != null) {
+                        mToast.cancel();
+                    }
+                    if (deleteMovieRecordNumber == DELETE_MOVIE_SUCCESS && deleteReviewRecordNumber == DELETE_REVIEW_SUCCESS
+                            && deleteTrailerRecordNumber == DELETE_TRAILER_SUCCESS) {
+                        mToast = Toast.makeText(this, getString(R.string.delete_movie_successful), Toast.LENGTH_SHORT);
+                        mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                        mToast.show();
+                    } else {
+                        mToast = Toast.makeText(this, getString(R.string.delete_movie_failed), Toast.LENGTH_SHORT);
+                        mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                        mToast.show();
+                    }
                 } else {
-                    mToast = Toast.makeText(this, getString(R.string.delete_movie_failed), Toast.LENGTH_SHORT);
-                    mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                    mToast.show();
+                    deleteFavoriteMovie();
+                    deleteFavoriteReview();
+                    if (mToast != null) {
+                        mToast.cancel();
+                    }
+                    if (deleteMovieRecordNumber == DELETE_MOVIE_SUCCESS && deleteReviewRecordNumber == DELETE_REVIEW_SUCCESS) {
+                        mToast = Toast.makeText(this, getString(R.string.delete_movie_successful), Toast.LENGTH_SHORT);
+                        mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                        mToast.show();
+                    } else {
+                        mToast = Toast.makeText(this, getString(R.string.delete_movie_failed), Toast.LENGTH_SHORT);
+                        mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                        mToast.show();
+                    }
                 }
             } else {
-                deleteFavoriteMovie();
-                if (mToast != null) {
-                    mToast.cancel();
-                }
-                if (deleteMovieRecordNumber == DELETE_MOVIE_SUCCESS) {
-                    mToast = Toast.makeText(this, getString(R.string.delete_movie_successful), Toast.LENGTH_SHORT);
-                    mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                    mToast.show();
+                if (mCurrentMovieTrailers.size() > 0) {
+                    deleteFavoriteMovie();
+                    deleteFavoriteTrailer();
+                    if (mToast != null) {
+                        mToast.cancel();
+                    }
+                    if (deleteMovieRecordNumber == DELETE_MOVIE_SUCCESS && deleteTrailerRecordNumber == DELETE_TRAILER_SUCCESS) {
+                        mToast = Toast.makeText(this, getString(R.string.delete_movie_successful), Toast.LENGTH_SHORT);
+                        mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                        mToast.show();
+                    } else {
+                        mToast = Toast.makeText(this, getString(R.string.delete_movie_failed), Toast.LENGTH_SHORT);
+                        mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                        mToast.show();
+                    }
                 } else {
-                    mToast = Toast.makeText(this, getString(R.string.delete_movie_failed), Toast.LENGTH_SHORT);
-                    mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                    mToast.show();
+                    deleteFavoriteMovie();
+                    if (mToast != null) {
+                        mToast.cancel();
+                    }
+                    if (deleteMovieRecordNumber == DELETE_MOVIE_SUCCESS) {
+                        mToast = Toast.makeText(this, getString(R.string.delete_movie_successful), Toast.LENGTH_SHORT);
+                        mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                        mToast.show();
+                    } else {
+                        mToast = Toast.makeText(this, getString(R.string.delete_movie_failed), Toast.LENGTH_SHORT);
+                        mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                        mToast.show();
+                    }
                 }
             }
         }
@@ -491,14 +570,15 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         // Create a ContentValues object where column names are the keys, and current movie
         // attributes are the values.
         ContentValues values = new ContentValues();
-        values.put(MovieContract.FavMovieEntry.COLUMN_POSTER_PATH, mCurrentMovie.getmPosterPath());
-        values.put(MovieContract.FavMovieEntry.COLUMN_ORIGINAL_TITLE, mCurrentMovie.getmOriginalTitle());
-        values.put(MovieContract.FavMovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL, mCurrentMovie.getmMoviePosterImageThumbnail());
+        values.put(FavMovieEntry.COLUMN_POSTER_PATH, mCurrentMovie.getmPosterPath());
+        values.put(FavMovieEntry.COLUMN_ORIGINAL_TITLE, mCurrentMovie.getmOriginalTitle());
+        values.put(FavMovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL, mCurrentMovie.getmMoviePosterImageThumbnail());
         values.put(FavMovieEntry.COLUMN_A_PLOT_SYNOPSIS, mCurrentMovie.getmAPlotSynopsis());
-        values.put(MovieContract.FavMovieEntry.COLUMN_USER_RATING, mCurrentMovie.getmUserRating());
+        values.put(FavMovieEntry.COLUMN_USER_RATING, mCurrentMovie.getmUserRating());
         values.put(FavMovieEntry.COLUMN_RELEASE_DATE, mCurrentMovie.getmReleaseDate());
-        values.put(MovieContract.FavMovieEntry.COLUMN_MOVIE_ID, mCurrentMovie.getmId());
-        values.put(MovieContract.FavMovieEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH, mCurrentMovie.getmExternalUrl());
+        values.put(FavMovieEntry.COLUMN_MOVIE_ID, mCurrentMovie.getmId());
+        values.put(FavMovieEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH, mCurrentMovie.getmExternalUrlPosterPath());
+        values.put(FavMovieEntry.COLUMN_EXTERNAL_STORAGE_IMAGE_THUMBNAIL, mCurrentMovie.getmExternalUrlImageThumbnail());
 
         // Insert a new movie into the provider, returning the content URI for the new movie.
         Uri newUri = getContentResolver().insert(MovieContract.FavMovieEntry.CONTENT_URI, values);
@@ -637,14 +717,27 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                 cursor.moveToNext();
             }
             cursor.close();
-        }
-        if (reviews != null) {
-            mCurrentMovieReviews = reviews;
-            mReviewAdapter.setReviewData(reviews);
-            // Display total number of reviews in the detail activity, because some movies does
-            // not have reviews.
-            mNumberOfReviewString = Integer.toString(mReviewAdapter.getItemCount());
-            mDetailBinding.extraDetails.tvNumberOfUserReview.setText(mNumberOfReviewString);
+
+            if (reviews != null) {
+                mCurrentMovieReviews = reviews;
+                mReviewAdapter.setReviewData(reviews);
+                // Display total number of reviews in the detail activity, because some movies does
+                // not have reviews.
+                mNumberOfReviewString = Integer.toString(mReviewAdapter.getItemCount());
+                mDetailBinding.extraDetails.tvNumberOfUserReview.setText(mNumberOfReviewString);
+            }
+        } else {
+            /************************************************************************************************
+             * This block of code's function:                                                               *
+             * when saved offline without fetching reviews and trailers,                                    *
+             * but open this movie when online, refetch reviews and trailers online inside of showing 0. *
+             ************************************************************************************************/
+            NetworkInfo networkInfo = getNetworkInfo();
+            if (networkInfo != null && networkInfo.isConnected()) {
+                new FetchReviewTask(this).execute(movieId);
+            } else {
+                mDetailBinding.extraDetails.tvNumberOfUserReview.setText(getString(R.string.detail_activity_offline_reminder_text));
+            }
         }
     }
 
@@ -668,12 +761,24 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                 cursor.moveToNext();
             }
             cursor.close();
-        }
-        if (trailers != null) {
-            mCurrentMovieTrailers = trailers;
-            mTrailerAdapter.setTrailerData(trailers);
-            mNumberOfTrailerString = Integer.toString(mTrailerAdapter.getItemCount());
-            mDetailBinding.extraDetails.tvNumberOfTrailer.setText(mNumberOfTrailerString);
+            if (trailers != null) {
+                mCurrentMovieTrailers = trailers;
+                mTrailerAdapter.setTrailerData(trailers);
+                mNumberOfTrailerString = Integer.toString(mTrailerAdapter.getItemCount());
+                mDetailBinding.extraDetails.tvNumberOfTrailer.setText(mNumberOfTrailerString);
+            }
+        } else {
+            /************************************************************************************************
+             * This block of code's function:                                                               *
+             * when saved offline without fetching reviews and trailers,                                    *
+             * but open this movie when online, refetch reviews and trailers online inside of showing 0. *
+             ************************************************************************************************/
+            NetworkInfo networkInfo = getNetworkInfo();
+            if (networkInfo != null && networkInfo.isConnected()) {
+                new FetchTrailerTask(this).execute(movieId);
+            } else {
+                mDetailBinding.extraDetails.tvNumberOfTrailer.setText(getString(R.string.detail_activity_offline_reminder_text));
+            }
         }
     }
 
@@ -713,20 +818,30 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         int id = item.getItemId();
         // Share trailer
         if (id == R.id.action_share) {
-            if (mCurrentMovieTrailers != null) {
-                if (mFirstTrailerSourceKey != null) {
-                    String urlToShare = BASE_YOUTUBE_URL_WEB + mFirstTrailerSourceKey;
-                    shareFirstYoutubeUrl(urlToShare);
+
+            NetworkInfo networkInfo = getNetworkInfo();
+            if (networkInfo != null && networkInfo.isConnected()) {
+                if (mCurrentMovieTrailers != null) {
+                    if (mFirstTrailerSourceKey != null) {
+                        String urlToShare = BASE_YOUTUBE_URL_WEB + mFirstTrailerSourceKey;
+                        shareFirstYoutubeUrl(urlToShare);
+                    } else {
+                        mToast = Toast.makeText(this, getString(R.string.no_trailer_to_share), Toast.LENGTH_SHORT);
+                        mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                        mToast.show();
+                    }
                 } else {
-                    mToast = Toast.makeText(this, getString(R.string.no_trailer_to_share), Toast.LENGTH_SHORT);
+                    mToast = Toast.makeText(this, getString(R.string.trailer_not_loaded_yet), Toast.LENGTH_SHORT);
                     mToast.setGravity(Gravity.BOTTOM, 0, 0);
                     mToast.show();
                 }
             } else {
-                mToast = Toast.makeText(this, getString(R.string.trailer_not_loaded_yet), Toast.LENGTH_SHORT);
+                mToast = Toast.makeText(this, getString(R.string.detail_activity_offline_reminder_text), Toast.LENGTH_SHORT);
                 mToast.setGravity(Gravity.BOTTOM, 0, 0);
                 mToast.show();
             }
+
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -740,5 +855,12 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                 .setChooserTitle(title)
                 .setText(urlToShare)
                 .startChooser();
+    }
+
+    private NetworkInfo getNetworkInfo() {
+        // Get a reference to the ConnectivityManager to check state of network connectivity.
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        // Get details on the currently active default data network
+        return connMgr.getActiveNetworkInfo();
     }
 }

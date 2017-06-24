@@ -39,9 +39,16 @@
     <!-- Toast message for swipeRefreshLayout swipe to refresh when there is no internet connection and not in fav preference. -->
     <string name="toast_message_swipeRefreshLayout_no_internet">Cannot refresh without internet connection.</string>
     <!-- Toast message for swipeRefreshLayout swipe to refresh Pop movies in one minute, no need to refresh. List up to date. -->
-    <string name="toast_message_swipe_refresh_pop_in_one_minute">Your Popular Movies list is up-to-date.</string>
+    <string name="toast_message_swipe_refresh_pop_in_one_minute">Your Most Popular Movies list is up-to-date.</string>
     <!-- Toast message for swipeRefreshLayout swipe to refresh Top movies in one minute, no need to refresh. List up to date. -->
-    <string name="toast_message_swipe_refresh_top_in_one_minute">Your Top-rated Movies list is up-to-date.</string>
+    <string name="toast_message_swipe_refresh_top_in_one_minute">Your Top Rated Movies list is up-to-date.</string>
+
+    <!-- Main Activity setTitle when the preference is most popular movies. -->
+    <string name="main_activity_title_most_popular">Most Popular Movies</string>
+    <!-- Main Activity setTitle when the preference is top rated movies. -->
+    <string name="main_activity_title_top_rated">Top Rated Movies</string>
+    <!-- Main Activity setTitle when the preference is favorite movies. -->
+    <string name="main_activity_title_favorite">Favorite Movies</string>
 
     <!-- The text for query method to throw an IllegalArgumentException message. -->
     <string name="query_default_illegal_argument_exception_message">Cannot query unknown URI </string>
@@ -134,6 +141,11 @@
 
     <!-- Label of user review author in list_item_review layout. -->
     <string name="list_item_user_review_author_label">Author:</string>
+
+    <!-- Text show besides Trailers and Reviews Title when offline. -->
+    <!-- Text show when click share menu item when offline.-->
+    <!-- Text show when click trailer fab button. -->
+    <string name="detail_activity_offline_reminder_text">Available while online.</string>
 
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - -
     - Fake texts show on detail activity for design reason.  -

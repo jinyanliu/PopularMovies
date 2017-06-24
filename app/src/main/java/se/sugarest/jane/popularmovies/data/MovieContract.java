@@ -104,6 +104,13 @@ public class MovieContract {
          */
         public static final String COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL
                 = "movie_poster_image_thumbnail";
+
+        /**
+         * External Storage image thumbnail is stored as a String representing movie's external image_thumbnail
+         * url, used for display on detail screen when it is offline.
+         */
+        public static final String COLUMN_EXTERNAL_STORAGE_IMAGE_THUMBNAIL = "external_storage_image_thumbnail";
+
         /**
          * APlotSynopsis is stored as a String representing movie's plot synopsis.
          */
