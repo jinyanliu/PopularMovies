@@ -262,7 +262,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                     try {
                         saveMovie();
                     } catch (IllegalArgumentException e) {
-                        Toast.makeText(DetailActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, e.getMessage());
                     }
                 } else {
                     mFabButton.setColorFilter(ContextCompat.getColor(DetailActivity.this, R.color.colorWhiteFavoriteStar));
@@ -416,36 +416,69 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
      */
     private void deleteMovie() {
         if (mCurrentMovieReviews.size() > 0) {
-            deleteFavoriteMovie();
-            deleteFavoriteTrailer();
-            deleteFavoriteReview();
-            if (mToast != null) {
-                mToast.cancel();
-            }
-            if (deleteMovieRecordNumber == DELETE_MOVIE_SUCCESS && deleteReviewRecordNumber == DELETE_REVIEW_SUCCESS
-                    && deleteTrailerRecordNumber == DELETE_TRAILER_SUCCESS) {
-                mToast = Toast.makeText(this, getString(R.string.delete_movie_successful), Toast.LENGTH_SHORT);
-                mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                mToast.show();
+            if (mCurrentMovieTrailers.size() > 0) {
+                deleteFavoriteMovie();
+                deleteFavoriteTrailer();
+                deleteFavoriteReview();
+                if (mToast != null) {
+                    mToast.cancel();
+                }
+                if (deleteMovieRecordNumber == DELETE_MOVIE_SUCCESS && deleteReviewRecordNumber == DELETE_REVIEW_SUCCESS
+                        && deleteTrailerRecordNumber == DELETE_TRAILER_SUCCESS) {
+                    mToast = Toast.makeText(this, getString(R.string.delete_movie_successful), Toast.LENGTH_SHORT);
+                    mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                    mToast.show();
+                } else {
+                    mToast = Toast.makeText(this, getString(R.string.delete_movie_failed), Toast.LENGTH_SHORT);
+                    mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                    mToast.show();
+                }
             } else {
-                mToast = Toast.makeText(this, getString(R.string.delete_movie_failed), Toast.LENGTH_SHORT);
-                mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                mToast.show();
+                deleteFavoriteMovie();
+                deleteFavoriteReview();
+                if (mToast != null) {
+                    mToast.cancel();
+                }
+                if (deleteMovieRecordNumber == DELETE_MOVIE_SUCCESS && deleteReviewRecordNumber == DELETE_REVIEW_SUCCESS) {
+                    mToast = Toast.makeText(this, getString(R.string.delete_movie_successful), Toast.LENGTH_SHORT);
+                    mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                    mToast.show();
+                } else {
+                    mToast = Toast.makeText(this, getString(R.string.delete_movie_failed), Toast.LENGTH_SHORT);
+                    mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                    mToast.show();
+                }
             }
         } else {
-            deleteFavoriteMovie();
-            deleteFavoriteTrailer();
-            if (mToast != null) {
-                mToast.cancel();
-            }
-            if (deleteMovieRecordNumber == DELETE_MOVIE_SUCCESS && deleteTrailerRecordNumber == DELETE_TRAILER_SUCCESS) {
-                mToast = Toast.makeText(this, getString(R.string.delete_movie_successful), Toast.LENGTH_SHORT);
-                mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                mToast.show();
+            if (mCurrentMovieTrailers.size() > 0) {
+                deleteFavoriteMovie();
+                deleteFavoriteTrailer();
+                if (mToast != null) {
+                    mToast.cancel();
+                }
+                if (deleteMovieRecordNumber == DELETE_MOVIE_SUCCESS && deleteTrailerRecordNumber == DELETE_TRAILER_SUCCESS) {
+                    mToast = Toast.makeText(this, getString(R.string.delete_movie_successful), Toast.LENGTH_SHORT);
+                    mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                    mToast.show();
+                } else {
+                    mToast = Toast.makeText(this, getString(R.string.delete_movie_failed), Toast.LENGTH_SHORT);
+                    mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                    mToast.show();
+                }
             } else {
-                mToast = Toast.makeText(this, getString(R.string.delete_movie_failed), Toast.LENGTH_SHORT);
-                mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                mToast.show();
+                deleteFavoriteMovie();
+                if (mToast != null) {
+                    mToast.cancel();
+                }
+                if (deleteMovieRecordNumber == DELETE_MOVIE_SUCCESS) {
+                    mToast = Toast.makeText(this, getString(R.string.delete_movie_successful), Toast.LENGTH_SHORT);
+                    mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                    mToast.show();
+                } else {
+                    mToast = Toast.makeText(this, getString(R.string.delete_movie_failed), Toast.LENGTH_SHORT);
+                    mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                    mToast.show();
+                }
             }
         }
     }
@@ -470,7 +503,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         // Insert a new movie into the provider, returning the content URI for the new movie.
         Uri newUri = getContentResolver().insert(MovieContract.FavMovieEntry.CONTENT_URI, values);
 
-        // Show a toast message depending on whether or not the insertion was successful
+        // Show a log message depending on whether or not the insertion was successful
         if (newUri == null) {
             saveMovieRecordNumber = SAVE_MOVIE_FAIL;
             Log.e(TAG, getString(R.string.insert_movie_movie_failed));
@@ -640,6 +673,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             mCurrentMovieTrailers = trailers;
             mTrailerAdapter.setTrailerData(trailers);
             mNumberOfTrailerString = Integer.toString(mTrailerAdapter.getItemCount());
+            mDetailBinding.extraDetails.tvNumberOfTrailer.setText(mNumberOfTrailerString);
         }
     }
 
@@ -685,10 +719,12 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                     shareFirstYoutubeUrl(urlToShare);
                 } else {
                     mToast = Toast.makeText(this, getString(R.string.no_trailer_to_share), Toast.LENGTH_SHORT);
+                    mToast.setGravity(Gravity.BOTTOM, 0, 0);
                     mToast.show();
                 }
             } else {
                 mToast = Toast.makeText(this, getString(R.string.trailer_not_loaded_yet), Toast.LENGTH_SHORT);
+                mToast.setGravity(Gravity.BOTTOM, 0, 0);
                 mToast.show();
             }
         }

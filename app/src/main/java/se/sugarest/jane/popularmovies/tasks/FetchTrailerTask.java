@@ -50,6 +50,7 @@ public class FetchTrailerTask extends AsyncTask<String, Void, List<Trailer>> {
             this.detailActivity.getmTrailerAdapter().setTrailerData(trailerData);
             String numberOfTrailerString = Integer.toString(this.detailActivity.getmTrailerAdapter().getItemCount());
             this.detailActivity.setmNumberOfTrailerString(numberOfTrailerString);
+            this.detailActivity.getmDetailBinding().extraDetails.tvNumberOfTrailer.setText(numberOfTrailerString);
         }
         if (trailerData.size() > 0) {
             this.detailActivity.setmFirstTrailerSourceKey(trailerData.get(0).getKeyString());
