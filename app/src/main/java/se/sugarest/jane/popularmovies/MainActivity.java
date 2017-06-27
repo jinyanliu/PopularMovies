@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -25,6 +26,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -35,6 +37,7 @@ import se.sugarest.jane.popularmovies.movie.FullMovie;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter.MovieAdapterOnClickHandler;
 import se.sugarest.jane.popularmovies.movie.MovieBasicInfo;
+import se.sugarest.jane.popularmovies.tasks.FetchExternalStorageFavMovieImageThumbnailsTask;
 import se.sugarest.jane.popularmovies.tasks.FetchExternalStorageFavMoviePosterImagesTask;
 import se.sugarest.jane.popularmovies.tasks.FetchMoviePostersTask;
 import se.sugarest.jane.popularmovies.tasks.PersistMovieTask;
@@ -45,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
+    private final String IMAGE_SIZE_W780 = "w780/";
     private final String IMAGE_SIZE_W185 = "w185/";
 
     public static final int MOVIE_LOADER = 0;
@@ -236,16 +240,34 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     }
 
     /**
-     * download pictures for favorite movies again.
-     * First reason: When we save it, the 2 pics might not be downloaded successfully yet.
-     * And it will say break, because we don't refresh it again. (What we are doing now is trying to
-     * refresh the fav list's pictures url.)
+     * download pictures for favorite movies.
+     * <p>
+     * First reason: When we save the movie to fav list database, the 2 pics might not be downloaded
+     * successfully yet.
+     * And it will stay break, because we don't refresh fav list again(only call from database for
+     * fav list).
+     * (What we are doing now is giving fav list the opportunity to refresh the its pictures' external
+     * url.)
+     * <p>
      * Second reason (IMPORTANT): Every time we receive new movie data, we delete the cache tables
-     * and the external folders completely. But one old movie might still stay in our fav list, when
-     * it wants to fetch external url, the folder is cleaned for new data. There is no way to find it.
-     * We have to create folders for fav list to maintain the data.
+     * (both POP and TOP) and their external folders completely. But one old movie we have saved to
+     * fav list before is still stay in our fav list, when it wants to fetch its external url, the
+     * cache movie folders is already cleaned for new data. There is no way to find it.
+     * We have to create folders for fav list to maintain its own data.
      */
     private void persistFavMovie() {
+
+        // When refresh, delete External Storage Folder favmovies
+        File favMoviePicsFolder
+                = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+                + "/favmovies/");
+        favMoviePicsFolder.delete();
+
+        // When refresh, delete External Storage Folder favthumbnails
+        File favMovieThumbnailsFolder
+                = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+                + "/favthumbnails/");
+        favMovieThumbnailsFolder.delete();
 
         Cursor cursor = getContentResolver()
                 .query(FavMovieEntry.CONTENT_URI,
@@ -264,9 +286,15 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
             String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
                     .concat(moviePosterForOneMovie);
 
+            String imageThumbnailForOneMovie = cursor.getString(cursor.getColumnIndex(FavMovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
+
+            String fullImageThumbnailForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W780)
+                    .concat(imageThumbnailForOneMovie);
+
             String movieId = cursor.getString(cursor.getColumnIndex(FavMovieEntry.COLUMN_MOVIE_ID));
 
             new FetchExternalStorageFavMoviePosterImagesTask(this).execute(new MovieBasicInfo(movieId, fullMoviePosterForOneMovie));
+            new FetchExternalStorageFavMovieImageThumbnailsTask(this).execute(new MovieBasicInfo(movieId, fullImageThumbnailForOneMovie));
 
             cursor.moveToNext();
         }
