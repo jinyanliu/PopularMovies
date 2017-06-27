@@ -222,6 +222,15 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         }
 
         // Set current movie textViews content
+        // Some movies' original title is too long to display fully on the action bar, so we need to
+        // repeat it again in the detail page.
+        if (mCurrentMovie.getmOriginalTitle().contains(":")) {
+            String[] separated = mCurrentMovie.getmOriginalTitle().split(":");
+            // separate[1].trim() will remove the empty space to the second string
+            mDetailBinding.primaryInfo.tvMovieTitle.setText(separated[0] + ":" + "\n" + separated[1].trim());
+        } else {
+            mDetailBinding.primaryInfo.tvMovieTitle.setText(mCurrentMovie.getmOriginalTitle());
+        }
         mDetailBinding.primaryInfo.tvUserRating.setText(mCurrentMovie.getmUserRating());
         mDetailBinding.primaryInfo.tvReleaseDate.setText(mCurrentMovie.getmReleaseDate());
         mDetailBinding.primaryInfo.tvAPlotSynopsis.setText(mCurrentMovie.getmAPlotSynopsis());
