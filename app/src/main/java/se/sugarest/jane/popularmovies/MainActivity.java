@@ -2,6 +2,7 @@ package se.sugarest.jane.popularmovies;
 
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
@@ -14,6 +15,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -33,6 +35,8 @@ import java.util.Date;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.FavMovieEntry;
+import se.sugarest.jane.popularmovies.data.MovieContract.ReviewEntry;
+import se.sugarest.jane.popularmovies.data.MovieContract.TrailerEntry;
 import se.sugarest.jane.popularmovies.movie.FullMovie;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter.MovieAdapterOnClickHandler;
@@ -299,6 +303,15 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
             cursor.moveToNext();
         }
         cursor.close();
+
+        Calendar calendar = Calendar.getInstance();
+        Date currentTime = calendar.getTime();
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putLong(getString(R.string.pref_fav_date_key), currentTime.getTime());
+        editor.apply();
+
         initCursorLoader();
     }
 
@@ -331,7 +344,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                             if (mToast != null) {
                                 mToast.cancel();
                             }
-                            mToast = Toast.makeText(MainActivity.this, getString(R.string.toast_message_swipe_refresh_pop_in_one_minute), Toast.LENGTH_SHORT);
+                            mToast = Toast.makeText(MainActivity.this, getString(R.string.toast_message_refresh_pop_in_one_minute), Toast.LENGTH_SHORT);
                             mToast.setGravity(Gravity.BOTTOM, 0, 0);
                             mToast.show();
                         }
@@ -351,7 +364,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                             if (mToast != null) {
                                 mToast.cancel();
                             }
-                            mToast = Toast.makeText(MainActivity.this, getString(R.string.toast_message_swipe_refresh_top_in_one_minute), Toast.LENGTH_SHORT);
+                            mToast = Toast.makeText(MainActivity.this, getString(R.string.toast_message_refresh_top_in_one_minute), Toast.LENGTH_SHORT);
                             mToast.setGravity(Gravity.BOTTOM, 0, 0);
                             mToast.show();
                         }
@@ -373,17 +386,40 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                     initCursorLoader();
                 }
             } else {
-                persistFavMovie();
+                boolean refreshFav = false;
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                Long default_time = new Date().getTime();
+                long mFavLatestRefreshed = preferences.getLong
+                        (getString(R.string.pref_fav_date_key), default_time);
+
+                if (mFavLatestRefreshed == default_time) {
+                    refreshFav = true;
+                } else {
+                    if (new Date(mFavLatestRefreshed).before(oneMinuteAgo)) {
+                        refreshFav = true;
+                    } else {
+                        if (mToast != null) {
+                            mToast.cancel();
+                        }
+                        mToast = Toast.makeText(MainActivity.this, getString(R.string.toast_message_refresh_fav_in_one_minute), Toast.LENGTH_SHORT);
+                        mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                        mToast.show();
+                    }
+                }
+                if (refreshFav) {
+                    persistFavMovie();
+                } else {
+                    initCursorLoader();
+                }
             }
         } else {
             hideLoadingIndicators();
             if (mToast != null) {
                 mToast.cancel();
             }
-            mToast = Toast.makeText(MainActivity.this, getString(R.string.toast_message_swipeRefreshLayout_no_internet), Toast.LENGTH_SHORT);
+            mToast = Toast.makeText(MainActivity.this, getString(R.string.toast_message_refresh_no_internet), Toast.LENGTH_SHORT);
             mToast.setGravity(Gravity.BOTTOM, 0, 0);
             mToast.show();
-            mSwipeRefreshLayout.setRefreshing(false);
         }
     }
 
@@ -432,6 +468,18 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem deleteAll = menu.findItem(R.id.action_delete_all);
+        String orderBy = getPreference();
+        if ("favorites".equals(orderBy)) {
+            deleteAll.setVisible(true);
+        } else {
+            deleteAll.setVisible(false);
+        }
+        return true;
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
@@ -451,8 +499,34 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                 Intent settingIntent = new Intent(this, SettingsActivity.class);
                 startActivity(settingIntent);
                 return true;
+            case R.id.action_delete_all:
+                showDeleteConfirmationDialog();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void deleteAllMovies() {
+
+        int rowsDeletedFavMovie = getContentResolver().delete(FavMovieEntry.CONTENT_URI, null, null);
+        int rowsDeletedReview = getContentResolver().delete(ReviewEntry.CONTENT_URI, null, null);
+        int rowsDeletedTrailer = getContentResolver().delete(TrailerEntry.CONTENT_URI, null, null);
+
+        if (rowsDeletedFavMovie == 0) {
+            if (mToast != null) {
+                mToast.cancel();
+            }
+            mToast = Toast.makeText(this, getString(R.string.delete_all_movie_failed), Toast.LENGTH_SHORT);
+            mToast.setGravity(Gravity.BOTTOM, 0, 0);
+            mToast.show();
+        } else {
+            if (mToast != null) {
+                mToast.cancel();
+            }
+            mToast = Toast.makeText(this, getString(R.string.delete_all_movie_successful), Toast.LENGTH_SHORT);
+            mToast.setGravity(Gravity.BOTTOM, 0, 0);
+            mToast.show();
         }
     }
 
@@ -554,4 +628,31 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         return connMgr.getActiveNetworkInfo();
     }
 
+    /**
+     * Prompt the user to confirm that they want to delete all movies.
+     */
+    private void showDeleteConfirmationDialog() {
+        // Create an AlertDialog.Builder and set the message, and click listeners
+        // for the positive and negative buttons on the dialog.
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.delete_all_dialog_msg);
+        builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked the "Delete" button, so delete all movies.
+                deleteAllMovies();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked the "Cancel" button, so dismiss the dialog
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        // Create and show the AlertDialog
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
 }

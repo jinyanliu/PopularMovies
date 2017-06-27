@@ -36,13 +36,15 @@
     <!-- The text for Log information message when checking refreshTop true. -->
     <string name="log_information_refreshTop_true">Check refresh Top true.</string>
 
-    <!-- Toast message for swipeRefreshLayout swipe to refresh when there is no internet connection and not in fav preference in MainActivity. -->
-    <!-- Toast message for swipeRefreshLayout swipe to refresh when there is no internet connection in DetailActivity. -->
-    <string name="toast_message_swipeRefreshLayout_no_internet">Cannot refresh without internet connection.</string>
-    <!-- Toast message for swipeRefreshLayout swipe to refresh Pop movies in one minute, no need to refresh. List up to date. -->
-    <string name="toast_message_swipe_refresh_pop_in_one_minute">Your Most Popular Movies list is up-to-date.</string>
-    <!-- Toast message for swipeRefreshLayout swipe to refresh Top movies in one minute, no need to refresh. List up to date. -->
-    <string name="toast_message_swipe_refresh_top_in_one_minute">Your Top Rated Movies list is up-to-date.</string>
+    <!-- Toast message for refresh when there is no internet connection in MainActivity. -->
+    <!-- Toast message for refresh when there is no internet connection in DetailActivity. -->
+    <string name="toast_message_refresh_no_internet">Cannot refresh without internet connection.</string>
+    <!-- Toast message for refresh Pop movies in one minute, no need to refresh. List up to date. -->
+    <string name="toast_message_refresh_pop_in_one_minute">Your Most Popular Movies list is up-to-date.</string>
+    <!-- Toast message for refresh Top movies in one minute, no need to refresh. List up to date. -->
+    <string name="toast_message_refresh_top_in_one_minute">Your Top Rated Movies list is up-to-date.</string>
+    <!-- Toast message for refresh Fav movies in one minute, no need to refresh. List up to date. -->
+    <string name="toast_message_refresh_fav_in_one_minute">Your Favorite Movies list is up-to-date.</string>
 
     <!-- Main Activity setTitle when the preference is most popular movies. -->
     <string name="main_activity_title_most_popular">Most Popular Movies</string>
@@ -77,6 +79,11 @@
     <!-- Toast message for deleting error when deleting a movie. [CHAR LIMIT=20] -->
     <string name="delete_movie_failed">Error with deleting movie</string>
 
+    <!-- Toast message for deleting success when deleting all movies from fav list. -->
+    <string name="delete_all_movie_successful">All Movies deleted.</string>
+    <!-- Toast message for deleting error when deleting all movies from fav list. -->
+    <string name="delete_all_movie_failed">Error with deleting all movies.</string>
+
     <!-- Log message for saving success when inserting a movie object. [CHAR LIMIT=20] -->
     <string name="insert_movie_movie_successful">Movie movie saved</string>
     <!-- Log message for saving error when inserting a movie object. [CHAR LIMIT=20] -->
@@ -109,6 +116,8 @@
     <string name="settings_menu_item">Settings</string>
     <!-- Settings Activity Title -->
     <string name="settings_title">Movie Settings</string>
+    <!-- Delete All Menu Item -->
+    <string name="delete_all_menu_item">Delete All Movies</string>
 
     <!-- Used to share the first trailer’s YouTube URL on a given movie from the DetailActivity -->
     <string name="action_share">Share</string>
@@ -117,6 +126,7 @@
 
     <string name="pref_pop_date_key" translatable="false">refresh_pop_movie</string>
     <string name="pref_top_date_key" translatable="false">refresh_top_movie</string>
+    <string name="pref_fav_date_key" translatable="false">refresh_fav_movie</string>
 
     <!-- Strings For Order-By Preference [CHAR LIMIT=30] -->
     <string name="settings_order_by_label">Order By</string>
@@ -151,6 +161,15 @@
     <!-- Text show when click share menu item when offline.-->
     <!-- Text show when click trailer fab button. -->
     <string name="detail_activity_offline_reminder_text">Available while online.</string>
+
+    <!-- Dialog message to ask the user to confirm deleting all movies [CHAR LIMIT=NONE] -->
+    <string name="delete_all_dialog_msg">Delete all movies?</string>
+
+    <!-- Dialog button text for the option to confirm deleting all pets [CHAR LIMIT=20] -->
+    <string name="delete">Delete</string>
+
+    <!-- Dialog button text for the option to cancel deletion of all movies [CHAR LIMIT=20] -->
+    <string name="cancel">Cancel</string>
 
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - -
     - Fake texts show on detail activity for design reason.  -

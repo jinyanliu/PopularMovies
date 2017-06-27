@@ -316,7 +316,6 @@ public class MovieProvider extends ContentProvider {
         switch (match) {
             case MOVIES:
                 // Delete all rows that match the selection and selection args
-                selection = selection + "=?";
                 rowsDeleted = database.delete(FavMovieEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             case MOVIE_ID:
@@ -326,7 +325,6 @@ public class MovieProvider extends ContentProvider {
                 rowsDeleted = database.delete(FavMovieEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             case REVIEWS:
-                selection = selection + "=?";
                 rowsDeleted = database.delete(ReviewEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             case REVIEW_ID:
@@ -335,7 +333,6 @@ public class MovieProvider extends ContentProvider {
                 rowsDeleted = database.delete(ReviewEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             case TRAILERS:
-                selection = selection + "=?";
                 rowsDeleted = database.delete(TrailerEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             case TRAILER_ID:

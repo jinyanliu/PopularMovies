@@ -359,7 +359,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             loadTrailerData(mCurrentMovie.getmId());
         } else {
             hideLoadingIndicators();
-            mToast = Toast.makeText(DetailActivity.this, getString(R.string.toast_message_swipeRefreshLayout_no_internet), Toast.LENGTH_SHORT);
+            mToast = Toast.makeText(DetailActivity.this, getString(R.string.toast_message_refresh_no_internet), Toast.LENGTH_SHORT);
             mToast.setGravity(Gravity.BOTTOM, 0, 0);
             mToast.show();
         }
@@ -717,7 +717,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
      * Delete movie from database.
      */
     private void deleteFavoriteMovie() {
-        String selection = FavMovieEntry.COLUMN_MOVIE_ID;
+        String selection = FavMovieEntry.COLUMN_MOVIE_ID + "=?";
         String[] selectionArgs = {mCurrentMovie.getmId()};
         int rowsDeleted = getContentResolver().delete(MovieContract.FavMovieEntry.CONTENT_URI, selection, selectionArgs);
 
@@ -734,7 +734,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
      * Delete review from database.
      */
     private void deleteFavoriteReview() {
-        String selection = ReviewEntry.COLUMN_MOVIE_ID;
+        String selection = ReviewEntry.COLUMN_MOVIE_ID + "=?";
         String[] selectionArgs = {mCurrentMovie.getmId()};
         int rowsDeleted = getContentResolver().delete(ReviewEntry.CONTENT_URI, selection, selectionArgs);
 
@@ -751,7 +751,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
      * Delete trailer from database
      */
     private void deleteFavoriteTrailer() {
-        String selection = TrailerEntry.COLUMN_MOVIE_ID;
+        String selection = TrailerEntry.COLUMN_MOVIE_ID + "=?";
         String[] selectionArgs = {mCurrentMovie.getmId()};
         int rowsDeleted = getContentResolver().delete(TrailerEntry.CONTENT_URI, selection, selectionArgs);
 
