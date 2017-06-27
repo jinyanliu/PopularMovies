@@ -349,6 +349,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             loadReviewData(mCurrentMovie.getmId());
             loadTrailerData(mCurrentMovie.getmId());
         } else {
+            hideLoadingIndicators();
             mToast = Toast.makeText(DetailActivity.this, getString(R.string.toast_message_swipeRefreshLayout_no_internet), Toast.LENGTH_SHORT);
             mToast.setGravity(Gravity.BOTTOM, 0, 0);
             mToast.show();

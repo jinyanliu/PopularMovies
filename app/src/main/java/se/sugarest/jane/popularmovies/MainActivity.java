@@ -34,6 +34,8 @@ import se.sugarest.jane.popularmovies.data.MovieContract.FavMovieEntry;
 import se.sugarest.jane.popularmovies.movie.FullMovie;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter.MovieAdapterOnClickHandler;
+import se.sugarest.jane.popularmovies.movie.MovieBasicInfo;
+import se.sugarest.jane.popularmovies.tasks.FetchExternalStorageFavMoviePosterImagesTask;
 import se.sugarest.jane.popularmovies.tasks.FetchMoviePostersTask;
 import se.sugarest.jane.popularmovies.tasks.PersistMovieTask;
 
@@ -223,12 +225,53 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                     initCursorLoader();
                 }
             } else {
-                initCursorLoader();
+                // if selected "fav"
+                // if has network
+                persistFavMovie();
             }
         } else {
             hideLoadingIndicators();
             initCursorLoader();
         }
+    }
+
+    /**
+     * download pictures for favorite movies again.
+     * First reason: When we save it, the 2 pics might not be downloaded successfully yet.
+     * And it will say break, because we don't refresh it again. (What we are doing now is trying to
+     * refresh the fav list's pictures url.)
+     * Second reason (IMPORTANT): Every time we receive new movie data, we delete the cache tables
+     * and the external folders completely. But one old movie might still stay in our fav list, when
+     * it wants to fetch external url, the folder is cleaned for new data. There is no way to find it.
+     * We have to create folders for fav list to maintain the data.
+     */
+    private void persistFavMovie() {
+
+        Cursor cursor = getContentResolver()
+                .query(FavMovieEntry.CONTENT_URI,
+                        null,
+                        null,
+                        null,
+                        null);
+
+        cursor.moveToFirst();
+
+        while (!cursor.isAfterLast()) {
+
+            String moviePosterForOneMovie = cursor
+                    .getString(cursor.getColumnIndex(FavMovieEntry.COLUMN_POSTER_PATH));
+
+            String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
+                    .concat(moviePosterForOneMovie);
+
+            String movieId = cursor.getString(cursor.getColumnIndex(FavMovieEntry.COLUMN_MOVIE_ID));
+
+            new FetchExternalStorageFavMoviePosterImagesTask(this).execute(new MovieBasicInfo(movieId, fullMoviePosterForOneMovie));
+
+            cursor.moveToNext();
+        }
+        cursor.close();
+        initCursorLoader();
     }
 
     private void refreshMovie() {
@@ -302,22 +345,17 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                     initCursorLoader();
                 }
             } else {
-                initCursorLoader();
+                persistFavMovie();
             }
         } else {
             hideLoadingIndicators();
-            String orderBy = getPreference();
-            if (!"favorites".equals(orderBy)) {
-                if (mToast != null) {
-                    mToast.cancel();
-                }
-                mToast = Toast.makeText(MainActivity.this, getString(R.string.toast_message_swipeRefreshLayout_no_internet), Toast.LENGTH_SHORT);
-                mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                mToast.show();
-                mSwipeRefreshLayout.setRefreshing(false);
-            } else {
-                initCursorLoader();
+            if (mToast != null) {
+                mToast.cancel();
             }
+            mToast = Toast.makeText(MainActivity.this, getString(R.string.toast_message_swipeRefreshLayout_no_internet), Toast.LENGTH_SHORT);
+            mToast.setGravity(Gravity.BOTTOM, 0, 0);
+            mToast.show();
+            mSwipeRefreshLayout.setRefreshing(false);
         }
     }
 

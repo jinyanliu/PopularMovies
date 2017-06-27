@@ -46,11 +46,6 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-//        if (this.mainActivity.getmSwipeRefreshLayout().isRefreshing()) {
-//            this.mainActivity.getmLoadingIndicator().setVisibility(View.INVISIBLE);
-//        } else {
-//            this.mainActivity.getmLoadingIndicator().setVisibility(View.VISIBLE);
-//        }
     }
 
     @Override

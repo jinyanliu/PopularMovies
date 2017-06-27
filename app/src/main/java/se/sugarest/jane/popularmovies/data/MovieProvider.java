@@ -381,6 +381,9 @@ public class MovieProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
 
         switch (match) {
+            case MOVIES:
+                rowsUpdated = database.update(FavMovieEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
             case CACHE_MOVIES_MOST_POPULAR:
                 rowsUpdated = database.update(CacheMovieMostPopularEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
