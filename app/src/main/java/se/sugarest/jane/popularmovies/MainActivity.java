@@ -243,35 +243,41 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         }
     }
 
-    /**
-     * download pictures for favorite movies.
-     * <p>
-     * First reason: When we save the movie to fav list database, the 2 pics might not be downloaded
-     * successfully yet.
-     * And it will stay break, because we don't refresh fav list again(only call from database for
-     * fav list).
-     * (What we are doing now is giving fav list the opportunity to refresh the its pictures' external
-     * url.)
-     * <p>
-     * Second reason (IMPORTANT): Every time we receive new movie data, we delete the cache tables
-     * (both POP and TOP) and their external folders completely. But one old movie we have saved to
-     * fav list before is still stay in our fav list, when it wants to fetch its external url, the
-     * cache movie folders is already cleaned for new data. There is no way to find it.
-     * We have to create folders for fav list to maintain its own data.
-     */
     private void persistFavMovie() {
+        /*
+        download pictures for favorite movies.
+
+        First reason: When we save the movie to fav list database, the 2 pics might not be downloaded
+        successfully yet.
+        And it will stay break, because we don't refresh fav list again(only call from database for
+        fav list).
+        (What we are doing now is giving fav list the opportunity to refresh the its pictures' external
+        url.)
+
+        Second reason (IMPORTANT): Every time we receive new movie data, we delete the cache tables
+        (both POP and TOP) and their external folders completely. But one old movie we have saved to
+        fav list before is still stay in our fav list, when it wants to fetch its external url, the
+        cache movie folders is already cleaned for new data. There is no way to find it.
+        We have to create folders for fav list to maintain its own data.
+        */
 
         // When refresh, delete External Storage Folder favmovies
         File favMoviePicsFolder
                 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
                 + "/favmovies/");
-        favMoviePicsFolder.delete();
+        for (File pic : favMoviePicsFolder.listFiles()) {
+            Log.i(TAG, "remove existing pic: " + pic.getAbsolutePath());
+            pic.delete();
+        }
 
         // When refresh, delete External Storage Folder favthumbnails
         File favMovieThumbnailsFolder
                 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
                 + "/favthumbnails/");
-        favMovieThumbnailsFolder.delete();
+        for (File pic : favMovieThumbnailsFolder.listFiles()) {
+            Log.i(TAG, "remove existing pic: " + pic.getAbsolutePath());
+            pic.delete();
+        }
 
         Cursor cursor = getContentResolver()
                 .query(FavMovieEntry.CONTENT_URI,

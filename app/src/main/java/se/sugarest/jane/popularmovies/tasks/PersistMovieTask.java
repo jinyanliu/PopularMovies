@@ -91,12 +91,18 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                 File popularMoviePicsFolder
                         = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
                         + "/popularmovies/");
-                popularMoviePicsFolder.delete();
+                for (File pic : popularMoviePicsFolder.listFiles()) {
+                    Log.i(TAG, "remove existing pic: " + pic.getAbsolutePath());
+                    pic.delete();
+                }
 
                 File popularMovieThumbnailImagesFolder
                         = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
                         + "/popthumbnails/");
-                popularMovieThumbnailImagesFolder.delete();
+                for (File pic : popularMovieThumbnailImagesFolder.listFiles()) {
+                    Log.i(TAG, "remove existing pic: " + pic.getAbsolutePath());
+                    pic.delete();
+                }
 
                 int count = movieData.size();
                 Vector<ContentValues> cVVector = new Vector<ContentValues>(count);
@@ -168,12 +174,18 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                 File topRatedMoviePicsFolder
                         = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
                         + "/topratedmovies/");
-                topRatedMoviePicsFolder.delete();
+                for (File pic : topRatedMoviePicsFolder.listFiles()) {
+                    Log.i(TAG, "remove existing pic: " + pic.getAbsolutePath());
+                    pic.delete();
+                }
 
                 File topRatedMovieThumbnailImagesFolder
                         = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
                         + "/topthumbnails/");
-                topRatedMovieThumbnailImagesFolder.delete();
+                for (File pic : topRatedMovieThumbnailImagesFolder.listFiles()) {
+                    Log.i(TAG, "remove existing pic: " + pic.getAbsolutePath());
+                    pic.delete();
+                }
 
                 int count = movieData.size();
                 Vector<ContentValues> cVVector = new Vector<ContentValues>(count);
