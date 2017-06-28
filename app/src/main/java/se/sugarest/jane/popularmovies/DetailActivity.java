@@ -209,24 +209,11 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
          * While online, picasso load url string which starts with "http://";
          * While offline, picasso load file path on external storage which starts with "/storage"
          */
-
         NetworkInfo networkInfo = getNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
-            // Set current movie poster image thumbnail
-            String currentMoviePosterImageThumbnail = BASE_IMAGE_URL.concat(IMAGE_SIZE_W780)
-                    .concat(mCurrentMovie.getmMoviePosterImageThumbnail());
-            Picasso.with(DetailActivity.this)
-                    .load(currentMoviePosterImageThumbnail)
-                    // .placeholder(R.drawable.progress_animation)
-                    .error(R.drawable.picasso_placeholder_error)
-                    .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
+            setCurrentMovieImageThumbnailOnLine();
         } else {
-            String currentMoviePosterImageThumbnail = mCurrentMovie.getmExternalUrlImageThumbnail();
-            File pathToPic = new File(currentMoviePosterImageThumbnail);
-            Picasso.with(DetailActivity.this)
-                    .load(pathToPic)
-                    .error(R.drawable.picasso_placeholder_error)
-                    .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
+            setCurrentMovieImageThumbnailOffLine();
         }
 
         // Set current movie textViews content
@@ -360,13 +347,35 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                 R.color.trailer0);
     }
 
+    private void setCurrentMovieImageThumbnailOffLine() {
+        String currentMoviePosterImageThumbnail = mCurrentMovie.getmExternalUrlImageThumbnail();
+        File pathToPic = new File(currentMoviePosterImageThumbnail);
+        Picasso.with(DetailActivity.this)
+                .load(pathToPic)
+                .error(R.drawable.picasso_placeholder_error)
+                .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
+    }
+
+    private void setCurrentMovieImageThumbnailOnLine() {
+        String currentMoviePosterImageThumbnail = BASE_IMAGE_URL.concat(IMAGE_SIZE_W780)
+                .concat(mCurrentMovie.getmMoviePosterImageThumbnail());
+        Picasso.with(DetailActivity.this)
+                .load(currentMoviePosterImageThumbnail)
+                .error(R.drawable.picasso_placeholder_error)
+                .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
+    }
+
     private void refreshMovie() {
         NetworkInfo networkInfo = getNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
+            setCurrentMovieImageThumbnailOnLine();
             loadReviewData(mCurrentMovie.getmId());
             loadTrailerData(mCurrentMovie.getmId());
         } else {
             hideLoadingIndicators();
+            if (mToast != null) {
+                mToast.cancel();
+            }
             mToast = Toast.makeText(DetailActivity.this, getString(R.string.toast_message_refresh_no_internet), Toast.LENGTH_SHORT);
             mToast.setGravity(Gravity.BOTTOM, 0, 0);
             mToast.show();
@@ -451,6 +460,9 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                 startActivity(webIntent);
             }
         } else {
+            if (mToast != null) {
+                mToast.cancel();
+            }
             mToast = Toast.makeText(this, getString(R.string.detail_activity_offline_reminder_text), Toast.LENGTH_SHORT);
             mToast.setGravity(Gravity.BOTTOM, 0, 0);
             mToast.show();
@@ -534,6 +546,9 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                 }
             } else {
                 mFabButton.setColorFilter(ContextCompat.getColor(DetailActivity.this, R.color.colorWhiteFavoriteStar));
+                if (mToast != null) {
+                    mToast.cancel();
+                }
                 mToast = Toast.makeText(this, getString(R.string.toast_message_review_and_trailer_not_loaded_yet), Toast.LENGTH_SHORT);
                 mToast.setGravity(Gravity.BOTTOM, 0, 0);
                 mToast.show();
@@ -920,16 +935,25 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                             String urlToShare = BASE_YOUTUBE_URL_WEB + mFirstTrailerSourceKey;
                             shareFirstYoutubeUrl(urlToShare);
                         } else {
+                            if (mToast != null) {
+                                mToast.cancel();
+                            }
                             mToast = Toast.makeText(this, getString(R.string.toast_message_no_trailer_to_share), Toast.LENGTH_SHORT);
                             mToast.setGravity(Gravity.BOTTOM, 0, 0);
                             mToast.show();
                         }
                     } else {
+                        if (mToast != null) {
+                            mToast.cancel();
+                        }
                         mToast = Toast.makeText(this, getString(R.string.toast_message_trailer_not_loaded_yet), Toast.LENGTH_SHORT);
                         mToast.setGravity(Gravity.BOTTOM, 0, 0);
                         mToast.show();
                     }
                 } else {
+                    if (mToast != null) {
+                        mToast.cancel();
+                    }
                     mToast = Toast.makeText(this, getString(R.string.detail_activity_offline_reminder_text), Toast.LENGTH_SHORT);
                     mToast.setGravity(Gravity.BOTTOM, 0, 0);
                     mToast.show();
