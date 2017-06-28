@@ -10,6 +10,10 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.Gravity;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.net.URL;
@@ -127,13 +131,8 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
                     values.put(CacheMovieMostPopularEntry.COLUMN_EXTERNAL_STORAGE_IMAGE_THUMBNAIL, fullImageThumbnailForOneMovie);
 
-                    // PersistMovieTask is only called when has internet. But we also have the situation that before downloading is finished,
-                    // user cut off internet. Have to handle the crush gracefully.
-                    if (getNetworkInfo() != null && getNetworkInfo().isConnected()) {
-                        new FetchExternalStoragePopMovieImageThumbnailsTask(this.mainActivity).execute(
-                                new MovieBasicInfo(movieId, fullImageThumbnailForOneMovie));
-                        Log.i(TAG, "fetch pop movie poster external");
-                    }
+                    new FetchExternalStoragePopMovieImageThumbnailsTask(this.mainActivity).execute(
+                            new MovieBasicInfo(movieId, fullImageThumbnailForOneMovie));
 
                     values.put(CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE, movieData.get(i).getOriginalTitle());
 
@@ -144,11 +143,8 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
                     values.put(CacheMovieMostPopularEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH, fullMoviePosterForOneMovie);
 
-                    if (getNetworkInfo() != null && getNetworkInfo().isConnected()) {
-                        new FetchExternalStoragePopMoviePosterImagesTask(this.mainActivity).execute(
-                                new MovieBasicInfo(movieId, fullMoviePosterForOneMovie));
-                        Log.i(TAG, "fetch pop movie image thumbnail external");
-                    }
+                    new FetchExternalStoragePopMoviePosterImagesTask(this.mainActivity).execute(
+                            new MovieBasicInfo(movieId, fullMoviePosterForOneMovie));
 
                     values.put(CacheMovieMostPopularEntry.COLUMN_RELEASE_DATE, movieData.get(i).getReleaseDate());
                     values.put(CacheMovieMostPopularEntry.COLUMN_USER_RATING, movieData.get(i).getUserRating());
@@ -222,10 +218,9 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
                     values.put(CacheMovieTopRatedEntry.COLUMN_EXTERNAL_STORAGE_IMAGE_THUMBNAIL, fullImageThumbnailForOneMovie);
 
-                    if (getNetworkInfo() != null && getNetworkInfo().isConnected()) {
-                        new FetchExternalStorageTopMovieImageThumbnailsTask(this.mainActivity).execute(
-                                new MovieBasicInfo(movieId, fullImageThumbnailForOneMovie));
-                    }
+                    new FetchExternalStorageTopMovieImageThumbnailsTask(this.mainActivity).execute(
+                            new MovieBasicInfo(movieId, fullImageThumbnailForOneMovie));
+
 
                     values.put(CacheMovieTopRatedEntry.COLUMN_ORIGINAL_TITLE, movieData.get(i).getOriginalTitle());
 
@@ -236,10 +231,8 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
                     values.put(CacheMovieTopRatedEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH, fullMoviePosterForOneMovie);
 
-                    if (getNetworkInfo() != null && getNetworkInfo().isConnected()) {
-                        new FetchExternalStorageTopMoviePosterImagesTask(this.mainActivity).execute(
-                                new MovieBasicInfo(movieId, fullMoviePosterForOneMovie));
-                    }
+                    new FetchExternalStorageTopMoviePosterImagesTask(this.mainActivity).execute(
+                            new MovieBasicInfo(movieId, fullMoviePosterForOneMovie));
 
                     values.put(CacheMovieTopRatedEntry.COLUMN_RELEASE_DATE, movieData.get(i).getReleaseDate());
                     values.put(CacheMovieTopRatedEntry.COLUMN_USER_RATING, movieData.get(i).getUserRating());
@@ -267,6 +260,26 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putLong(this.mainActivity.getString(R.string.pref_top_date_key), currentTime.getTime());
                 editor.apply();
+            }
+        } else {
+            Log.e(TAG, mainActivity.getString(R.string.log_error_message_offline_before_fetch_movie_data_finish));
+            String expectedMsg = mainActivity.getString(R.string.toast_message_offline_before_fetch_movie_data_finish);
+
+            if (this.mainActivity.getmToast() != null) {
+                String displayedText = ((TextView) ((LinearLayout) this.mainActivity.getmToast().getView())
+                        .getChildAt(0)).getText().toString();
+                if (!displayedText.equals(expectedMsg)) {
+                    this.mainActivity.getmToast().cancel();
+                    Toast newToast = Toast.makeText(mainActivity, mainActivity.getString(R.string.toast_message_offline_before_fetch_movie_data_finish), Toast.LENGTH_SHORT);
+                    this.mainActivity.setmToast(newToast);
+                    this.mainActivity.getmToast().setGravity(Gravity.BOTTOM, 0, 0);
+                    this.mainActivity.getmToast().show();
+                }
+            } else {
+                Toast newToast = Toast.makeText(mainActivity, expectedMsg, Toast.LENGTH_SHORT);
+                this.mainActivity.setmToast(newToast);
+                this.mainActivity.getmToast().setGravity(Gravity.BOTTOM, 0, 0);
+                this.mainActivity.getmToast().show();
             }
         }
 

@@ -168,6 +168,14 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         this.mFirstTrailerSourceKey = mFirstTrailerSourceKey;
     }
 
+    public Toast getmToast() {
+        return mToast;
+    }
+
+    public void setmToast(Toast mToast) {
+        this.mToast = mToast;
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -5,7 +5,11 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -100,7 +104,26 @@ public class FetchMoviePostersTask extends AsyncTask<String, Void, List<Movie>> 
             Log.i(TAG, "Pass movie data to main activity: " + array.size());
             this.mainActivity.getmMovieAdapter().setMoviePosterData(array);
             // this.mainActivity.getmMovieAdapter().notifyDataSetChanged();
+        } else {
+            Log.e(TAG, mainActivity.getString(R.string.log_error_message_offline_before_fetch_movie_data_finish));
+            String expectedMsg = mainActivity.getString(R.string.toast_message_offline_before_fetch_movie_data_finish);
 
+            if (this.mainActivity.getmToast() != null) {
+                String displayedText = ((TextView) ((LinearLayout) this.mainActivity.getmToast().getView())
+                        .getChildAt(0)).getText().toString();
+                if (!displayedText.equals(expectedMsg)) {
+                    this.mainActivity.getmToast().cancel();
+                    Toast newToast = Toast.makeText(mainActivity, mainActivity.getString(R.string.toast_message_offline_before_fetch_movie_data_finish), Toast.LENGTH_SHORT);
+                    this.mainActivity.setmToast(newToast);
+                    this.mainActivity.getmToast().setGravity(Gravity.BOTTOM, 0, 0);
+                    this.mainActivity.getmToast().show();
+                }
+            } else {
+                Toast newToast = Toast.makeText(mainActivity, expectedMsg, Toast.LENGTH_SHORT);
+                this.mainActivity.setmToast(newToast);
+                this.mainActivity.getmToast().setGravity(Gravity.BOTTOM, 0, 0);
+                this.mainActivity.getmToast().show();
+            }
         }
     }
 

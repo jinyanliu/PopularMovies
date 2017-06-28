@@ -2,11 +2,16 @@ package se.sugarest.jane.popularmovies.tasks;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.Gravity;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.net.URL;
 import java.util.List;
 
 import se.sugarest.jane.popularmovies.DetailActivity;
+import se.sugarest.jane.popularmovies.R;
 import se.sugarest.jane.popularmovies.trailer.Trailer;
 import se.sugarest.jane.popularmovies.utilities.NetworkUtils;
 import se.sugarest.jane.popularmovies.utilities.TrailerJsonUtils;
@@ -64,11 +69,31 @@ public class FetchTrailerTask extends AsyncTask<String, Void, List<Trailer>> {
                 this.detailActivity.saveFavoriteTrailer();
                 Log.i(TAG, "Save Trailers.");
             }
-        }
-        if (trailerData.size() > 0) {
-            this.detailActivity.setmFirstTrailerSourceKey(trailerData.get(0).getKeyString());
+            if (trailerData.size() > 0) {
+                this.detailActivity.setmFirstTrailerSourceKey(trailerData.get(0).getKeyString());
+            } else {
+                this.detailActivity.setmFirstTrailerSourceKey(null);
+            }
         } else {
-            this.detailActivity.setmFirstTrailerSourceKey(null);
+            Log.e(TAG, detailActivity.getString(R.string.log_error_message_offline_before_fetch_trailer_finish));
+            String expectedMsg = detailActivity.getString(R.string.toast_message_offline_before_fetch_trailer_finish);
+
+            if (this.detailActivity.getmToast() != null) {
+                String displayedText = ((TextView) ((LinearLayout) this.detailActivity.getmToast().getView())
+                        .getChildAt(0)).getText().toString();
+                if (!displayedText.equals(expectedMsg)) {
+                    this.detailActivity.getmToast().cancel();
+                    Toast newToast = Toast.makeText(detailActivity, detailActivity.getString(R.string.toast_message_offline_before_fetch_trailer_finish), Toast.LENGTH_SHORT);
+                    this.detailActivity.setmToast(newToast);
+                    this.detailActivity.getmToast().setGravity(Gravity.BOTTOM, 0, 0);
+                    this.detailActivity.getmToast().show();
+                }
+            } else {
+                Toast newToast = Toast.makeText(detailActivity, expectedMsg, Toast.LENGTH_SHORT);
+                this.detailActivity.setmToast(newToast);
+                this.detailActivity.getmToast().setGravity(Gravity.BOTTOM, 0, 0);
+                this.detailActivity.getmToast().show();
+            }
         }
     }
 }

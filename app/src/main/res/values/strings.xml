@@ -4,9 +4,16 @@
     <!-- The text for Log error message when passing JSON. -->
     <string name="log_error_message_passing_JSON">Problem parsing the movie JSON results.</string>
 
-    <!-- The text for Log error message when you cut off the internet when the pop or top or fav movie list is still downloading.
+    <!-- The text for Log error message when you cut off the internet when the pop or top or fav movie list is still downloading in MainActivity.
      (open for the first time or refresh time) -->
     <string name="log_error_message_offline_before_download_pics_finish">Offline before downloading is finished.</string>
+    <!-- The text for Log error message when you cut off the internet when the mainActivity is still fetching movie posters http data. -->
+    <string name="log_error_message_offline_before_fetch_movie_data_finish">Offline before fetching movie date is finished.</string>
+
+    <!-- The text for Log error message when you cut off the internet when the detailActivity is still fetching reviews data. -->
+    <string name="log_error_message_offline_before_fetch_review_finish">Offline before fetching reviews is finished.</string>
+    <!-- The text for Log error message when you cut off the internet when the detailActivity is still fetching trailers data. -->
+    <string name="log_error_message_offline_before_fetch_trailer_finish">Offline before fetching trailers is finished.</string>
 
     <!-- The text for Log information message (display file name) when downloading the picture and put it into SD card storage. -->
     <string name="log_information_message_download_filename">Local filename: </string>
@@ -41,6 +48,13 @@
     <!-- Toast message when you cut off the internet when the pop or top or fav movie list is still downloading.
     (open for the first time or refresh time) -->
     <string name="toast_message_offline_before_download_finish">Download is interrupted without internet connection.</string>
+    <!-- Toast message when you cut off the internet when the mainActivity is still fetching movie posters http data. -->
+    <string name="toast_message_offline_before_fetch_movie_data_finish">Fetch movie data is interrupted without internet connection.</string>
+
+    <!-- Toast message when you cut off the internet when the detailActivity is still fetching reviews data. -->
+    <string name="toast_message_offline_before_fetch_review_finish">Fetch review data is interrupted without internet connection.</string>
+    <!-- Toast message when you cut off the internet when the detailActivity is still fetching trailers data. -->
+    <string name="toast_message_offline_before_fetch_trailer_finish">Fetch trailer data is interrupted without internet connection.</string>
 
     <!-- The text for query method to throw an IllegalArgumentException message. -->
     <string name="query_default_illegal_argument_exception_message">Cannot query unknown URI </string>

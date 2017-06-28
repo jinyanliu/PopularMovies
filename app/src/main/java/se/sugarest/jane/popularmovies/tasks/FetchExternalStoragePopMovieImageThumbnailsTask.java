@@ -1,11 +1,12 @@
 package se.sugarest.jane.popularmovies.tasks;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 import android.view.Gravity;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -16,6 +17,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import se.sugarest.jane.popularmovies.MainActivity;
 import se.sugarest.jane.popularmovies.R;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
 import se.sugarest.jane.popularmovies.movie.MovieBasicInfo;
@@ -26,12 +28,10 @@ import se.sugarest.jane.popularmovies.movie.MovieBasicInfo;
 
 public class FetchExternalStoragePopMovieImageThumbnailsTask extends AsyncTask<MovieBasicInfo, Void, String> {
 
-    private Context mContext;
+    private MainActivity mainActivity;
 
-    private Toast mToast;
-
-    public FetchExternalStoragePopMovieImageThumbnailsTask(Context context) {
-        mContext = context;
+    public FetchExternalStoragePopMovieImageThumbnailsTask(MainActivity mainActivity) {
+        this.mainActivity = mainActivity;
     }
 
     private static final String TAG = FetchExternalStoragePopMovieImageThumbnailsTask.class.getSimpleName();
@@ -69,7 +69,7 @@ public class FetchExternalStoragePopMovieImageThumbnailsTask extends AsyncTask<M
             String[] parts = urlToBeDownloaded.split("/");
             String lastPart = parts[7];
             String filename = lastPart;
-            Log.i(TAG, mContext.getString(R.string.log_information_message_download_filename) + filename);
+            Log.i(TAG, this.mainActivity.getString(R.string.log_information_message_download_filename) + filename);
 
             File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
                     + "/popthumbnails/" + filename);
@@ -91,8 +91,8 @@ public class FetchExternalStoragePopMovieImageThumbnailsTask extends AsyncTask<M
             while ((bufferLength = inputStream.read(buffer)) > 0) {
                 fileOutput.write(buffer, 0, bufferLength);
                 downloadedSize += bufferLength;
-                Log.i(TAG, mContext.getString(R.string.log_information_message_download_downloadedSize)
-                        + downloadedSize + mContext.getString(R.string.log_information_message_download_totalSize)
+                Log.i(TAG, this.mainActivity.getString(R.string.log_information_message_download_downloadedSize)
+                        + downloadedSize + this.mainActivity.getString(R.string.log_information_message_download_totalSize)
                         + totalSize);
             }
             fileOutput.close();
@@ -105,7 +105,7 @@ public class FetchExternalStoragePopMovieImageThumbnailsTask extends AsyncTask<M
             filepath = null;
             Log.e(TAG, e.getMessage());
         }
-        Log.i(TAG, mContext.getString(R.string.log_information_message_download_filepath) + filepath);
+        Log.i(TAG, this.mainActivity.getString(R.string.log_information_message_download_filepath) + filepath);
         return filepath;
     }
 
@@ -118,7 +118,7 @@ public class FetchExternalStoragePopMovieImageThumbnailsTask extends AsyncTask<M
             selection = selection + " =?";
             String[] selectionArgs = {movieId};
             Log.i(TAG, "This is movie Id: " + movieId + ", image thumbnail external path: " + s);
-            int rowsUpdated = mContext.getContentResolver()
+            int rowsUpdated = this.mainActivity.getContentResolver()
                     .update(CacheMovieMostPopularEntry.CONTENT_URI,
                             contentValues,
                             selection,
@@ -128,13 +128,25 @@ public class FetchExternalStoragePopMovieImageThumbnailsTask extends AsyncTask<M
                 Log.i(TAG, "Insert external image thumbnail poster path into cache popular movie table successful.");
             }
         } else {
-            Log.e(TAG, mContext.getString(R.string.log_error_message_offline_before_download_pics_finish));
-                if (mToast != null) {
-                    mToast.cancel();
+            Log.e(TAG, mainActivity.getString(R.string.log_error_message_offline_before_download_pics_finish));
+            String expectedMsg = mainActivity.getString(R.string.toast_message_offline_before_download_finish);
+
+            if (this.mainActivity.getmToast() != null) {
+                String displayedText = ((TextView) ((LinearLayout) this.mainActivity.getmToast().getView())
+                        .getChildAt(0)).getText().toString();
+                if (!displayedText.equals(expectedMsg)) {
+                    this.mainActivity.getmToast().cancel();
+                    Toast newToast = Toast.makeText(mainActivity, mainActivity.getString(R.string.toast_message_offline_before_download_finish), Toast.LENGTH_SHORT);
+                    this.mainActivity.setmToast(newToast);
+                    this.mainActivity.getmToast().setGravity(Gravity.BOTTOM, 0, 0);
+                    this.mainActivity.getmToast().show();
                 }
-                mToast = Toast.makeText(mContext, mContext.getString(R.string.toast_message_offline_before_download_finish), Toast.LENGTH_SHORT);
-                mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                mToast.show();
+            } else {
+                Toast newToast = Toast.makeText(mainActivity, expectedMsg, Toast.LENGTH_SHORT);
+                this.mainActivity.setmToast(newToast);
+                this.mainActivity.getmToast().setGravity(Gravity.BOTTOM, 0, 0);
+                this.mainActivity.getmToast().show();
+            }
         }
     }
 }

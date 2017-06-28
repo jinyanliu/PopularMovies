@@ -81,6 +81,14 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         return mSwipeRefreshLayout;
     }
 
+    public Toast getmToast() {
+        return mToast;
+    }
+
+    public void setmToast(Toast mToast) {
+        this.mToast = mToast;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -276,9 +284,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         File favMovieThumbnailsFolder
                 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
                 + "/favthumbnails/");
-        for (File pic : favMovieThumbnailsFolder.listFiles()) {
-            Log.i(TAG, "remove existing pic: " + pic.getAbsolutePath());
-            pic.delete();
+        if (favMovieThumbnailsFolder.exists()) {
+            for (File pic : favMovieThumbnailsFolder.listFiles()) {
+                Log.i(TAG, "remove existing pic: " + pic.getAbsolutePath());
+                pic.delete();
+            }
         }
 
         Cursor cursor = getContentResolver()
