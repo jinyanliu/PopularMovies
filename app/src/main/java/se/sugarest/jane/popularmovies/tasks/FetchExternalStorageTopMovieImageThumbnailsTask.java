@@ -5,6 +5,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
+import android.view.Gravity;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,6 +27,8 @@ import se.sugarest.jane.popularmovies.movie.MovieBasicInfo;
 public class FetchExternalStorageTopMovieImageThumbnailsTask extends AsyncTask<MovieBasicInfo, Void, String> {
 
     private Context mContext;
+
+    private Toast mToast;
 
     public FetchExternalStorageTopMovieImageThumbnailsTask(Context context) {
         mContext = context;
@@ -65,7 +69,7 @@ public class FetchExternalStorageTopMovieImageThumbnailsTask extends AsyncTask<M
             String[] parts = urlToBeDownloaded.split("/");
             String lastPart = parts[7];
             String filename = lastPart;
-            Log.i(TAG, mContext.getString(R.string.log_information_message_download_poster_filename) + filename);
+            Log.i(TAG, mContext.getString(R.string.log_information_message_download_filename) + filename);
 
             File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
                     + "/topthumbnails/" + filename);
@@ -87,8 +91,8 @@ public class FetchExternalStorageTopMovieImageThumbnailsTask extends AsyncTask<M
             while ((bufferLength = inputStream.read(buffer)) > 0) {
                 fileOutput.write(buffer, 0, bufferLength);
                 downloadedSize += bufferLength;
-                Log.i(TAG, mContext.getString(R.string.log_information_message_download_poster_downloadedSize)
-                        + downloadedSize + mContext.getString(R.string.log_information_message_download_poster_totalSize)
+                Log.i(TAG, mContext.getString(R.string.log_information_message_download_downloadedSize)
+                        + downloadedSize + mContext.getString(R.string.log_information_message_download_totalSize)
                         + totalSize);
             }
             fileOutput.close();
@@ -101,27 +105,36 @@ public class FetchExternalStorageTopMovieImageThumbnailsTask extends AsyncTask<M
             filepath = null;
             Log.e(TAG, e.getMessage());
         }
-        Log.i(TAG, mContext.getString(R.string.log_information_message_download_poster_filepath) + filepath);
+        Log.i(TAG, mContext.getString(R.string.log_information_message_download_filepath) + filepath);
         return filepath;
     }
 
     @Override
     protected void onPostExecute(String s) {
+        if (s != null) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(CacheMovieTopRatedEntry.COLUMN_EXTERNAL_STORAGE_IMAGE_THUMBNAIL, s);
+            String selection = CacheMovieTopRatedEntry.COLUMN_MOVIE_ID;
+            selection = selection + " =?";
+            String[] selectionArgs = {movieId};
+            Log.i(TAG, "This is movie Id: " + movieId + ", image thumbnail external path: " + s);
+            int rowsUpdated = mContext.getContentResolver()
+                    .update(CacheMovieTopRatedEntry.CONTENT_URI,
+                            contentValues,
+                            selection,
+                            selectionArgs);
 
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(CacheMovieTopRatedEntry.COLUMN_EXTERNAL_STORAGE_IMAGE_THUMBNAIL, s);
-        String selection = CacheMovieTopRatedEntry.COLUMN_MOVIE_ID;
-        selection = selection + " =?";
-        String[] selectionArgs = {movieId};
-        Log.i(TAG, "This is movie Id: " + movieId + ", image thumbnail external path: " + s);
-        int rowsUpdated = mContext.getContentResolver()
-                .update(CacheMovieTopRatedEntry.CONTENT_URI,
-                        contentValues,
-                        selection,
-                        selectionArgs);
-
-        if (rowsUpdated > 0) {
-            Log.i(TAG, "Insert external image thumbnail poster path into cache popular movie table successful.");
+            if (rowsUpdated > 0) {
+                Log.i(TAG, "Insert external image thumbnail poster path into cache popular movie table successful.");
+            }
+        } else {
+            Log.e(TAG, mContext.getString(R.string.log_error_message_offline_before_download_pics_finish));
+            if (mToast != null) {
+                mToast.cancel();
+            }
+            mToast = Toast.makeText(mContext, mContext.getString(R.string.toast_message_offline_before_download_finish), Toast.LENGTH_SHORT);
+            mToast.setGravity(Gravity.BOTTOM, 0, 0);
+            mToast.show();
         }
     }
 }

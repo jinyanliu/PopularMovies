@@ -1,7 +1,10 @@
 package se.sugarest.jane.popularmovies.tasks;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -91,17 +94,21 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                 File popularMoviePicsFolder
                         = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
                         + "/popularmovies/");
-                for (File pic : popularMoviePicsFolder.listFiles()) {
-                    Log.i(TAG, "remove existing pic: " + pic.getAbsolutePath());
-                    pic.delete();
+                if (popularMoviePicsFolder.exists()) {
+                    for (File pic : popularMoviePicsFolder.listFiles()) {
+                        Log.i(TAG, "remove existing pic: " + pic.getAbsolutePath());
+                        pic.delete();
+                    }
                 }
 
                 File popularMovieThumbnailImagesFolder
                         = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
                         + "/popthumbnails/");
-                for (File pic : popularMovieThumbnailImagesFolder.listFiles()) {
-                    Log.i(TAG, "remove existing pic: " + pic.getAbsolutePath());
-                    pic.delete();
+                if (popularMovieThumbnailImagesFolder.exists()) {
+                    for (File pic : popularMovieThumbnailImagesFolder.listFiles()) {
+                        Log.i(TAG, "remove existing pic: " + pic.getAbsolutePath());
+                        pic.delete();
+                    }
                 }
 
                 int count = movieData.size();
@@ -120,8 +127,13 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
                     values.put(CacheMovieMostPopularEntry.COLUMN_EXTERNAL_STORAGE_IMAGE_THUMBNAIL, fullImageThumbnailForOneMovie);
 
-                    new FetchExternalStoragePopMovieImageThumbnailsTask(this.mainActivity).execute(
-                            new MovieBasicInfo(movieId, fullImageThumbnailForOneMovie));
+                    // PersistMovieTask is only called when has internet. But we also have the situation that before downloading is finished,
+                    // user cut off internet. Have to handle the crush gracefully.
+                    if (getNetworkInfo() != null && getNetworkInfo().isConnected()) {
+                        new FetchExternalStoragePopMovieImageThumbnailsTask(this.mainActivity).execute(
+                                new MovieBasicInfo(movieId, fullImageThumbnailForOneMovie));
+                        Log.i(TAG, "fetch pop movie poster external");
+                    }
 
                     values.put(CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE, movieData.get(i).getOriginalTitle());
 
@@ -132,8 +144,11 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
                     values.put(CacheMovieMostPopularEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH, fullMoviePosterForOneMovie);
 
-                    new FetchExternalStoragePopMoviePosterImagesTask(this.mainActivity).execute(
-                            new MovieBasicInfo(movieId, fullMoviePosterForOneMovie));
+                    if (getNetworkInfo() != null && getNetworkInfo().isConnected()) {
+                        new FetchExternalStoragePopMoviePosterImagesTask(this.mainActivity).execute(
+                                new MovieBasicInfo(movieId, fullMoviePosterForOneMovie));
+                        Log.i(TAG, "fetch pop movie image thumbnail external");
+                    }
 
                     values.put(CacheMovieMostPopularEntry.COLUMN_RELEASE_DATE, movieData.get(i).getReleaseDate());
                     values.put(CacheMovieMostPopularEntry.COLUMN_USER_RATING, movieData.get(i).getUserRating());
@@ -174,17 +189,21 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                 File topRatedMoviePicsFolder
                         = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
                         + "/topratedmovies/");
-                for (File pic : topRatedMoviePicsFolder.listFiles()) {
-                    Log.i(TAG, "remove existing pic: " + pic.getAbsolutePath());
-                    pic.delete();
+                if (topRatedMoviePicsFolder.exists()) {
+                    for (File pic : topRatedMoviePicsFolder.listFiles()) {
+                        Log.i(TAG, "remove existing pic: " + pic.getAbsolutePath());
+                        pic.delete();
+                    }
                 }
 
                 File topRatedMovieThumbnailImagesFolder
                         = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
                         + "/topthumbnails/");
-                for (File pic : topRatedMovieThumbnailImagesFolder.listFiles()) {
-                    Log.i(TAG, "remove existing pic: " + pic.getAbsolutePath());
-                    pic.delete();
+                if (topRatedMovieThumbnailImagesFolder.exists()) {
+                    for (File pic : topRatedMovieThumbnailImagesFolder.listFiles()) {
+                        Log.i(TAG, "remove existing pic: " + pic.getAbsolutePath());
+                        pic.delete();
+                    }
                 }
 
                 int count = movieData.size();
@@ -203,8 +222,10 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
                     values.put(CacheMovieTopRatedEntry.COLUMN_EXTERNAL_STORAGE_IMAGE_THUMBNAIL, fullImageThumbnailForOneMovie);
 
-                    new FetchExternalStorageTopMovieImageThumbnailsTask(this.mainActivity).execute(
-                            new MovieBasicInfo(movieId, fullImageThumbnailForOneMovie));
+                    if (getNetworkInfo() != null && getNetworkInfo().isConnected()) {
+                        new FetchExternalStorageTopMovieImageThumbnailsTask(this.mainActivity).execute(
+                                new MovieBasicInfo(movieId, fullImageThumbnailForOneMovie));
+                    }
 
                     values.put(CacheMovieTopRatedEntry.COLUMN_ORIGINAL_TITLE, movieData.get(i).getOriginalTitle());
 
@@ -215,8 +236,10 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
                     values.put(CacheMovieTopRatedEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH, fullMoviePosterForOneMovie);
 
-                    new FetchExternalStorageTopMoviePosterImagesTask(this.mainActivity).execute(
-                            new MovieBasicInfo(movieId, fullMoviePosterForOneMovie));
+                    if (getNetworkInfo() != null && getNetworkInfo().isConnected()) {
+                        new FetchExternalStorageTopMoviePosterImagesTask(this.mainActivity).execute(
+                                new MovieBasicInfo(movieId, fullMoviePosterForOneMovie));
+                    }
 
                     values.put(CacheMovieTopRatedEntry.COLUMN_RELEASE_DATE, movieData.get(i).getReleaseDate());
                     values.put(CacheMovieTopRatedEntry.COLUMN_USER_RATING, movieData.get(i).getUserRating());
@@ -258,5 +281,12 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                 this.mainActivity.getString(R.string.settings_order_by_key),
                 this.mainActivity.getString(R.string.settings_order_by_default)
         );
+    }
+
+    private NetworkInfo getNetworkInfo() {
+        // Get a reference to the ConnectivityManager to check state of network connectivity.
+        ConnectivityManager connMgr = (ConnectivityManager) this.mainActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
+        // Get details on the currently active default data network
+        return connMgr.getActiveNetworkInfo();
     }
 }

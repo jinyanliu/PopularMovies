@@ -265,9 +265,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         File favMoviePicsFolder
                 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
                 + "/favmovies/");
-        for (File pic : favMoviePicsFolder.listFiles()) {
-            Log.i(TAG, "remove existing pic: " + pic.getAbsolutePath());
-            pic.delete();
+        if (favMoviePicsFolder.exists()) {
+            for (File pic : favMoviePicsFolder.listFiles()) {
+                Log.i(TAG, "remove existing pic: " + pic.getAbsolutePath());
+                pic.delete();
+            }
         }
 
         // When refresh, delete External Storage Folder favthumbnails

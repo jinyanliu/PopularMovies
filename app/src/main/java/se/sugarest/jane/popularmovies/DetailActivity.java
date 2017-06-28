@@ -526,7 +526,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                 }
             } else {
                 mFabButton.setColorFilter(ContextCompat.getColor(DetailActivity.this, R.color.colorWhiteFavoriteStar));
-                mToast = Toast.makeText(this, getString(R.string.review_and_trailer_not_loaded_yet), Toast.LENGTH_SHORT);
+                mToast = Toast.makeText(this, getString(R.string.toast_message_review_and_trailer_not_loaded_yet), Toast.LENGTH_SHORT);
                 mToast.setGravity(Gravity.BOTTOM, 0, 0);
                 mToast.show();
             }
@@ -912,12 +912,12 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                             String urlToShare = BASE_YOUTUBE_URL_WEB + mFirstTrailerSourceKey;
                             shareFirstYoutubeUrl(urlToShare);
                         } else {
-                            mToast = Toast.makeText(this, getString(R.string.no_trailer_to_share), Toast.LENGTH_SHORT);
+                            mToast = Toast.makeText(this, getString(R.string.toast_message_no_trailer_to_share), Toast.LENGTH_SHORT);
                             mToast.setGravity(Gravity.BOTTOM, 0, 0);
                             mToast.show();
                         }
                     } else {
-                        mToast = Toast.makeText(this, getString(R.string.trailer_not_loaded_yet), Toast.LENGTH_SHORT);
+                        mToast = Toast.makeText(this, getString(R.string.toast_message_trailer_not_loaded_yet), Toast.LENGTH_SHORT);
                         mToast.setGravity(Gravity.BOTTOM, 0, 0);
                         mToast.show();
                     }

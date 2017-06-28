@@ -1,43 +1,28 @@
 <resources>
     <string name="app_name" translatable="false">Popular Movies</string>
 
-    <!-- The text for the TextView to display error message. -->
-    <string name="error_message">An error has occurred.</string>
-    <!-- The text for the TextView to display error message when there is no favorite movies to display. -->
-    <string name="error_message_no_fav_movie">You don\'t have favorite movies !\nStart by pressing the STAR button on single movie\'s Page !</string>
-    <!-- The text for the TextView to display error message when there is no popular movies to display. -->
-    <string name="error_message_no_popular_movie">No popular movies! Please check your network settings and refresh!</string>
-    <!-- The text for the TextView to display error message when there is no top rated movies to display. -->
-    <string name="error_message_no_top_rated_movie">No top rated movies! Please check your network settings and refresh!</string>
-
     <!-- The text for Log error message when passing JSON. -->
     <string name="log_error_message_passing_JSON">Problem parsing the movie JSON results.</string>
 
-    <!-- The text for Log information message (display file name) when downloading the poster and put it into SD card storage. -->
-    <string name="log_information_message_download_poster_filename">Local filename: </string>
-    <!-- The text for Log information message (display downloadedSize) when downloading the poster and put it into SD card storage. -->
-    <string name="log_information_message_download_poster_downloadedSize">Progress: downloadedSize: </string>
-    <!-- The text for Log information message (display totalSize) when downloading the poster and put it into SD card storage. -->
-    <string name="log_information_message_download_poster_totalSize">totalSize: </string>
-    <!-- The text for Log information message (display filepath) when downloading the poster and put it into SD card storage. -->
-    <string name="log_information_message_download_poster_filepath">filepath: </string>
+    <!-- The text for Log error message when you cut off the internet when the pop or top or fav movie list is still downloading.
+     (open for the first time or refresh time) -->
+    <string name="log_error_message_offline_before_download_pics_finish">Offline before downloading is finished.</string>
 
-    <!-- The text for Log information message (display file name) when downloading the poster thumbnail and put it into SD card storage. -->
-    <string name="log_information_message_download_poster_thumbnail_filename">Local filename: </string>
-    <!-- The text for Log information message (display downloadedSize) when downloading the poster thumbnail and put it into SD card storage. -->
-    <string name="log_information_message_download_poster_thumbnail_downloadedSize">Progress: downloadedSize: </string>
-    <!-- The text for Log information message (display totalSize) when downloading the poster thumbnail and put it into SD card storage. -->
-    <string name="log_information_message_download_poster_thumbnail_totalSize">totalSize: </string>
-    <!-- The text for Log information message (display filepath) when downloading the poster thumbnail and put it into SD card storage. -->
-    <string name="log_information_message_download_poster_thumbnail_filepath">filepath: </string>
+    <!-- The text for Log information message (display file name) when downloading the picture and put it into SD card storage. -->
+    <string name="log_information_message_download_filename">Local filename: </string>
+    <!-- The text for Log information message (display downloadedSize) when downloading the picture and put it into SD card storage. -->
+    <string name="log_information_message_download_downloadedSize">Progress: downloadedSize: </string>
+    <!-- The text for Log information message (display totalSize) when downloading the picture and put it into SD card storage. -->
+    <string name="log_information_message_download_totalSize">totalSize: </string>
+    <!-- The text for Log information message (display filepath) when downloading the picture and put it into SD card storage. -->
+    <string name="log_information_message_download_filepath">filepath: </string>
 
     <!-- The text for Log information message when checking refreshPop true. -->
     <string name="log_information_refreshPop_true">Check refresh Pop true.</string>
     <!-- The text for Log information message when checking refreshTop true. -->
     <string name="log_information_refreshTop_true">Check refresh Top true.</string>
 
-    <!-- Toast message for refresh when there is no internet connection in MainActivity. -->
-    <!-- Toast message for refresh when there is no internet connection in DetailActivity. -->
+    <!-- Toast message for refresh when there is no internet connection in MainActivity and DetailActivity. -->
     <string name="toast_message_refresh_no_internet">Cannot refresh without internet connection.</string>
     <!-- Toast message for refresh Pop movies in one minute, no need to refresh. List up to date. -->
     <string name="toast_message_refresh_pop_in_one_minute">Your Most Popular Movies list is up-to-date.</string>
@@ -46,12 +31,16 @@
     <!-- Toast message for refresh Fav movies in one minute, no need to refresh. List up to date. -->
     <string name="toast_message_refresh_fav_in_one_minute">Your Favorite Movies list is up-to-date.</string>
 
-    <!-- Main Activity setTitle when the preference is most popular movies. -->
-    <string name="main_activity_title_most_popular">Most Popular Movies</string>
-    <!-- Main Activity setTitle when the preference is top rated movies. -->
-    <string name="main_activity_title_top_rated">Top Rated Movies</string>
-    <!-- Main Activity setTitle when the preference is favorite movies. -->
-    <string name="main_activity_title_favorite">Favorite Movies</string>
+    <!-- Toast message when you want to save the movie to favDatabase but the movie's reviews and trailers haven't loader yet. -->
+    <string name="toast_message_review_and_trailer_not_loaded_yet">Please wait :p Reviews and trailers not loaded yet.</string>
+    <!-- Toast message when you want to share the first trailer but the movie's trailers haven't loader yet. -->
+    <string name="toast_message_trailer_not_loaded_yet">Please wait :P Trailers not loaded yet.</string>
+    <!-- Toast message when you want to share the first trailer but the movie has no trailers to share. -->
+    <string name="toast_message_no_trailer_to_share">Sorry. This movie doesn\'t have a trailer to share.</string>
+
+    <!-- Toast message when you cut off the internet when the pop or top or fav movie list is still downloading.
+    (open for the first time or refresh time) -->
+    <string name="toast_message_offline_before_download_finish">Download is interrupted without internet connection.</string>
 
     <!-- The text for query method to throw an IllegalArgumentException message. -->
     <string name="query_default_illegal_argument_exception_message">Cannot query unknown URI </string>
@@ -110,23 +99,30 @@
     <!-- Log message for deleting error when deleting a trailer. [CHAR LIMIT=20] -->
     <string name="delete_trailer_failed">Error with deleting trailer</string>
 
-    <!-- Refresh Menu Item -->
-    <string name="refresh_menu_item">Refresh</string>
-    <!-- Settings Menu Item -->
-    <string name="settings_menu_item">Settings</string>
-    <!-- Settings Activity Title -->
-    <string name="settings_title">Movie Settings</string>
-    <!-- Delete All Menu Item -->
-    <string name="delete_all_menu_item">Delete All Movies</string>
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    - Texts show on activity_main's error message textview.  -
+    - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- The text for the TextView to display error message. -->
+    <string name="error_message">An error has occurred.</string>
+    <!-- The text for the TextView to display error message when there is no favorite movies to display. -->
+    <string name="error_message_no_fav_movie">You don\'t have favorite movies !\nStart by pressing the STAR button on single movie\'s Page !</string>
+    <!-- The text for the TextView to display error message when there is no popular movies to display. -->
+    <string name="error_message_no_popular_movie">No popular movies! Please check your network settings and refresh!</string>
+    <!-- The text for the TextView to display error message when there is no top rated movies to display. -->
+    <string name="error_message_no_top_rated_movie">No top rated movies! Please check your network settings and refresh!</string>
 
-    <!-- Used to share the first trailer’s YouTube URL on a given movie from the DetailActivity -->
-    <string name="action_share">Share</string>
-    <!-- The title of the ShareCompat to build a share action. -->
-    <string name="title_share_url_string">Share the first Youtube Url</string>
-
+    <!-- - - - - - - - - -
+    - SharedPreference.  -
+    - - - - - - - - - - -->
+    <!-- SharedPreference Key to store time information to check the boolean refreshPop, refreshTop, refreshFav. -->
     <string name="pref_pop_date_key" translatable="false">refresh_pop_movie</string>
     <string name="pref_top_date_key" translatable="false">refresh_top_movie</string>
     <string name="pref_fav_date_key" translatable="false">refresh_fav_movie</string>
+
+    <!-- SharedPreference Key to store first time called information to control toast message' loop stop. -->
+    <string name="pref_pop_download_interrupt_key" translatable="false">pop_download_interrupt</string>
+    <string name="pref_top_download_interrupt_key" translatable="false">top_download_interrupt</string>
+    <string name="pref_fav_download_interrupt_key" translatable="false">fav_download_interrupt</string>
 
     <!-- Strings For Order-By Preference [CHAR LIMIT=30] -->
     <string name="settings_order_by_label">Order By</string>
@@ -145,6 +141,49 @@
     <string name="settings_order_by_favorites_label">Favorite Movies</string>
     <string name="settings_order_by_favorites_value" translatable="false">favorites</string>
 
+    <!-- - - - - - - - - - - - - - - - - - - - -
+    - Texts show on MainActivity's Page Title. -
+    - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Main Activity setTitle when the preference is most popular movies. -->
+    <string name="main_activity_title_most_popular">Most Popular Movies</string>
+    <!-- Main Activity setTitle when the preference is top rated movies. -->
+    <string name="main_activity_title_top_rated">Top Rated Movies</string>
+    <!-- Main Activity setTitle when the preference is favorite movies. -->
+    <string name="main_activity_title_favorite">Favorite Movies</string>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - -
+    - Texts show on AlertDialog when clicking "deleteAll". -
+    - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Dialog message to ask the user to confirm deleting all movies [CHAR LIMIT=NONE] -->
+    <string name="delete_all_dialog_msg">Delete all movies?</string>
+    <!-- Dialog button text for the option to confirm deleting all pets [CHAR LIMIT=20] -->
+    <string name="delete">Delete</string>
+    <!-- Dialog button text for the option to cancel deletion of all movies [CHAR LIMIT=20] -->
+    <string name="cancel">Cancel</string>
+
+    <!-- - - - - - - - - - - - - - - -
+    - MainActivity Menu Item texts.  -
+    - - - - - - - - - - - - - - - - -->
+    <!-- Refresh Menu Item -->
+    <string name="refresh_menu_item">Refresh</string>
+    <!-- Settings Menu Item -->
+    <string name="settings_menu_item">Settings</string>
+    <!-- Settings Activity Title -->
+    <string name="settings_title">Movie Settings</string>
+    <!-- Delete All Menu Item -->
+    <string name="delete_all_menu_item">Delete All Movies</string>
+
+    <!-- - - - - - - - - - - - - - - -
+    - DetailActivity Menu Item texts.  -
+    - - - - - - - - - - - - - - - - -->
+    <!-- Used to share the first trailer’s YouTube URL on a given movie from the DetailActivity -->
+    <string name="action_share">Share</string>
+    <!-- The title of the ShareCompat to build a share action. -->
+    <string name="title_share_url_string">Share the first Youtube Url</string>
+
+    <!-- - - - - - - - -
+    - UI design texts. -
+    - - - - - - - - - -->
     <!-- Label of release data textview in detail activity. -->
     <string name="detail_activity_release_date_label">Release Date:</string>
     <!-- Label of user rating textview in detail activity. -->
@@ -153,23 +192,12 @@
     <string name="detail_activity_user_review_label">Total User Reviews:</string>
     <!-- Label of trailers textview in detail activity. -->
     <string name="detail_activity_trailers_label">Trailers:</string>
-
     <!-- Label of user review author in list_item_review layout. -->
     <string name="list_item_user_review_author_label">Author:</string>
-
     <!-- Text show besides Trailers and Reviews Title when offline. -->
-    <!-- Text show when click share menu item when offline.-->
-    <!-- Text show when click trailer fab button. -->
+    <!-- Toast Message show when click share menu item when offline.-->
+    <!-- Toast Message show when click trailer fab button. -->
     <string name="detail_activity_offline_reminder_text">Available while online.</string>
-
-    <!-- Dialog message to ask the user to confirm deleting all movies [CHAR LIMIT=NONE] -->
-    <string name="delete_all_dialog_msg">Delete all movies?</string>
-
-    <!-- Dialog button text for the option to confirm deleting all pets [CHAR LIMIT=20] -->
-    <string name="delete">Delete</string>
-
-    <!-- Dialog button text for the option to cancel deletion of all movies [CHAR LIMIT=20] -->
-    <string name="cancel">Cancel</string>
 
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - -
     - Fake texts show on detail activity for design reason.  -
@@ -189,12 +217,5 @@
         thoroughly positive \-\- see below.) The musical numbers are by far the best part of the movie, including Jennifer
         Hudson-voiced renditions of \"Golden Slumbers/Carry That Weight\" to the piggy duet of \"Shake It Off\" (by Witherspoon
         and comedian Nick Kroll as a German boar called Gunter) to Kelly\'s show-stopping version of "Hallelujah."</string>
-
-    <!-- Toast message when you want to save the movie to favDatabase but the movie's reviews and trailers haven't loader yet. -->
-    <string name="review_and_trailer_not_loaded_yet">Please wait :p Reviews and trailers not loaded yet.</string>
-    <!-- Toast message when you want to share the first trailer but the movie's trailers haven't loader yet. -->
-    <string name="trailer_not_loaded_yet">Please wait :P Trailers not loaded yet.</string>
-    <!-- Toast message when you want to share the first trailer but the movie has no trailers to share. -->
-    <string name="no_trailer_to_share">Sorry. This movie doesn\'t have a trailer to share.</string>
 </resources>
 
