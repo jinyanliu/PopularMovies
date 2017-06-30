@@ -20,7 +20,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/image_height_detail"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_loading_larger_detail"
+                android:src="@drawable/pic_loading_indicator_1560_878"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
