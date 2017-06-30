@@ -3,6 +3,7 @@ package se.sugarest.jane.popularmovies.tasks;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +29,14 @@ public class FetchTrailerTask extends AsyncTask<String, Void, List<Trailer>> {
 
     public FetchTrailerTask(DetailActivity detailActivity) {
         this.detailActivity = detailActivity;
+    }
+
+    @Override
+    protected void onPreExecute() {
+
+        super.onPreExecute();
+        this.detailActivity.setTrailersLoadingIndicator();
+
     }
 
     @Override
@@ -61,7 +70,7 @@ public class FetchTrailerTask extends AsyncTask<String, Void, List<Trailer>> {
             this.detailActivity.getmTrailerAdapter().setTrailerData(trailerData);
             String numberOfTrailerString = Integer.toString(this.detailActivity.getmTrailerAdapter().getItemCount());
             this.detailActivity.setmNumberOfTrailerString(numberOfTrailerString);
-            this.detailActivity.getmDetailBinding().extraDetails.tvNumberOfTrailer.setText(numberOfTrailerString);
+            this.detailActivity.setNumberOfTrailerTextViewText(numberOfTrailerString);
             // When movie is saved offline (no fetching reviews and trailers), and reopen online, reviews and trailers show.
             // Save secretly reviews and trailers for user.
             boolean movieIsInDatabase = this.detailActivity.checkIsMovieAlreadyInFavDatabase(movieId);
@@ -76,6 +85,9 @@ public class FetchTrailerTask extends AsyncTask<String, Void, List<Trailer>> {
             }
         } else {
             Log.e(TAG, detailActivity.getString(R.string.log_error_message_offline_before_fetch_trailer_finish));
+
+            this.detailActivity.getmDetailBinding().extraDetails.ivTrailerLoadingIndicator.setVisibility(View.INVISIBLE);
+
             String expectedMsg = detailActivity.getString(R.string.toast_message_offline_before_fetch_trailer_finish);
 
             if (this.detailActivity.getmToast() != null) {

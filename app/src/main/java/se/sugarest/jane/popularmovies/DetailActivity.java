@@ -419,6 +419,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
      * @param id The id of the movie clicked.
      */
     private void loadTrailerData(String id) {
+
         try {
             boolean movieIsInDatabase = checkIsMovieAlreadyInFavDatabase(id);
             // When saved offline, trailers haven't loaded yet.
@@ -430,12 +431,26 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                     new FetchTrailerTask(this).execute(id);
                 } else {
                     hideLoadingIndicators();
-                    mDetailBinding.extraDetails.tvNumberOfTrailer.setText(getString(R.string.detail_activity_offline_reminder_text));
+                    setNumberOfTrailerTextViewText(getString(R.string.detail_activity_offline_reminder_text));
                 }
             }
         } catch (NullPointerException e) {
             Log.e(TAG, e.getMessage());
         }
+    }
+
+    public void setTrailersLoadingIndicator() {
+        mDetailBinding.extraDetails.ivTrailerLoadingIndicator.setVisibility(View.VISIBLE);
+        // Trailers Loading Animation
+        Animation b = AnimationUtils.loadAnimation(this, R.anim.progress_animation_main);
+        b.setDuration(1000);
+        mDetailBinding.extraDetails.ivTrailerLoadingIndicator.startAnimation(b);
+    }
+
+    public void setNumberOfTrailerTextViewText(String numberOfTrailerTextViewText) {
+        mDetailBinding.extraDetails.ivTrailerLoadingIndicator.clearAnimation();
+        mDetailBinding.extraDetails.ivTrailerLoadingIndicator.setVisibility(View.GONE);
+        mDetailBinding.extraDetails.tvNumberOfTrailer.setText(numberOfTrailerTextViewText);
     }
 
     /**
@@ -842,6 +857,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     }
 
     public void loadTrailerDataFromDatabase(String movieId) {
+        setTrailersLoadingIndicator();
         List<Trailer> trailers = new ArrayList<>();
         String selection = TrailerEntry.COLUMN_MOVIE_ID;
         String[] selectionArgs = {movieId};
@@ -866,7 +882,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                 mCurrentMovieTrailers = trailers;
                 mTrailerAdapter.setTrailerData(trailers);
                 mNumberOfTrailerString = Integer.toString(mTrailerAdapter.getItemCount());
-                mDetailBinding.extraDetails.tvNumberOfTrailer.setText(mNumberOfTrailerString);
+                setNumberOfTrailerTextViewText(mNumberOfTrailerString);
             }
         } else {
             /************************************************************************************************
@@ -879,7 +895,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                 new FetchTrailerTask(this).execute(movieId);
             } else {
                 hideLoadingIndicators();
-                mDetailBinding.extraDetails.tvNumberOfTrailer.setText(getString(R.string.detail_activity_offline_reminder_text));
+                setNumberOfTrailerTextViewText(getString(R.string.detail_activity_offline_reminder_text));
             }
         }
     }

@@ -12,10 +12,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/activity_detail_horizontal_padding"
+            android:layout_marginStart="@dimen/activity_detail_horizontal_padding"
             android:layout_marginTop="@dimen/activity_detail_vertical_padding"
             android:text="@string/detail_activity_trailers_label"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/iv_trailer_loading_indicator"
+            android:layout_width="21dp"
+            android:layout_height="21dp"
+            android:layout_marginLeft="@dimen/activity_detail_horizontal_padding"
+            android:layout_marginStart="@dimen/activity_detail_horizontal_padding"
+            android:adjustViewBounds="true"
+            android:src="@drawable/trailer_review_loading_indicator"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_trailers_label"
+            app:layout_constraintLeft_toRightOf="@+id/tv_trailers_label"
+            app:layout_constraintTop_toTopOf="@+id/tv_trailers_label" />
 
         <TextView
             android:id="@+id/tv_number_of_trailer"
@@ -23,6 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/activity_detail_horizontal_padding"
             android:layout_marginStart="@dimen/activity_detail_horizontal_padding"
+            android:gravity="center"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="@+id/tv_trailers_label"
             app:layout_constraintLeft_toRightOf="@+id/tv_trailers_label"
@@ -63,6 +78,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/activity_detail_horizontal_padding"
             android:layout_marginStart="@dimen/activity_detail_horizontal_padding"
+            android:gravity="center"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="@+id/tv_user_review_label"
             app:layout_constraintLeft_toRightOf="@+id/tv_user_review_label"
