@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
         android:gravity="center"
-        android:src="@drawable/pic_loading_indicator_370_556" />
+        android:src="@drawable/pic_loading_indicator_w370" />
 
     <ImageView
         android:id="@+id/iv_movie_posters"
