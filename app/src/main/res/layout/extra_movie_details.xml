@@ -72,6 +72,19 @@
             app:layout_constraintLeft_toLeftOf="@+id/tv_trailers_label"
             app:layout_constraintTop_toBottomOf="@+id/dividing_line_trailers_and_reviews" />
 
+        <ImageView
+            android:id="@+id/iv_review_loading_indicator"
+            android:layout_width="21dp"
+            android:layout_height="21dp"
+            android:layout_marginLeft="@dimen/activity_detail_horizontal_padding"
+            android:layout_marginStart="@dimen/activity_detail_horizontal_padding"
+            android:adjustViewBounds="true"
+            android:src="@drawable/trailer_review_loading_indicator"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_user_review_label"
+            app:layout_constraintLeft_toRightOf="@+id/tv_user_review_label"
+            app:layout_constraintTop_toTopOf="@+id/tv_user_review_label" />
+
         <TextView
             android:id="@+id/tv_number_of_user_review"
             android:layout_width="wrap_content"

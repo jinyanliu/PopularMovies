@@ -3,6 +3,7 @@ package se.sugarest.jane.popularmovies.tasks;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +29,14 @@ public class FetchReviewTask extends AsyncTask<String, Void, List<Review>> {
 
     public FetchReviewTask(DetailActivity detailActivity) {
         this.detailActivity = detailActivity;
+    }
+
+    @Override
+    protected void onPreExecute() {
+
+        super.onPreExecute();
+        this.detailActivity.setReviewsLoadingIndicator();
+
     }
 
     @Override
@@ -62,7 +71,7 @@ public class FetchReviewTask extends AsyncTask<String, Void, List<Review>> {
             // not have reviews.
             String numberOfReviewString = Integer.toString(this.detailActivity.getmReviewAdapter().getItemCount());
             this.detailActivity.setmNumberOfReviewString(numberOfReviewString);
-            this.detailActivity.getmDetailBinding().extraDetails.tvNumberOfUserReview.setText(numberOfReviewString);
+            this.detailActivity.setNumberOfReviewTextViewText(numberOfReviewString);
             boolean movieIsInDatabase = this.detailActivity.checkIsMovieAlreadyInFavDatabase(movieId);
             if (movieIsInDatabase) {
                 this.detailActivity.saveFavoriteReview();
@@ -70,6 +79,9 @@ public class FetchReviewTask extends AsyncTask<String, Void, List<Review>> {
             }
         } else {
             Log.e(TAG, detailActivity.getString(R.string.log_error_message_offline_before_fetch_review_finish));
+
+            this.detailActivity.getmDetailBinding().extraDetails.ivReviewLoadingIndicator.setVisibility(View.INVISIBLE);
+
             String expectedMsg = detailActivity.getString(R.string.toast_message_offline_before_fetch_review_finish);
 
             if (this.detailActivity.getmToast() != null) {

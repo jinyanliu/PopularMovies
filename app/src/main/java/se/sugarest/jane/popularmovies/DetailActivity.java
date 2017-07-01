@@ -399,7 +399,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                     new FetchReviewTask(this).execute(id);
                 } else {
                     hideLoadingIndicators();
-                    mDetailBinding.extraDetails.tvNumberOfUserReview.setText(getString(R.string.detail_activity_offline_reminder_text));
+                    setNumberOfReviewTextViewText(getString(R.string.detail_activity_offline_reminder_text));
                 }
             }
         } catch (NullPointerException e) {
@@ -451,6 +451,19 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         mDetailBinding.extraDetails.ivTrailerLoadingIndicator.clearAnimation();
         mDetailBinding.extraDetails.ivTrailerLoadingIndicator.setVisibility(View.GONE);
         mDetailBinding.extraDetails.tvNumberOfTrailer.setText(numberOfTrailerTextViewText);
+    }
+
+    public void setReviewsLoadingIndicator() {
+        mDetailBinding.extraDetails.ivReviewLoadingIndicator.setVisibility(View.VISIBLE);
+        Animation c = AnimationUtils.loadAnimation(this, R.anim.progress_animation_main);
+        c.setDuration(1000);
+        mDetailBinding.extraDetails.ivReviewLoadingIndicator.startAnimation(c);
+    }
+
+    public void setNumberOfReviewTextViewText(String numberOfReviewTextViewText) {
+        mDetailBinding.extraDetails.ivReviewLoadingIndicator.clearAnimation();
+        mDetailBinding.extraDetails.ivReviewLoadingIndicator.setVisibility(View.GONE);
+        mDetailBinding.extraDetails.tvNumberOfUserReview.setText(numberOfReviewTextViewText);
     }
 
     /**
@@ -803,6 +816,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     }
 
     public void loadReviewDataFromDatabase(String movieId) {
+        setReviewsLoadingIndicator();
         // Create an empty ArrayList that can start adding reviews to
         List<Review> reviews = new ArrayList<>();
         String selection = ReviewEntry.COLUMN_MOVIE_ID;
@@ -838,7 +852,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                 // Display total number of reviews in the detail activity, because some movies does
                 // not have reviews.
                 mNumberOfReviewString = Integer.toString(mReviewAdapter.getItemCount());
-                mDetailBinding.extraDetails.tvNumberOfUserReview.setText(mNumberOfReviewString);
+                setNumberOfReviewTextViewText(mNumberOfReviewString);
             }
         } else {
             /************************************************************************************************
@@ -851,7 +865,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                 new FetchReviewTask(this).execute(movieId);
             } else {
                 hideLoadingIndicators();
-                mDetailBinding.extraDetails.tvNumberOfUserReview.setText(getString(R.string.detail_activity_offline_reminder_text));
+                setNumberOfReviewTextViewText(getString(R.string.detail_activity_offline_reminder_text));
             }
         }
     }
