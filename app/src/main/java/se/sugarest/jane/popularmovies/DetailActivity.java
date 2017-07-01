@@ -440,6 +440,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     }
 
     public void setTrailersLoadingIndicator() {
+        mDetailBinding.extraDetails.tvNumberOfTrailer.setVisibility(View.INVISIBLE);
         mDetailBinding.extraDetails.ivTrailerLoadingIndicator.setVisibility(View.VISIBLE);
         // Trailers Loading Animation
         Animation b = AnimationUtils.loadAnimation(this, R.anim.progress_animation_main);
@@ -450,10 +451,12 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     public void setNumberOfTrailerTextViewText(String numberOfTrailerTextViewText) {
         mDetailBinding.extraDetails.ivTrailerLoadingIndicator.clearAnimation();
         mDetailBinding.extraDetails.ivTrailerLoadingIndicator.setVisibility(View.GONE);
+        mDetailBinding.extraDetails.tvNumberOfTrailer.setVisibility(View.VISIBLE);
         mDetailBinding.extraDetails.tvNumberOfTrailer.setText(numberOfTrailerTextViewText);
     }
 
     public void setReviewsLoadingIndicator() {
+        mDetailBinding.extraDetails.tvNumberOfUserReview.setVisibility(View.INVISIBLE);
         mDetailBinding.extraDetails.ivReviewLoadingIndicator.setVisibility(View.VISIBLE);
         Animation c = AnimationUtils.loadAnimation(this, R.anim.progress_animation_main);
         c.setDuration(1000);
@@ -463,6 +466,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     public void setNumberOfReviewTextViewText(String numberOfReviewTextViewText) {
         mDetailBinding.extraDetails.ivReviewLoadingIndicator.clearAnimation();
         mDetailBinding.extraDetails.ivReviewLoadingIndicator.setVisibility(View.GONE);
+        mDetailBinding.extraDetails.tvNumberOfUserReview.setVisibility(View.VISIBLE);
         mDetailBinding.extraDetails.tvNumberOfUserReview.setText(numberOfReviewTextViewText);
     }
 
