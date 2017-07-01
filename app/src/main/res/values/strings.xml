@@ -38,9 +38,9 @@
     <!-- Toast message for refresh Fav movies in one minute, no need to refresh. List up to date. -->
     <string name="toast_message_refresh_fav_in_one_minute">Your Favorite Movies list is up-to-date.</string>
 
-    <!-- Toast message when you want to save the movie to favDatabase but the movie's reviews and trailers haven't loader yet. -->
+    <!-- Toast message when you want to save the movie to favDatabase but the movie's reviews and trailers haven't loaded yet. -->
     <string name="toast_message_review_and_trailer_not_loaded_yet">Please wait :p Reviews and trailers not loaded yet.</string>
-    <!-- Toast message when you want to share the first trailer but the movie's trailers haven't loader yet. -->
+    <!-- Toast message when you want to share the first trailer but the movie's trailers haven't loaded yet. -->
     <string name="toast_message_trailer_not_loaded_yet">Please wait :P Trailers not loaded yet.</string>
     <!-- Toast message when you want to share the first trailer but the movie has no trailers to share. -->
     <string name="toast_message_no_trailer_to_share">Sorry. This movie doesn\'t have a trailer to share.</string>
@@ -55,6 +55,9 @@
     <string name="toast_message_offline_before_fetch_review_finish">Fetch review data is interrupted without internet connection.</string>
     <!-- Toast message when you cut off the internet when the detailActivity is still fetching trailers data. -->
     <string name="toast_message_offline_before_fetch_trailer_finish">Fetch trailer data is interrupted without internet connection.</string>
+
+    <!-- Toast message when you want to click a single movie item but the movies haven't loaded yet. (mCursor in Movie Adapter null) -->
+    <string name="toast_message_movies_not_load_yet">Please wait :p Movies not loaded yet.</string>
 
     <!-- The text for query method to throw an IllegalArgumentException message. -->
     <string name="query_default_illegal_argument_exception_message">Cannot query unknown URI </string>
