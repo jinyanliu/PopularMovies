@@ -3,6 +3,7 @@ package se.sugarest.jane.popularmovies.tasks;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -95,15 +97,15 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                         null);
 
                 // When latest movie data fetches, delete External Storage Folder popularmovies
-                File popularMoviePicsFolder
-                        = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
-                        + "/popularmovies/");
-                if (popularMoviePicsFolder.exists()) {
-                    for (File pic : popularMoviePicsFolder.listFiles()) {
-                        Log.i(TAG, "remove existing pic: " + pic.getAbsolutePath());
-                        pic.delete();
-                    }
-                }
+//                File popularMoviePicsFolder
+//                        = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+//                        + "/popularmovies/");
+//                if (popularMoviePicsFolder.exists()) {
+//                    for (File pic : popularMoviePicsFolder.listFiles()) {
+//                        Log.i(TAG, "remove existing pic: " + pic.getAbsolutePath());
+//                        pic.delete();
+//                    }
+//                }
 
                 File popularMovieThumbnailImagesFolder
                         = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
@@ -283,8 +285,47 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
             }
         }
 
-
         this.mainActivity.initCursorLoader();
+
+        deleteExtraMoviePosterFilePic();
+
+    }
+
+    private void deleteExtraMoviePosterFilePic() {
+        String[] projection = {CacheMovieMostPopularEntry.COLUMN_POSTER_PATH};
+        Cursor cursor = mainActivity.getContentResolver().query(
+                CacheMovieMostPopularEntry.CONTENT_URI,
+                projection,
+                null,
+                null,
+                null);
+
+        String[] posterPathArray = new String[cursor.getCount()];
+        int i = 0;
+
+        cursor.moveToFirst();
+
+        while (!cursor.isAfterLast()) {
+            posterPathArray[i] = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH));
+            Log.i(TAG, "filepath:poster path in database: " + posterPathArray[i]);
+            i++;
+            cursor.moveToNext();
+        }
+        cursor.close();
+
+        // When latest movie data fetches, delete External Storage Pics which doesn't included in the new list.
+        File popularMoviePicsFolder
+                = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+                + "/popularmovies/");
+        if (popularMoviePicsFolder.exists()) {
+            for (File pic : popularMoviePicsFolder.listFiles()) {
+                String fileName = "/" + pic.getName();
+                if (!Arrays.asList(posterPathArray).contains(fileName)) {
+                    Log.i(TAG, "filepath:delete external pic:" + fileName);
+                    pic.delete();
+                }
+            }
+        }
     }
 
     @NonNull
