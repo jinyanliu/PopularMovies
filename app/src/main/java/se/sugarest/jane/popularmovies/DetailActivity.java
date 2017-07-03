@@ -11,6 +11,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ShareCompat;
@@ -82,6 +83,8 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     private int saveTrailerRecordNumber;
     private int deleteTrailerRecordNumber;
 
+    private final String BASE_EXTERNAL_URL = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+            + "/popthumbnails";
     private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
     private final String IMAGE_SIZE_W780 = "w780/";
     private final String BASE_YOUTUBE_URL_APP = "vnd.youtube:";
@@ -348,8 +351,15 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     }
 
     private void setCurrentMovieImageThumbnailOffLine() {
-        String currentMoviePosterImageThumbnail = mCurrentMovie.getmExternalUrlImageThumbnail();
-        File pathToPic = new File(currentMoviePosterImageThumbnail);
+
+//        String currentMoviePosterImageThumbnail = mCurrentMovie.getmExternalUrlImageThumbnail();
+//        File pathToPic = new File(currentMoviePosterImageThumbnail);
+
+        String currentMovieImageThumbnail = mCurrentMovie.getmMoviePosterImageThumbnail();
+        String fullMovieImageThumbnailForOneMovie = BASE_EXTERNAL_URL
+                .concat(currentMovieImageThumbnail);
+        File pathToPic = new File(fullMovieImageThumbnailForOneMovie);
+
         Picasso.with(DetailActivity.this)
                 .load(pathToPic)
                 .error(R.drawable.picasso_placeholder_error)
