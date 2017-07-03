@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.databinding.DataBindingUtil;
@@ -12,6 +13,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ShareCompat;
@@ -83,8 +85,10 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     private int saveTrailerRecordNumber;
     private int deleteTrailerRecordNumber;
 
-    private final String BASE_EXTERNAL_URL = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+    private final String BASE_POP_THUMBNAIL_EXTERNAL_URL = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
             + "/popthumbnails";
+    private final String BASE_TOP_THUMBNAIL_EXTERNAL_URL = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+            + "/topthumbnails";
     private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
     private final String IMAGE_SIZE_W780 = "w780/";
     private final String BASE_YOUTUBE_URL_APP = "vnd.youtube:";
@@ -355,15 +359,30 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
 //        String currentMoviePosterImageThumbnail = mCurrentMovie.getmExternalUrlImageThumbnail();
 //        File pathToPic = new File(currentMoviePosterImageThumbnail);
 
-        String currentMovieImageThumbnail = mCurrentMovie.getmMoviePosterImageThumbnail();
-        String fullMovieImageThumbnailForOneMovie = BASE_EXTERNAL_URL
-                .concat(currentMovieImageThumbnail);
-        File pathToPic = new File(fullMovieImageThumbnailForOneMovie);
+        String orderBy = getPreference();
+        if ("popular".equals(orderBy)) {
+            String currentMovieImageThumbnail = mCurrentMovie.getmMoviePosterImageThumbnail();
+            String fullMovieImageThumbnailForOneMovie = BASE_POP_THUMBNAIL_EXTERNAL_URL
+                    .concat(currentMovieImageThumbnail);
+            File pathToPic = new File(fullMovieImageThumbnailForOneMovie);
 
-        Picasso.with(DetailActivity.this)
-                .load(pathToPic)
-                .error(R.drawable.picasso_placeholder_error)
-                .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
+            Picasso.with(DetailActivity.this)
+                    .load(pathToPic)
+                    .error(R.drawable.picasso_placeholder_error)
+                    .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
+        } else if ("top_rated".equals(orderBy)) {
+            String currentMovieImageThumbnail = mCurrentMovie.getmMoviePosterImageThumbnail();
+            String fullMovieImageThumbnailForOneMovie = BASE_TOP_THUMBNAIL_EXTERNAL_URL
+                    .concat(currentMovieImageThumbnail);
+            File pathToPic = new File(fullMovieImageThumbnailForOneMovie);
+
+            Picasso.with(DetailActivity.this)
+                    .load(pathToPic)
+                    .error(R.drawable.picasso_placeholder_error)
+                    .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
+        } else {
+            //TODO:FAV
+        }
     }
 
     private void setCurrentMovieImageThumbnailOnLine() {
@@ -1024,5 +1043,12 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         // Get details on the currently active default data network
         return connMgr.getActiveNetworkInfo();
+    }
+
+    private String getPreference() {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPrefs.getString(
+                getString(R.string.settings_order_by_key),
+                getString(R.string.settings_order_by_default));
     }
 }

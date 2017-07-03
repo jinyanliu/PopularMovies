@@ -47,8 +47,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
     private final String IMAGE_SIZE_W185 = "w185/";
 
-    private final String BASE_EXTERNAL_URL = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+    private final String BASE_POP_POSTER_EXTERNAL_URL
+            = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
             + "/popularmovies";
+    private final String BASE_TOP_POSTER_EXTERNAL_URL
+            = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+            + "/topratedmovies";
 
     private Cursor mCursor;
     private boolean mLoadFromDb;
@@ -195,7 +199,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                 mCursor.moveToPosition(position);
                 String moviePosterForOneMovie = mCursor.getString(mCursor
                         .getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH));
-                String fullMoviePosterForOneMovie = BASE_EXTERNAL_URL
+                String fullMoviePosterForOneMovie = BASE_POP_POSTER_EXTERNAL_URL
                         .concat(moviePosterForOneMovie);
                 File pathToPic = new File(fullMoviePosterForOneMovie);
 
@@ -206,28 +210,41 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                         .into(movieAdapterViewHolder.mMoviePosterImageView);
 
             } else if ("top_rated".equals(orderBy)) {
-                String[] projection = {CacheMovieTopRatedEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH};
-                Cursor cursor = mainActivity.getContentResolver().query(
-                        CacheMovieTopRatedEntry.CONTENT_URI,
-                        projection,
-                        null,
-                        null,
-                        null);
-                if (cursor != null && cursor.getCount() > 0 && position < cursor.getCount()) {
-                    Log.i(TAG, "Cursor size: " + cursor.getCount() + ", moving to position: " + position);
-                    cursor.moveToPosition(position);
-                    String moviePosterForOneMovie = cursor
-                            .getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH));
-                    File pathToPic = new File(moviePosterForOneMovie);
-                    Log.i(TAG, "Loading pic exists at " + moviePosterForOneMovie + " ? " + pathToPic.exists());
+//                String[] projection = {CacheMovieTopRatedEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH};
+//                Cursor cursor = mainActivity.getContentResolver().query(
+//                        CacheMovieTopRatedEntry.CONTENT_URI,
+//                        projection,
+//                        null,
+//                        null,
+//                        null);
+//                if (cursor != null && cursor.getCount() > 0 && position < cursor.getCount()) {
+//                    Log.i(TAG, "Cursor size: " + cursor.getCount() + ", moving to position: " + position);
+//                    cursor.moveToPosition(position);
+//                    String moviePosterForOneMovie = cursor
+//                            .getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH));
+//                    File pathToPic = new File(moviePosterForOneMovie);
+//                    Log.i(TAG, "Loading pic exists at " + moviePosterForOneMovie + " ? " + pathToPic.exists());
+//
+//                    Picasso.with(mainActivity)
+//                            // Load from external storage on the phone
+//                            .load(pathToPic)
+//                            .error(R.drawable.picasso_placeholder_error)
+//                            .into(movieAdapterViewHolder.mMoviePosterImageView);
+//                }
+//                cursor.close();
 
-                    Picasso.with(mainActivity)
-                            // Load from external storage on the phone
-                            .load(pathToPic)
-                            .error(R.drawable.picasso_placeholder_error)
-                            .into(movieAdapterViewHolder.mMoviePosterImageView);
-                }
-                cursor.close();
+                mCursor.moveToPosition(position);
+                String moviePosterForOneMovie = mCursor.getString(mCursor
+                        .getColumnIndex(CacheMovieTopRatedEntry.COLUMN_POSTER_PATH));
+                String fullMoviePosterForOneMovie = BASE_TOP_POSTER_EXTERNAL_URL
+                        .concat(moviePosterForOneMovie);
+                File pathToPic = new File(fullMoviePosterForOneMovie);
+
+                Picasso.with(mainActivity)
+                        // PosterPath from external storage
+                        .load(pathToPic)
+                        .error(R.drawable.picasso_placeholder_error)
+                        .into(movieAdapterViewHolder.mMoviePosterImageView);
             } else {
                 String[] projection = {FavMovieEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH};
                 Cursor cursor = mainActivity.getContentResolver().query(

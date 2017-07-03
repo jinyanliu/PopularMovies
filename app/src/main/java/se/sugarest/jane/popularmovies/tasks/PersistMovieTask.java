@@ -96,27 +96,6 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                         null,
                         null);
 
-                // When latest movie data fetches, delete External Storage Folder popularmovies
-//                File popularMoviePicsFolder
-//                        = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
-//                        + "/popularmovies/");
-//                if (popularMoviePicsFolder.exists()) {
-//                    for (File pic : popularMoviePicsFolder.listFiles()) {
-//                        Log.i(TAG, "remove existing pic: " + pic.getAbsolutePath());
-//                        pic.delete();
-//                    }
-//                }
-
-//                File popularMovieThumbnailImagesFolder
-//                        = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
-//                        + "/popthumbnails/");
-//                if (popularMovieThumbnailImagesFolder.exists()) {
-//                    for (File pic : popularMovieThumbnailImagesFolder.listFiles()) {
-//                        Log.i(TAG, "remove existing pic: " + pic.getAbsolutePath());
-//                        pic.delete();
-//                    }
-//                }
-
                 int count = movieData.size();
                 Vector<ContentValues> cVVector = new Vector<ContentValues>(count);
                 for (int i = 0; i < count; i++) {
@@ -175,6 +154,16 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                 editor.putLong(this.mainActivity.getString(R.string.pref_pop_date_key), currentTime.getTime());
                 editor.apply();
 
+                // After new movie data is fetched from internet, check, loop through the pics folder, only
+                // delete those pics which are outdated, not in the new list, so the pics folder can be more
+                // stable(movie update is not very quick and frequent, we don't need to delete everything
+                // from the very beginning and start fresh). And in MovieAdapter and DetailActivity, we use
+                // the external path directly to get the image file paths, even the background task hasn't
+                // completely when refresh, we can still get most of the movie poster and thumbnail show up
+                // when offline.
+                deleteExtraPopMoviePosterFilePic();
+                deleteExtraPopMovieImageThumbnailFilePic();
+
             } else {
 
                 // When latest movie data fetches, delete CacheMovieTopRatedTable
@@ -182,27 +171,6 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                         CacheMovieTopRatedEntry.CONTENT_URI,
                         null,
                         null);
-
-                // When latest movie data fetches, delete External Storage Folder topratedmovies
-                File topRatedMoviePicsFolder
-                        = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
-                        + "/topratedmovies/");
-                if (topRatedMoviePicsFolder.exists()) {
-                    for (File pic : topRatedMoviePicsFolder.listFiles()) {
-                        Log.i(TAG, "remove existing pic: " + pic.getAbsolutePath());
-                        pic.delete();
-                    }
-                }
-
-                File topRatedMovieThumbnailImagesFolder
-                        = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
-                        + "/topthumbnails/");
-                if (topRatedMovieThumbnailImagesFolder.exists()) {
-                    for (File pic : topRatedMovieThumbnailImagesFolder.listFiles()) {
-                        Log.i(TAG, "remove existing pic: " + pic.getAbsolutePath());
-                        pic.delete();
-                    }
-                }
 
                 int count = movieData.size();
                 Vector<ContentValues> cVVector = new Vector<ContentValues>(count);
@@ -262,6 +230,9 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putLong(this.mainActivity.getString(R.string.pref_top_date_key), currentTime.getTime());
                 editor.apply();
+
+                deleteExtraTopMoviePosterFilePic();
+                deleteExtraTopMovieImageThumbnailFilePic();
             }
         } else {
             Log.e(TAG, mainActivity.getString(R.string.log_error_message_offline_before_fetch_movie_data_finish));
@@ -287,12 +258,9 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
         this.mainActivity.initCursorLoader();
 
-        deleteExtraMoviePosterFilePic();
-        deleteExtraMovieImageThumbnailFilePic();
-
     }
 
-    private void deleteExtraMoviePosterFilePic() {
+    private void deleteExtraPopMoviePosterFilePic() {
         String[] projection = {CacheMovieMostPopularEntry.COLUMN_POSTER_PATH};
         Cursor cursor = mainActivity.getContentResolver().query(
                 CacheMovieMostPopularEntry.CONTENT_URI,
@@ -308,13 +276,12 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
         while (!cursor.isAfterLast()) {
             posterPathArray[i] = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH));
-            Log.i(TAG, "filepath:poster path in database: " + posterPathArray[i]);
+            Log.i(TAG, "filepath: pop poster path in database: " + posterPathArray[i]);
             i++;
             cursor.moveToNext();
         }
         cursor.close();
 
-        // When latest movie data fetches, delete External Storage Pics which doesn't included in the new list.
         File popularMoviePicsFolder
                 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
                 + "/popularmovies/");
@@ -322,14 +289,14 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
             for (File pic : popularMoviePicsFolder.listFiles()) {
                 String fileName = "/" + pic.getName();
                 if (!Arrays.asList(posterPathArray).contains(fileName)) {
-                    Log.i(TAG, "filepath:delete external poster pic:" + fileName);
+                    Log.i(TAG, "filepath:delete pop external poster pic:" + fileName);
                     pic.delete();
                 }
             }
         }
     }
 
-    private void deleteExtraMovieImageThumbnailFilePic() {
+    private void deleteExtraPopMovieImageThumbnailFilePic() {
         String[] projection = {CacheMovieMostPopularEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL};
         Cursor cursor = mainActivity.getContentResolver().query(
                 CacheMovieMostPopularEntry.CONTENT_URI,
@@ -345,7 +312,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
         while (!cursor.isAfterLast()) {
             imageThumbnailArray[i] = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
-            Log.i(TAG, "filepath:image thumbnail path in database: " + imageThumbnailArray[i]);
+            Log.i(TAG, "filepath: pop image thumbnail path in database: " + imageThumbnailArray[i]);
             i++;
             cursor.moveToNext();
         }
@@ -358,7 +325,79 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
             for (File pic : popularMovieThumbnailImagesFolder.listFiles()) {
                 String fileName = "/" + pic.getName();
                 if (!Arrays.asList(imageThumbnailArray).contains(fileName)) {
-                    Log.i(TAG, "filepath:delete external thumbnail pic:" + fileName);
+                    Log.i(TAG, "filepath:delete pop external thumbnail pic:" + fileName);
+                    pic.delete();
+                }
+            }
+        }
+    }
+
+    private void deleteExtraTopMoviePosterFilePic() {
+        String[] projection = {CacheMovieTopRatedEntry.COLUMN_POSTER_PATH};
+        Cursor cursor = mainActivity.getContentResolver().query(
+                CacheMovieTopRatedEntry.CONTENT_URI,
+                projection,
+                null,
+                null,
+                null);
+
+        String[] posterPathArray = new String[cursor.getCount()];
+        int i = 0;
+
+        cursor.moveToFirst();
+
+        while (!cursor.isAfterLast()) {
+            posterPathArray[i] = cursor.getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_POSTER_PATH));
+            Log.i(TAG, "filepath: top poster path in database: " + posterPathArray[i]);
+            i++;
+            cursor.moveToNext();
+        }
+        cursor.close();
+
+        File topRatedMoviePicsFolder
+                = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+                + "/topratedmovies/");
+        if (topRatedMoviePicsFolder.exists()) {
+            for (File pic : topRatedMoviePicsFolder.listFiles()) {
+                String fileName = "/" + pic.getName();
+                if (!Arrays.asList(posterPathArray).contains(fileName)) {
+                    Log.i(TAG, "filepath:delete top external poster pic:" + fileName);
+                    pic.delete();
+                }
+            }
+        }
+    }
+
+    private void deleteExtraTopMovieImageThumbnailFilePic() {
+        String[] projection = {CacheMovieTopRatedEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL};
+        Cursor cursor = mainActivity.getContentResolver().query(
+                CacheMovieTopRatedEntry.CONTENT_URI,
+                projection,
+                null,
+                null,
+                null);
+
+        String[] imageThumbnailArray = new String[cursor.getCount()];
+        int i = 0;
+
+        cursor.moveToFirst();
+
+        while (!cursor.isAfterLast()) {
+            imageThumbnailArray[i] = cursor.getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
+            Log.i(TAG, "filepath: top image thumbnail path in database: " + imageThumbnailArray[i]);
+            i++;
+            cursor.moveToNext();
+        }
+        cursor.close();
+
+        File topRatedMovieThumbnailImagesFolder
+                = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+                + "/topthumbnails/");
+        if (topRatedMovieThumbnailImagesFolder.exists()) {
+            for (File pic : topRatedMovieThumbnailImagesFolder.listFiles()) {
+                String fileName = "/" + pic.getName();
+                if (!Arrays.asList(imageThumbnailArray).contains(fileName)) {
+                    Log.i(TAG, "filepath:delete top external thumbnail pic:" + fileName);
                     pic.delete();
                 }
             }
