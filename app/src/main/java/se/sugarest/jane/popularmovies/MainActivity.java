@@ -47,8 +47,6 @@ import se.sugarest.jane.popularmovies.tasks.FetchExternalStorageFavMoviePosterIm
 import se.sugarest.jane.popularmovies.tasks.FetchMoviePostersTask;
 import se.sugarest.jane.popularmovies.tasks.PersistMovieTask;
 
-import static se.sugarest.jane.popularmovies.R.string.delete;
-
 public class MainActivity extends AppCompatActivity implements MovieAdapterOnClickHandler
         , android.app.LoaderManager.LoaderCallbacks<Cursor> {
 
