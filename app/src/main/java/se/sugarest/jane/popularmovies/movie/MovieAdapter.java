@@ -9,7 +9,6 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,6 +52,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     private final String BASE_TOP_POSTER_EXTERNAL_URL
             = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
             + "/topratedmovies";
+    private final String BASE_FAV_POSTER_EXTERNAL_URL
+            = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+            + "/favmovies";
 
     private Cursor mCursor;
     private boolean mLoadFromDb;
@@ -157,7 +159,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                                 .into(movieAdapterViewHolder.mMoviePosterImageView);
                     }
                 }
-
             } else {
                 mCursor.moveToPosition(position);
                 String moviePosterForOneMovie = mCursor.getString(mCursor
@@ -246,28 +247,67 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                         .error(R.drawable.picasso_placeholder_error)
                         .into(movieAdapterViewHolder.mMoviePosterImageView);
             } else {
-                String[] projection = {FavMovieEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH};
-                Cursor cursor = mainActivity.getContentResolver().query(
-                        FavMovieEntry.CONTENT_URI,
-                        projection,
-                        null,
-                        null,
-                        null);
-                if (cursor != null && cursor.getCount() > 0 && position < cursor.getCount()) {
-                    Log.i(TAG, "Cursor size: " + cursor.getCount() + ", moving to position: " + position);
-                    cursor.moveToPosition(position);
-                    String moviePosterForOneMovie = cursor
-                            .getString(cursor.getColumnIndex(FavMovieEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH));
-                    File pathToPic = new File(moviePosterForOneMovie);
-                    Log.i(TAG, "Loading pic exists at " + moviePosterForOneMovie + " ? " + pathToPic.exists());
+//                String[] projection = {FavMovieEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH};
+//                Cursor cursor = mainActivity.getContentResolver().query(
+//                        FavMovieEntry.CONTENT_URI,
+//                        projection,
+//                        null,
+//                        null,
+//                        null);
+//                if (cursor != null && cursor.getCount() > 0 && position < cursor.getCount()) {
+//                    Log.i(TAG, "Cursor size: " + cursor.getCount() + ", moving to position: " + position);
+//                    cursor.moveToPosition(position);
+//                    String moviePosterForOneMovie = cursor
+//                            .getString(cursor.getColumnIndex(FavMovieEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH));
+//                    File pathToPic = new File(moviePosterForOneMovie);
+//                    Log.i(TAG, "Loading pic exists at " + moviePosterForOneMovie + " ? " + pathToPic.exists());
+//
+//                    Picasso.with(mainActivity)
+//                            // Load from external storage on the phone
+//                            .load(pathToPic)
+//                            .error(R.drawable.picasso_placeholder_error)
+//                            .into(movieAdapterViewHolder.mMoviePosterImageView);
+//                }
+//                cursor.close();
+                mCursor.moveToPosition(position);
+                String moviePosterForOneMovie = mCursor.getString(mCursor
+                        .getColumnIndex(FavMovieEntry.COLUMN_POSTER_PATH));
 
+                // If the fav movie is saved from pop list and still in pop list
+                String fullMoviePopPosterForOneMovie = BASE_POP_POSTER_EXTERNAL_URL
+                        .concat(moviePosterForOneMovie);
+                File pathToPopPic = new File(fullMoviePopPosterForOneMovie);
+
+                // If the fav movie is saved from top list and still in top list
+                String fullMovieTopPosterForOneMovie = BASE_TOP_POSTER_EXTERNAL_URL
+                        .concat(moviePosterForOneMovie);
+                File pathToTopPic = new File(fullMovieTopPosterForOneMovie);
+
+                // If the fav movie is not existing anymore in any of the pop or top list
+                String fullMovieFavPosterForOneMovie = BASE_FAV_POSTER_EXTERNAL_URL
+                        .concat(moviePosterForOneMovie);
+                File pathToFavPic = new File(fullMovieFavPosterForOneMovie);
+
+                // I do 3 check because the fav movie poster is only saved to fav folder when user
+                // open fav page, but if the user save the movie from pop or top list, and cut off
+                // internet, the movie poster hasn't saved to fav folder, so I want to get them out
+                // from pop or top folder.
+                if (pathToPopPic.exists()) {
                     Picasso.with(mainActivity)
-                            // Load from external storage on the phone
-                            .load(pathToPic)
+                            .load(pathToPopPic)
+                            .error(R.drawable.picasso_placeholder_error)
+                            .into(movieAdapterViewHolder.mMoviePosterImageView);
+                } else if (pathToTopPic.exists()) {
+                    Picasso.with(mainActivity)
+                            .load(pathToTopPic)
+                            .error(R.drawable.picasso_placeholder_error)
+                            .into(movieAdapterViewHolder.mMoviePosterImageView);
+                } else {
+                    Picasso.with(mainActivity)
+                            .load(pathToFavPic)
                             .error(R.drawable.picasso_placeholder_error)
                             .into(movieAdapterViewHolder.mMoviePosterImageView);
                 }
-                cursor.close();
             }
         }
     }

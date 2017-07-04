@@ -89,6 +89,9 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             + "/popthumbnails";
     private final String BASE_TOP_THUMBNAIL_EXTERNAL_URL = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
             + "/topthumbnails";
+    private final String BASE_FAV_THUMBNAIL_EXTERNAL_URL = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+            + "/favthumbnails";
+
     private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
     private final String IMAGE_SIZE_W780 = "w780/";
     private final String BASE_YOUTUBE_URL_APP = "vnd.youtube:";
@@ -381,7 +384,36 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                     .error(R.drawable.picasso_placeholder_error)
                     .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
         } else {
-            //TODO:FAV
+            String currentMovieImageThumbnail = mCurrentMovie.getmMoviePosterImageThumbnail();
+
+            String fullMoviePopImageThumbnailForOneMovie = BASE_POP_THUMBNAIL_EXTERNAL_URL
+                    .concat(currentMovieImageThumbnail);
+            File pathToPopPic = new File(fullMoviePopImageThumbnailForOneMovie);
+
+            String fullMovieTopImageThumbnailForOneMovie = BASE_TOP_THUMBNAIL_EXTERNAL_URL
+                    .concat(currentMovieImageThumbnail);
+            File pathToTopPic = new File(fullMovieTopImageThumbnailForOneMovie);
+
+            String fullMovieFavImageThumbnailForOneMovie = BASE_FAV_THUMBNAIL_EXTERNAL_URL
+                    .concat(currentMovieImageThumbnail);
+            File pathToFavPic = new File(fullMovieFavImageThumbnailForOneMovie);
+
+            if (pathToPopPic.exists()) {
+                Picasso.with(DetailActivity.this)
+                        .load(pathToPopPic)
+                        .error(R.drawable.picasso_placeholder_error)
+                        .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
+            } else if (pathToTopPic.exists()) {
+                Picasso.with(DetailActivity.this)
+                        .load(pathToTopPic)
+                        .error(R.drawable.picasso_placeholder_error)
+                        .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
+            } else {
+                Picasso.with(DetailActivity.this)
+                        .load(pathToFavPic)
+                        .error(R.drawable.picasso_placeholder_error)
+                        .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
+            }
         }
     }
 

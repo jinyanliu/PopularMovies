@@ -29,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -45,6 +46,8 @@ import se.sugarest.jane.popularmovies.tasks.FetchExternalStorageFavMovieImageThu
 import se.sugarest.jane.popularmovies.tasks.FetchExternalStorageFavMoviePosterImagesTask;
 import se.sugarest.jane.popularmovies.tasks.FetchMoviePostersTask;
 import se.sugarest.jane.popularmovies.tasks.PersistMovieTask;
+
+import static se.sugarest.jane.popularmovies.R.string.delete;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapterOnClickHandler
         , android.app.LoaderManager.LoaderCallbacks<Cursor> {
@@ -269,28 +272,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         We have to create folders for fav list to maintain its own data.
         */
 
-        // When refresh, delete External Storage Folder favmovies
-        File favMoviePicsFolder
-                = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
-                + "/favmovies/");
-        if (favMoviePicsFolder.exists()) {
-            for (File pic : favMoviePicsFolder.listFiles()) {
-                Log.i(TAG, "remove existing pic: " + pic.getAbsolutePath());
-                pic.delete();
-            }
-        }
-
-        // When refresh, delete External Storage Folder favthumbnails
-        File favMovieThumbnailsFolder
-                = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
-                + "/favthumbnails/");
-        if (favMovieThumbnailsFolder.exists()) {
-            for (File pic : favMovieThumbnailsFolder.listFiles()) {
-                Log.i(TAG, "remove existing pic: " + pic.getAbsolutePath());
-                pic.delete();
-            }
-        }
-
         Cursor cursor = getContentResolver()
                 .query(FavMovieEntry.CONTENT_URI,
                         null,
@@ -331,6 +312,81 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         editor.apply();
 
         initCursorLoader();
+
+        deleteExtraFavMoviePosterFilePic();
+        deleteExtraFavMovieImageThumbnailFilePic();
+    }
+
+    private void deleteExtraFavMoviePosterFilePic() {
+        String[] projection = {FavMovieEntry.COLUMN_POSTER_PATH};
+        Cursor cursor = getContentResolver().query(
+                FavMovieEntry.CONTENT_URI,
+                projection,
+                null,
+                null,
+                null);
+
+        String[] posterPathArray = new String[cursor.getCount()];
+        int i = 0;
+
+        cursor.moveToFirst();
+
+        while (!cursor.isAfterLast()) {
+            posterPathArray[i] = cursor.getString(cursor.getColumnIndex(FavMovieEntry.COLUMN_POSTER_PATH));
+            Log.i(TAG, "filepath: fav poster path in database: " + posterPathArray[i]);
+            i++;
+            cursor.moveToNext();
+        }
+        cursor.close();
+
+        File favMoviePicsFolder
+                = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+                + "/favmovies/");
+        if (favMoviePicsFolder.exists()) {
+            for (File pic : favMoviePicsFolder.listFiles()) {
+                String fileName = "/" + pic.getName();
+                if (!Arrays.asList(posterPathArray).contains(fileName)) {
+                    Log.i(TAG, "filepath:delete fav external poster pic:" + fileName);
+                    pic.delete();
+                }
+            }
+        }
+    }
+
+    private void deleteExtraFavMovieImageThumbnailFilePic() {
+        String[] projection = {FavMovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL};
+        Cursor cursor = getContentResolver().query(
+                FavMovieEntry.CONTENT_URI,
+                projection,
+                null,
+                null,
+                null);
+
+        String[] imageThumbnailArray = new String[cursor.getCount()];
+        int i = 0;
+
+        cursor.moveToFirst();
+
+        while (!cursor.isAfterLast()) {
+            imageThumbnailArray[i] = cursor.getString(cursor.getColumnIndex(FavMovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
+            Log.i(TAG, "filepath: fav image thumbnail path in database: " + imageThumbnailArray[i]);
+            i++;
+            cursor.moveToNext();
+        }
+        cursor.close();
+
+        File favMovieThumbnailsFolder
+                = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+                + "/favthumbnails/");
+        if (favMovieThumbnailsFolder.exists()) {
+            for (File pic : favMovieThumbnailsFolder.listFiles()) {
+                String fileName = "/" + pic.getName();
+                if (!Arrays.asList(imageThumbnailArray).contains(fileName)) {
+                    Log.i(TAG, "filepath:delete fav external thumbnail pic:" + fileName);
+                    pic.delete();
+                }
+            }
+        }
     }
 
     private void refreshMovie() {
