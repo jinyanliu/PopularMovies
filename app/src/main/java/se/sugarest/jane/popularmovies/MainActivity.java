@@ -270,36 +270,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         We have to create folders for fav list to maintain its own data.
         */
 
-        Cursor cursor = getContentResolver()
-                .query(FavMovieEntry.CONTENT_URI,
-                        null,
-                        null,
-                        null,
-                        null);
-
-        cursor.moveToFirst();
-
-        while (!cursor.isAfterLast()) {
-
-            String moviePosterForOneMovie = cursor
-                    .getString(cursor.getColumnIndex(FavMovieEntry.COLUMN_POSTER_PATH));
-
-            String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
-                    .concat(moviePosterForOneMovie);
-
-            String imageThumbnailForOneMovie = cursor.getString(cursor.getColumnIndex(FavMovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
-
-            String fullImageThumbnailForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W780)
-                    .concat(imageThumbnailForOneMovie);
-
-            String movieId = cursor.getString(cursor.getColumnIndex(FavMovieEntry.COLUMN_MOVIE_ID));
-
-            new FetchExternalStorageFavMoviePosterImagesTask(this).execute(new MovieBasicInfo(movieId, fullMoviePosterForOneMovie));
-            new FetchExternalStorageFavMovieImageThumbnailsTask(this).execute(new MovieBasicInfo(movieId, fullImageThumbnailForOneMovie));
-
-            cursor.moveToNext();
-        }
-        cursor.close();
+        downloadExtraFavMoviePosterFilePic();
+        downloadExtraFavMovieImageThumbnailFilePic();
 
         Calendar calendar = Calendar.getInstance();
         Date currentTime = calendar.getTime();
@@ -313,6 +285,138 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
 
         deleteExtraFavMoviePosterFilePic();
         deleteExtraFavMovieImageThumbnailFilePic();
+    }
+
+    private void downloadExtraFavMoviePosterFilePic() {
+
+        File favMoviePicsFolder
+                = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+                + "/favmovies/");
+
+        if (favMoviePicsFolder.exists()) {
+
+            String[] fileNameArray = new String[favMoviePicsFolder.listFiles().length];
+            Log.i(TAG, "download / filepath: fav poster file name count in external folder: " + favMoviePicsFolder.listFiles().length);
+            int j = 0;
+            for (File pic : favMoviePicsFolder.listFiles()) {
+                String fileName = "/" + pic.getName();
+                fileNameArray[j] = fileName;
+                Log.i(TAG, "download / filepath: fav poster file name in external folder: " + fileNameArray[j]);
+                j++;
+            }
+
+            String[] projection = {FavMovieEntry.COLUMN_MOVIE_ID, FavMovieEntry.COLUMN_POSTER_PATH};
+            Cursor cursor = getContentResolver().query(
+                    FavMovieEntry.CONTENT_URI,
+                    projection,
+                    null,
+                    null,
+                    null);
+
+            cursor.moveToFirst();
+
+            while (!cursor.isAfterLast()) {
+                String currentPosterPath = cursor.getString(cursor.getColumnIndex(FavMovieEntry.COLUMN_POSTER_PATH));
+                String currentMovieId = cursor.getString(cursor.getColumnIndex(FavMovieEntry.COLUMN_MOVIE_ID));
+                if (!Arrays.asList(fileNameArray).contains(currentPosterPath)) {
+                    Log.i(TAG, "download / filepath: download fav external poster pic:" + currentPosterPath);
+                    String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
+                            .concat(currentPosterPath);
+                    new FetchExternalStorageFavMoviePosterImagesTask(this).execute(
+                            new MovieBasicInfo(currentMovieId, fullMoviePosterForOneMovie));
+                }
+                cursor.moveToNext();
+            }
+            cursor.close();
+        } else {
+            String[] projection = {FavMovieEntry.COLUMN_MOVIE_ID, FavMovieEntry.COLUMN_POSTER_PATH};
+            Cursor cursor = getContentResolver().query(
+                    FavMovieEntry.CONTENT_URI,
+                    projection,
+                    null,
+                    null,
+                    null);
+
+            cursor.moveToFirst();
+
+            while (!cursor.isAfterLast()) {
+                String currentPosterPath = cursor.getString(cursor.getColumnIndex(FavMovieEntry.COLUMN_POSTER_PATH));
+                String currentMovieId = cursor.getString(cursor.getColumnIndex(FavMovieEntry.COLUMN_MOVIE_ID));
+                Log.i(TAG, "download / filepath: download fav external poster pic:" + currentPosterPath);
+                String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
+                        .concat(currentPosterPath);
+                new FetchExternalStorageFavMoviePosterImagesTask(this).execute(
+                        new MovieBasicInfo(currentMovieId, fullMoviePosterForOneMovie));
+                cursor.moveToNext();
+            }
+            cursor.close();
+        }
+    }
+
+    private void downloadExtraFavMovieImageThumbnailFilePic() {
+
+        File favMovieThumbnailsFolder
+                = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+                + "/favthumbnails/");
+
+        if (favMovieThumbnailsFolder.exists()) {
+
+            String[] fileNameArray = new String[favMovieThumbnailsFolder.listFiles().length];
+            Log.i(TAG, "download / filepath: fav image thumbnail file name count in external folder: " + favMovieThumbnailsFolder.listFiles().length);
+            int j = 0;
+            for (File pic : favMovieThumbnailsFolder.listFiles()) {
+                String fileName = "/" + pic.getName();
+                fileNameArray[j] = fileName;
+                Log.i(TAG, "download / filepath: fav image thumbnail file name in external folder: " + fileNameArray[j]);
+                j++;
+            }
+
+            String[] projection = {FavMovieEntry.COLUMN_MOVIE_ID, FavMovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL};
+            Cursor cursor = getContentResolver().query(
+                    FavMovieEntry.CONTENT_URI,
+                    projection,
+                    null,
+                    null,
+                    null);
+
+            cursor.moveToFirst();
+
+            while (!cursor.isAfterLast()) {
+                String currentImageThumbnail = cursor.getString(cursor.getColumnIndex(FavMovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
+                String currentMovieId = cursor.getString(cursor.getColumnIndex(FavMovieEntry.COLUMN_MOVIE_ID));
+                if (!Arrays.asList(fileNameArray).contains(currentImageThumbnail)) {
+                    Log.i(TAG, "download / filepath: download fav external image thumbnail pic:" + currentImageThumbnail);
+                    String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W780)
+                            .concat(currentImageThumbnail);
+                    new FetchExternalStorageFavMovieImageThumbnailsTask(this).execute(
+                            new MovieBasicInfo(currentMovieId, fullMoviePosterForOneMovie));
+                }
+                cursor.moveToNext();
+            }
+            cursor.close();
+        } else {
+            String[] projection = {FavMovieEntry.COLUMN_MOVIE_ID, FavMovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL};
+            Cursor cursor = getContentResolver().query(
+                    FavMovieEntry.CONTENT_URI,
+                    projection,
+                    null,
+                    null,
+                    null);
+
+            cursor.moveToFirst();
+
+            while (!cursor.isAfterLast()) {
+                String currentImageThumbnail = cursor.getString(cursor.getColumnIndex(FavMovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
+                String currentMovieId = cursor.getString(cursor.getColumnIndex(FavMovieEntry.COLUMN_MOVIE_ID));
+                Log.i(TAG, "download / filepath: download fav external image thumbnail pic:" + currentImageThumbnail);
+                String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W780)
+                        .concat(currentImageThumbnail);
+                new FetchExternalStorageFavMovieImageThumbnailsTask(this).execute(
+                        new MovieBasicInfo(currentMovieId, fullMoviePosterForOneMovie));
+                cursor.moveToNext();
+            }
+            cursor.close();
+        }
     }
 
     private void deleteExtraFavMoviePosterFilePic() {
@@ -331,7 +435,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
 
         while (!cursor.isAfterLast()) {
             posterPathArray[i] = cursor.getString(cursor.getColumnIndex(FavMovieEntry.COLUMN_POSTER_PATH));
-            Log.i(TAG, "filepath: fav poster path in database: " + posterPathArray[i]);
+            Log.i(TAG, "delete / filepath: fav poster path in database: " + posterPathArray[i]);
             i++;
             cursor.moveToNext();
         }
@@ -344,7 +448,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
             for (File pic : favMoviePicsFolder.listFiles()) {
                 String fileName = "/" + pic.getName();
                 if (!Arrays.asList(posterPathArray).contains(fileName)) {
-                    Log.i(TAG, "filepath:delete fav external poster pic:" + fileName);
+                    Log.i(TAG, "delete / filepath: delete fav external poster pic:" + fileName);
                     pic.delete();
                 }
             }
@@ -367,7 +471,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
 
         while (!cursor.isAfterLast()) {
             imageThumbnailArray[i] = cursor.getString(cursor.getColumnIndex(FavMovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
-            Log.i(TAG, "filepath: fav image thumbnail path in database: " + imageThumbnailArray[i]);
+            Log.i(TAG, "delete / filepath: fav image thumbnail path in database: " + imageThumbnailArray[i]);
             i++;
             cursor.moveToNext();
         }
@@ -380,7 +484,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
             for (File pic : favMovieThumbnailsFolder.listFiles()) {
                 String fileName = "/" + pic.getName();
                 if (!Arrays.asList(imageThumbnailArray).contains(fileName)) {
-                    Log.i(TAG, "filepath:delete fav external thumbnail pic:" + fileName);
+                    Log.i(TAG, "delete / filepath: delete fav external thumbnail pic:" + fileName);
                     pic.delete();
                 }
             }
