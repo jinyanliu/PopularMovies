@@ -371,7 +371,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
 
             Picasso.with(DetailActivity.this)
                     .load(pathToPic)
-                    .error(R.drawable.picasso_placeholder_error)
+                    .error(R.drawable.pic_error_loading_1560_878)
                     .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
         } else if ("top_rated".equals(orderBy)) {
             String currentMovieImageThumbnail = mCurrentMovie.getmMoviePosterImageThumbnail();
@@ -381,7 +381,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
 
             Picasso.with(DetailActivity.this)
                     .load(pathToPic)
-                    .error(R.drawable.picasso_placeholder_error)
+                    .error(R.drawable.pic_error_loading_1560_878)
                     .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
         } else {
             String currentMovieImageThumbnail = mCurrentMovie.getmMoviePosterImageThumbnail();
@@ -401,17 +401,17 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             if (pathToPopPic.exists()) {
                 Picasso.with(DetailActivity.this)
                         .load(pathToPopPic)
-                        .error(R.drawable.picasso_placeholder_error)
+                        .error(R.drawable.pic_error_loading_1560_878)
                         .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
             } else if (pathToTopPic.exists()) {
                 Picasso.with(DetailActivity.this)
                         .load(pathToTopPic)
-                        .error(R.drawable.picasso_placeholder_error)
+                        .error(R.drawable.pic_error_loading_1560_878)
                         .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
             } else {
                 Picasso.with(DetailActivity.this)
                         .load(pathToFavPic)
-                        .error(R.drawable.picasso_placeholder_error)
+                        .error(R.drawable.pic_error_loading_1560_878)
                         .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
             }
         }
@@ -422,7 +422,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                 .concat(mCurrentMovie.getmMoviePosterImageThumbnail());
         Picasso.with(DetailActivity.this)
                 .load(currentMoviePosterImageThumbnail)
-                .error(R.drawable.picasso_placeholder_error)
+                .error(R.drawable.pic_error_loading_1560_878)
                 .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
     }
 
