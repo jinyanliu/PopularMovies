@@ -9,6 +9,7 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,8 +18,10 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -112,7 +115,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
      * @param position               The position of the item within the adapter's data set.
      */
     @Override
-    public void onBindViewHolder(MovieAdapterViewHolder movieAdapterViewHolder, int position) {
+    public void onBindViewHolder(final MovieAdapterViewHolder movieAdapterViewHolder, final int position) {
 
         // Those animation is a substitute for Picasso's placeholder.
         Animation a = AnimationUtils.loadAnimation(mainActivity, R.anim.progress_animation_main);
@@ -130,7 +133,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
                     Picasso.with(mainActivity)
                             .load(moviePosterForOneMovie)
-                            .error(R.drawable.picasso_placeholder_error)
+                            .error(R.drawable.pic_error_loading_w370)
                             .into(movieAdapterViewHolder.mMoviePosterImageView);
                 } else {
                     if ("popular".equals(orderBy)) {
@@ -143,7 +146,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                         Picasso.with(mainActivity)
                                 // PosterPath from web
                                 .load(fullMoviePosterForOneMovie)
-                                .error(R.drawable.picasso_placeholder_error)
+                                .error(R.drawable.pic_error_loading_w370)
                                 .into(movieAdapterViewHolder.mMoviePosterImageView);
                     } else {
                         mCursor.moveToPosition(position);
@@ -155,7 +158,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                         Picasso.with(mainActivity)
                                 // PosterPath from web
                                 .load(fullMoviePosterForOneMovie)
-                                .error(R.drawable.picasso_placeholder_error)
+                                .error(R.drawable.pic_error_loading_w370)
                                 .into(movieAdapterViewHolder.mMoviePosterImageView);
                     }
                 }
@@ -169,7 +172,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                 Picasso.with(mainActivity)
                         // PosterPath from web
                         .load(fullMoviePosterForOneMovie)
-                        .error(R.drawable.picasso_placeholder_error)
+                        .error(R.drawable.pic_error_loading_w370)
                         .into(movieAdapterViewHolder.mMoviePosterImageView);
             }
         } else {
@@ -207,8 +210,29 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                 Picasso.with(mainActivity)
                         // PosterPath from external storage
                         .load(pathToPic)
-                        .error(R.drawable.picasso_placeholder_error)
-                        .into(movieAdapterViewHolder.mMoviePosterImageView);
+                        .error(R.drawable.pic_error_loading_w370)
+                        .into(movieAdapterViewHolder.mMoviePosterImageView, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                                movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.INVISIBLE);
+                            }
+
+                            @Override
+                            public void onError() {
+                                movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.VISIBLE);
+                                Log.i(TAG, "Current Position: " + position + "\nCurrent Movie Title: " + mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE)));
+                                mCursor.moveToPosition(position);
+                                String currentMovieTitle = mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE));
+                                if (currentMovieTitle.contains(":")) {
+                                    String[] separated = currentMovieTitle.split(":");
+                                    // separate[1].trim() will remove the empty space to the second string
+                                    movieAdapterViewHolder.mErrorMovieNameTextView.setText(separated[0] + ":" + "\n" + separated[1].trim());
+                                } else {
+                                    movieAdapterViewHolder.mErrorMovieNameTextView
+                                            .setText(currentMovieTitle);
+                                }
+                            }
+                        });
 
             } else if ("top_rated".equals(orderBy)) {
 //                String[] projection = {CacheMovieTopRatedEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH};
@@ -244,8 +268,29 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                 Picasso.with(mainActivity)
                         // PosterPath from external storage
                         .load(pathToPic)
-                        .error(R.drawable.picasso_placeholder_error)
-                        .into(movieAdapterViewHolder.mMoviePosterImageView);
+                        .error(R.drawable.pic_error_loading_w370)
+                        .into(movieAdapterViewHolder.mMoviePosterImageView, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                                movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.INVISIBLE);
+                            }
+
+                            @Override
+                            public void onError() {
+                                movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.VISIBLE);
+                                Log.i(TAG, "Current Position: " + position + "\nCurrent Movie Title: " + mCursor.getString(mCursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_ORIGINAL_TITLE)));
+                                mCursor.moveToPosition(position);
+                                String currentMovieTitle = mCursor.getString(mCursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_ORIGINAL_TITLE));
+                                if (currentMovieTitle.contains(":")) {
+                                    String[] separated = currentMovieTitle.split(":");
+                                    // separate[1].trim() will remove the empty space to the second string
+                                    movieAdapterViewHolder.mErrorMovieNameTextView.setText(separated[0] + ":" + "\n" + separated[1].trim());
+                                } else {
+                                    movieAdapterViewHolder.mErrorMovieNameTextView
+                                            .setText(currentMovieTitle);
+                                }
+                            }
+                        });
             } else {
 //                String[] projection = {FavMovieEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH};
 //                Cursor cursor = mainActivity.getContentResolver().query(
@@ -292,22 +337,40 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                 // open fav page, but if the user save the movie from pop or top list, and cut off
                 // internet, the movie poster hasn't saved to fav folder, so I want to get them out
                 // from pop or top folder.
+                File pathToPic;
                 if (pathToPopPic.exists()) {
-                    Picasso.with(mainActivity)
-                            .load(pathToPopPic)
-                            .error(R.drawable.picasso_placeholder_error)
-                            .into(movieAdapterViewHolder.mMoviePosterImageView);
+                    pathToPic = pathToPopPic;
                 } else if (pathToTopPic.exists()) {
-                    Picasso.with(mainActivity)
-                            .load(pathToTopPic)
-                            .error(R.drawable.picasso_placeholder_error)
-                            .into(movieAdapterViewHolder.mMoviePosterImageView);
+                    pathToPic = pathToTopPic;
                 } else {
-                    Picasso.with(mainActivity)
-                            .load(pathToFavPic)
-                            .error(R.drawable.picasso_placeholder_error)
-                            .into(movieAdapterViewHolder.mMoviePosterImageView);
+                    pathToPic = pathToFavPic;
                 }
+                Picasso.with(mainActivity)
+                        // PosterPath from external storage
+                        .load(pathToPic)
+                        .error(R.drawable.pic_error_loading_w370)
+                        .into(movieAdapterViewHolder.mMoviePosterImageView, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                                movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.INVISIBLE);
+                            }
+
+                            @Override
+                            public void onError() {
+                                movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.VISIBLE);
+                                Log.i(TAG, "Current Position: " + position + "\nCurrent Movie Title: " + mCursor.getString(mCursor.getColumnIndex(FavMovieEntry.COLUMN_ORIGINAL_TITLE)));
+                                mCursor.moveToPosition(position);
+                                String currentMovieTitle = mCursor.getString(mCursor.getColumnIndex(FavMovieEntry.COLUMN_ORIGINAL_TITLE));
+                                if (currentMovieTitle.contains(":")) {
+                                    String[] separated = currentMovieTitle.split(":");
+                                    // separate[1].trim() will remove the empty space to the second string
+                                    movieAdapterViewHolder.mErrorMovieNameTextView.setText(separated[0] + ":" + "\n" + separated[1].trim());
+                                } else {
+                                    movieAdapterViewHolder.mErrorMovieNameTextView
+                                            .setText(currentMovieTitle);
+                                }
+                            }
+                        });
             }
         }
     }
@@ -358,10 +421,13 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
         public final ImageView mLoadingImageView;
 
+        public final TextView mErrorMovieNameTextView;
+
         public MovieAdapterViewHolder(View view) {
             super(view);
             mMoviePosterImageView = (ImageView) view.findViewById(R.id.iv_movie_posters);
             mLoadingImageView = (ImageView) view.findViewById(R.id.iv_loading);
+            mErrorMovieNameTextView = (TextView) view.findViewById(R.id.tv_error_movie_title_display);
             view.setOnClickListener(this);
         }
 
