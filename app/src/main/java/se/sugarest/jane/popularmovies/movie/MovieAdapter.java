@@ -147,7 +147,28 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                                 // PosterPath from web
                                 .load(fullMoviePosterForOneMovie)
                                 .error(R.drawable.pic_error_loading_w370)
-                                .into(movieAdapterViewHolder.mMoviePosterImageView);
+                                .into(movieAdapterViewHolder.mMoviePosterImageView, new Callback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.INVISIBLE);
+                                    }
+
+                                    @Override
+                                    public void onError() {
+                                        movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.VISIBLE);
+                                        Log.i(TAG, "Current Position: " + position + "\nCurrent Movie Title: " + mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE)));
+                                        mCursor.moveToPosition(position);
+                                        String currentMovieTitle = mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE));
+                                        if (currentMovieTitle.contains(":")) {
+                                            String[] separated = currentMovieTitle.split(":");
+                                            // separate[1].trim() will remove the empty space to the second string
+                                            movieAdapterViewHolder.mErrorMovieNameTextView.setText(separated[0] + ":" + "\n" + separated[1].trim());
+                                        } else {
+                                            movieAdapterViewHolder.mErrorMovieNameTextView
+                                                    .setText(currentMovieTitle);
+                                        }
+                                    }
+                                });
                     } else {
                         mCursor.moveToPosition(position);
                         String moviePosterForOneMovie = mCursor.getString(mCursor
@@ -159,7 +180,28 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                                 // PosterPath from web
                                 .load(fullMoviePosterForOneMovie)
                                 .error(R.drawable.pic_error_loading_w370)
-                                .into(movieAdapterViewHolder.mMoviePosterImageView);
+                                .into(movieAdapterViewHolder.mMoviePosterImageView, new Callback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.INVISIBLE);
+                                    }
+
+                                    @Override
+                                    public void onError() {
+                                        movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.VISIBLE);
+                                        Log.i(TAG, "Current Position: " + position + "\nCurrent Movie Title: " + mCursor.getString(mCursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_ORIGINAL_TITLE)));
+                                        mCursor.moveToPosition(position);
+                                        String currentMovieTitle = mCursor.getString(mCursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_ORIGINAL_TITLE));
+                                        if (currentMovieTitle.contains(":")) {
+                                            String[] separated = currentMovieTitle.split(":");
+                                            // separate[1].trim() will remove the empty space to the second string
+                                            movieAdapterViewHolder.mErrorMovieNameTextView.setText(separated[0] + ":" + "\n" + separated[1].trim());
+                                        } else {
+                                            movieAdapterViewHolder.mErrorMovieNameTextView
+                                                    .setText(currentMovieTitle);
+                                        }
+                                    }
+                                });
                     }
                 }
             } else {
@@ -173,7 +215,28 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                         // PosterPath from web
                         .load(fullMoviePosterForOneMovie)
                         .error(R.drawable.pic_error_loading_w370)
-                        .into(movieAdapterViewHolder.mMoviePosterImageView);
+                        .into(movieAdapterViewHolder.mMoviePosterImageView, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                                movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.INVISIBLE);
+                            }
+
+                            @Override
+                            public void onError() {
+                                movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.VISIBLE);
+                                Log.i(TAG, "Current Position: " + position + "\nCurrent Movie Title: " + mCursor.getString(mCursor.getColumnIndex(FavMovieEntry.COLUMN_ORIGINAL_TITLE)));
+                                mCursor.moveToPosition(position);
+                                String currentMovieTitle = mCursor.getString(mCursor.getColumnIndex(FavMovieEntry.COLUMN_ORIGINAL_TITLE));
+                                if (currentMovieTitle.contains(":")) {
+                                    String[] separated = currentMovieTitle.split(":");
+                                    // separate[1].trim() will remove the empty space to the second string
+                                    movieAdapterViewHolder.mErrorMovieNameTextView.setText(separated[0] + ":" + "\n" + separated[1].trim());
+                                } else {
+                                    movieAdapterViewHolder.mErrorMovieNameTextView
+                                            .setText(currentMovieTitle);
+                                }
+                            }
+                        });
             }
         } else {
             String orderBy = getPreference();
