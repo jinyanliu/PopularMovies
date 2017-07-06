@@ -190,8 +190,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
                     values.put(CacheMovieTopRatedEntry.COLUMN_EXTERNAL_STORAGE_IMAGE_THUMBNAIL, fullImageThumbnailForOneMovie);
 
-                    new FetchExternalStorageTopMovieImageThumbnailsTask(this.mainActivity).execute(
-                            new MovieBasicInfo(movieId, fullImageThumbnailForOneMovie));
+                    // new FetchExternalStorageTopMovieImageThumbnailsTask(this.mainActivity).execute(new MovieBasicInfo(movieId, fullImageThumbnailForOneMovie));
 
 
                     values.put(CacheMovieTopRatedEntry.COLUMN_ORIGINAL_TITLE, movieData.get(i).getOriginalTitle());
@@ -203,8 +202,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
                     values.put(CacheMovieTopRatedEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH, fullMoviePosterForOneMovie);
 
-                    new FetchExternalStorageTopMoviePosterImagesTask(this.mainActivity).execute(
-                            new MovieBasicInfo(movieId, fullMoviePosterForOneMovie));
+                    // new FetchExternalStorageTopMoviePosterImagesTask(this.mainActivity).execute(new MovieBasicInfo(movieId, fullMoviePosterForOneMovie));
 
                     values.put(CacheMovieTopRatedEntry.COLUMN_RELEASE_DATE, movieData.get(i).getReleaseDate());
                     values.put(CacheMovieTopRatedEntry.COLUMN_USER_RATING, movieData.get(i).getUserRating());
@@ -224,6 +222,9 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                         Log.i(TAG, "bulkInsertCacheMovie TopRated unsuccessful.");
                     }
                 }
+
+                downloadExtraTopMoviePosterFilePic();
+                downloadExtraTopMovieImageThumbnailFilePic();
 
                 Calendar calendar = Calendar.getInstance();
                 Date currentTime = calendar.getTime();
@@ -317,7 +318,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
             while (!cursor.isAfterLast()) {
                 String currentPosterPath = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH));
                 String currentMovieId = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_MOVIE_ID));
-                Log.i(TAG, "download / filepath:download pop external poster pic:" + currentPosterPath);
+                Log.i(TAG, "download / filepath: download pop external poster pic:" + currentPosterPath);
                 String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
                         .concat(currentPosterPath);
                 new FetchExternalStoragePopMoviePosterImagesTask(this.mainActivity).execute(
@@ -466,6 +467,138 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
         }
     }
 
+    private void downloadExtraTopMoviePosterFilePic() {
+
+        File topRatedMoviePicsFolder
+                = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+                + "/topratedmovies/");
+
+        if (topRatedMoviePicsFolder.exists()) {
+
+            String[] fileNameArray = new String[topRatedMoviePicsFolder.listFiles().length];
+            Log.i(TAG, "download / filepath: top poster file name count in external folder: " + topRatedMoviePicsFolder.listFiles().length);
+            int j = 0;
+            for (File pic : topRatedMoviePicsFolder.listFiles()) {
+                String fileName = "/" + pic.getName();
+                fileNameArray[j] = fileName;
+                Log.i(TAG, "download / filepath: top poster file name in external folder: " + fileNameArray[j]);
+                j++;
+            }
+
+            String[] projection = {CacheMovieTopRatedEntry.COLUMN_MOVIE_ID, CacheMovieTopRatedEntry.COLUMN_POSTER_PATH};
+            Cursor cursor = mainActivity.getContentResolver().query(
+                    CacheMovieTopRatedEntry.CONTENT_URI,
+                    projection,
+                    null,
+                    null,
+                    null);
+
+            cursor.moveToFirst();
+
+            while (!cursor.isAfterLast()) {
+                String currentPosterPath = cursor.getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_POSTER_PATH));
+                String currentMovieId = cursor.getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_MOVIE_ID));
+                if (!Arrays.asList(fileNameArray).contains(currentPosterPath)) {
+                    Log.i(TAG, "download / filepath: download top external poster pic:" + currentPosterPath);
+                    String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
+                            .concat(currentPosterPath);
+                    new FetchExternalStorageTopMoviePosterImagesTask(this.mainActivity).execute(
+                            new MovieBasicInfo(currentMovieId, fullMoviePosterForOneMovie));
+                }
+                cursor.moveToNext();
+            }
+            cursor.close();
+        } else {
+            String[] projection = {CacheMovieTopRatedEntry.COLUMN_MOVIE_ID, CacheMovieTopRatedEntry.COLUMN_POSTER_PATH};
+            Cursor cursor = mainActivity.getContentResolver().query(
+                    CacheMovieTopRatedEntry.CONTENT_URI,
+                    projection,
+                    null,
+                    null,
+                    null);
+
+            cursor.moveToFirst();
+
+            while (!cursor.isAfterLast()) {
+                String currentPosterPath = cursor.getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_POSTER_PATH));
+                String currentMovieId = cursor.getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_MOVIE_ID));
+                Log.i(TAG, "download / filepath: download top external poster pic:" + currentPosterPath);
+                String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
+                        .concat(currentPosterPath);
+                new FetchExternalStorageTopMoviePosterImagesTask(this.mainActivity).execute(
+                        new MovieBasicInfo(currentMovieId, fullMoviePosterForOneMovie));
+                cursor.moveToNext();
+            }
+            cursor.close();
+        }
+    }
+
+    private void downloadExtraTopMovieImageThumbnailFilePic() {
+
+        File topRatedMovieThumbnailImagesFolder
+                = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+                + "/topthumbnails/");
+
+        if (topRatedMovieThumbnailImagesFolder.exists()) {
+
+            String[] fileNameArray = new String[topRatedMovieThumbnailImagesFolder.listFiles().length];
+            Log.i(TAG, "download / filepath: top image thumbnail file name count in external folder: " + topRatedMovieThumbnailImagesFolder.listFiles().length);
+            int j = 0;
+            for (File pic : topRatedMovieThumbnailImagesFolder.listFiles()) {
+                String fileName = "/" + pic.getName();
+                fileNameArray[j] = fileName;
+                Log.i(TAG, "download / filepath: top image thumbnail file name in external folder: " + fileNameArray[j]);
+                j++;
+            }
+
+            String[] projection = {CacheMovieTopRatedEntry.COLUMN_MOVIE_ID, CacheMovieTopRatedEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL};
+            Cursor cursor = mainActivity.getContentResolver().query(
+                    CacheMovieTopRatedEntry.CONTENT_URI,
+                    projection,
+                    null,
+                    null,
+                    null);
+
+            cursor.moveToFirst();
+
+            while (!cursor.isAfterLast()) {
+                String currentImageThumbnail = cursor.getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
+                String currentMovieId = cursor.getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_MOVIE_ID));
+                if (!Arrays.asList(fileNameArray).contains(currentImageThumbnail)) {
+                    Log.i(TAG, "download / filepath: download top external image thumbnail pic:" + currentImageThumbnail);
+                    String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W780)
+                            .concat(currentImageThumbnail);
+                    new FetchExternalStorageTopMovieImageThumbnailsTask(this.mainActivity).execute(
+                            new MovieBasicInfo(currentMovieId, fullMoviePosterForOneMovie));
+                }
+                cursor.moveToNext();
+            }
+            cursor.close();
+        } else {
+            String[] projection = {CacheMovieTopRatedEntry.COLUMN_MOVIE_ID, CacheMovieTopRatedEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL};
+            Cursor cursor = mainActivity.getContentResolver().query(
+                    CacheMovieTopRatedEntry.CONTENT_URI,
+                    projection,
+                    null,
+                    null,
+                    null);
+
+            cursor.moveToFirst();
+
+            while (!cursor.isAfterLast()) {
+                String currentImageThumbnail = cursor.getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
+                String currentMovieId = cursor.getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_MOVIE_ID));
+                Log.i(TAG, "download / filepath: download top external image thumbnail pic:" + currentImageThumbnail);
+                String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W780)
+                        .concat(currentImageThumbnail);
+                new FetchExternalStorageTopMovieImageThumbnailsTask(this.mainActivity).execute(
+                        new MovieBasicInfo(currentMovieId, fullMoviePosterForOneMovie));
+                cursor.moveToNext();
+            }
+            cursor.close();
+        }
+    }
+
     private void deleteExtraTopMoviePosterFilePic() {
         String[] projection = {CacheMovieTopRatedEntry.COLUMN_POSTER_PATH};
         Cursor cursor = mainActivity.getContentResolver().query(
@@ -482,7 +615,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
         while (!cursor.isAfterLast()) {
             posterPathArray[i] = cursor.getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_POSTER_PATH));
-            Log.i(TAG, "filepath: top poster path in database: " + posterPathArray[i]);
+            Log.i(TAG, "delete / filepath: top poster path in database: " + posterPathArray[i]);
             i++;
             cursor.moveToNext();
         }
@@ -495,7 +628,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
             for (File pic : topRatedMoviePicsFolder.listFiles()) {
                 String fileName = "/" + pic.getName();
                 if (!Arrays.asList(posterPathArray).contains(fileName)) {
-                    Log.i(TAG, "filepath:delete top external poster pic:" + fileName);
+                    Log.i(TAG, "delete / filepath:delete top external poster pic:" + fileName);
                     pic.delete();
                 }
             }
@@ -518,7 +651,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
         while (!cursor.isAfterLast()) {
             imageThumbnailArray[i] = cursor.getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
-            Log.i(TAG, "filepath: top image thumbnail path in database: " + imageThumbnailArray[i]);
+            Log.i(TAG, "delete / filepath: top image thumbnail path in database: " + imageThumbnailArray[i]);
             i++;
             cursor.moveToNext();
         }
@@ -531,7 +664,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
             for (File pic : topRatedMovieThumbnailImagesFolder.listFiles()) {
                 String fileName = "/" + pic.getName();
                 if (!Arrays.asList(imageThumbnailArray).contains(fileName)) {
-                    Log.i(TAG, "filepath:delete top external thumbnail pic:" + fileName);
+                    Log.i(TAG, "delete / filepath:delete top external thumbnail pic:" + fileName);
                     pic.delete();
                 }
             }
