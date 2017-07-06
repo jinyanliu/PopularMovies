@@ -52,10 +52,6 @@ public class MovieContract {
 
     public static final String PATH_CACHE_MOVIE_TOP_RATED = "cache_movie_top_rated";
 
-    public static final String PATH_CACHE_MOVIE_MOST_POPULAR_POSTER = "cache_movie_most_popular_poster";
-
-    public static final String PATH_CACHE_MOVIE_TOP_RATED_POSTER = "cache_movie_top_rated_poster";
-
     /**
      * Inner class that defines the table contents of the movie table.
      */
