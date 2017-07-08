@@ -1,4 +1,4 @@
-package se.sugarest.jane.popularmovies;
+package se.sugarest.jane.popularmovies.ui;
 
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
@@ -39,6 +39,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import se.sugarest.jane.popularmovies.R;
 import se.sugarest.jane.popularmovies.data.MovieContract;
 import se.sugarest.jane.popularmovies.data.MovieContract.FavMovieEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.ReviewEntry;

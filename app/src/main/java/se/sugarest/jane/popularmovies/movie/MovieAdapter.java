@@ -27,7 +27,7 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.util.ArrayList;
 
-import se.sugarest.jane.popularmovies.MainActivity;
+import se.sugarest.jane.popularmovies.ui.MainActivity;
 import se.sugarest.jane.popularmovies.R;
 import se.sugarest.jane.popularmovies.data.MovieContract;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;

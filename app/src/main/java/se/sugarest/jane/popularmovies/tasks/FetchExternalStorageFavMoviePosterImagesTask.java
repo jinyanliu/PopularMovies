@@ -17,7 +17,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import se.sugarest.jane.popularmovies.MainActivity;
+import se.sugarest.jane.popularmovies.ui.MainActivity;
 import se.sugarest.jane.popularmovies.R;
 import se.sugarest.jane.popularmovies.data.MovieContract.FavMovieEntry;
 import se.sugarest.jane.popularmovies.movie.MovieBasicInfo;

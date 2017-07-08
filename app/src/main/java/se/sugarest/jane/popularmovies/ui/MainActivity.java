@@ -1,4 +1,4 @@
-package se.sugarest.jane.popularmovies;
+package se.sugarest.jane.popularmovies.ui;
 
 import android.content.Context;
 import android.content.CursorLoader;
@@ -31,6 +31,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.util.Arrays;
 
+import se.sugarest.jane.popularmovies.R;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.FavMovieEntry;

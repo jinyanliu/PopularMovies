@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
-import se.sugarest.jane.popularmovies.MainActivity;
+import se.sugarest.jane.popularmovies.ui.MainActivity;
 import se.sugarest.jane.popularmovies.R;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedEntry;

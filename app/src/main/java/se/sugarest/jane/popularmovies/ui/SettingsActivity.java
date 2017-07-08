@@ -1,4 +1,4 @@
-package se.sugarest.jane.popularmovies;
+package se.sugarest.jane.popularmovies.ui;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -8,6 +8,8 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+
+import se.sugarest.jane.popularmovies.R;
 
 /**
  * Created by jane on 3/1/17.

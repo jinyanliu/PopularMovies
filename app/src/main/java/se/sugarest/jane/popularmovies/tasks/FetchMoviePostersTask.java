@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import se.sugarest.jane.popularmovies.MainActivity;
+import se.sugarest.jane.popularmovies.ui.MainActivity;
 import se.sugarest.jane.popularmovies.R;
 import se.sugarest.jane.popularmovies.movie.Movie;
 import se.sugarest.jane.popularmovies.utilities.MovieJsonUtils;

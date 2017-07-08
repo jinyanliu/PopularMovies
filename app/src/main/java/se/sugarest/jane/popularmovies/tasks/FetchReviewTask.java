@@ -11,7 +11,7 @@ import android.widget.Toast;
 import java.net.URL;
 import java.util.List;
 
-import se.sugarest.jane.popularmovies.DetailActivity;
+import se.sugarest.jane.popularmovies.ui.DetailActivity;
 import se.sugarest.jane.popularmovies.R;
 import se.sugarest.jane.popularmovies.review.Review;
 import se.sugarest.jane.popularmovies.utilities.NetworkUtils;
