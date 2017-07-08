@@ -19,9 +19,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
@@ -148,14 +146,6 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                 downloadExtraPopMoviePosterFilePic();
                 downloadExtraPopMovieImageThumbnailFilePic();
 
-                Calendar calendar = Calendar.getInstance();
-                Date currentTime = calendar.getTime();
-
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.mainActivity);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putLong(this.mainActivity.getString(R.string.pref_pop_date_key), currentTime.getTime());
-                editor.apply();
-
                 // After new movie data is fetched from internet, check, loop through the pics folder, only
                 // delete those pics which are outdated, not in the new list, so the pics folder can be more
                 // stable(movie update is not very quick and frequent, we don't need to delete everything
@@ -226,14 +216,6 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                 downloadExtraTopMoviePosterFilePic();
                 downloadExtraTopMovieImageThumbnailFilePic();
 
-                Calendar calendar = Calendar.getInstance();
-                Date currentTime = calendar.getTime();
-
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.mainActivity);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putLong(this.mainActivity.getString(R.string.pref_top_date_key), currentTime.getTime());
-                editor.apply();
-
                 deleteExtraTopMoviePosterFilePic();
                 deleteExtraTopMovieImageThumbnailFilePic();
             }
@@ -290,9 +272,13 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                     null);
 
             cursor.moveToFirst();
+            int i = 0;
+            String[] newDataArray = new String[cursor.getCount()];
 
             while (!cursor.isAfterLast()) {
                 String currentPosterPath = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH));
+                newDataArray[i] = currentPosterPath;
+                i++;
                 String currentMovieId = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_MOVIE_ID));
                 if (!Arrays.asList(fileNameArray).contains(currentPosterPath)) {
                     Log.i(TAG, "download / filepath: download pop external poster pic:" + currentPosterPath);
@@ -304,6 +290,21 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                 cursor.moveToNext();
             }
             cursor.close();
+
+            if (this.mainActivity.getmShowToast()) {
+                if (Arrays.asList(fileNameArray).containsAll(Arrays.asList(newDataArray))) {
+
+                    if (this.mainActivity.getmToast() != null) {
+                        this.mainActivity.getmToast().cancel();
+                    }
+                    Toast newToast = Toast.makeText(this.mainActivity, this.mainActivity.getString(R.string.toast_message_refresh_pop_up_to_date), Toast.LENGTH_SHORT);
+                    this.mainActivity.setmToast(newToast);
+                    this.mainActivity.getmToast().setGravity(Gravity.BOTTOM, 0, 0);
+                    this.mainActivity.getmToast().show();
+
+                }
+            }
+
         } else {
             String[] projection = {CacheMovieMostPopularEntry.COLUMN_MOVIE_ID, CacheMovieMostPopularEntry.COLUMN_POSTER_PATH};
             Cursor cursor = mainActivity.getContentResolver().query(
@@ -494,9 +495,13 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                     null);
 
             cursor.moveToFirst();
+            int i = 0;
+            String[] newDataArray = new String[cursor.getCount()];
 
             while (!cursor.isAfterLast()) {
                 String currentPosterPath = cursor.getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_POSTER_PATH));
+                newDataArray[i] = currentPosterPath;
+                i++;
                 String currentMovieId = cursor.getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_MOVIE_ID));
                 if (!Arrays.asList(fileNameArray).contains(currentPosterPath)) {
                     Log.i(TAG, "download / filepath: download top external poster pic:" + currentPosterPath);
@@ -508,6 +513,21 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                 cursor.moveToNext();
             }
             cursor.close();
+
+            if (this.mainActivity.getmShowToast()) {
+                if (Arrays.asList(fileNameArray).containsAll(Arrays.asList(newDataArray))) {
+
+                    if (this.mainActivity.getmToast() != null) {
+                        this.mainActivity.getmToast().cancel();
+                    }
+                    Toast newToast = Toast.makeText(this.mainActivity, this.mainActivity.getString(R.string.toast_message_refresh_top_up_to_date), Toast.LENGTH_SHORT);
+                    this.mainActivity.setmToast(newToast);
+                    this.mainActivity.getmToast().setGravity(Gravity.BOTTOM, 0, 0);
+                    this.mainActivity.getmToast().show();
+
+                }
+            }
+
         } else {
             String[] projection = {CacheMovieTopRatedEntry.COLUMN_MOVIE_ID, CacheMovieTopRatedEntry.COLUMN_POSTER_PATH};
             Cursor cursor = mainActivity.getContentResolver().query(

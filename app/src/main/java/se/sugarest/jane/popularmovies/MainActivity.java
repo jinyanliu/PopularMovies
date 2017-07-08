@@ -30,8 +30,6 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedEntry;
@@ -88,6 +86,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
 
     public void setmToast(Toast mToast) {
         this.mToast = mToast;
+    }
+
+    private Boolean mShowToast;
+
+    public Boolean getmShowToast() {
+        return mShowToast;
     }
 
     @Override
@@ -187,65 +191,20 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
 
         // If there is a network connection, fetch data
         if (getNetworkInfo() != null && getNetworkInfo().isConnected()) {
-
-            Calendar calendar = Calendar.getInstance();
-            calendar.roll(Calendar.MINUTE, -10);
-            Date tenMinAgoThisTime = calendar.getTime();
-
+            mShowToast = false;
             String orderBy = getPreference();
-
             if (!"favorites".equals(orderBy)) {
-
-                boolean refreshPop = false;
-                boolean refreshTop = false;
-
-                if ("popular".equals(orderBy)) {
-                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-                    Long default_time = new Date().getTime();
-                    long mPopLatestRefreshed = preferences.getLong
-                            (getString(R.string.pref_pop_date_key), default_time);
-
-                    if (mPopLatestRefreshed == default_time) {
-                        refreshPop = true;
-                    } else {
-                        if (new Date(mPopLatestRefreshed).before(tenMinAgoThisTime)) {
-                            refreshPop = true;
-                        }
-                    }
-                } else {
-                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-                    Long default_time = new Date().getTime();
-                    long mTopLatestRefreshed = preferences.getLong
-                            (getString(R.string.pref_top_date_key), default_time);
-
-                    if (mTopLatestRefreshed == default_time) {
-                        refreshTop = true;
-                    } else {
-                        if (new Date(mTopLatestRefreshed).before(tenMinAgoThisTime)) {
-                            refreshTop = true;
-                        }
-                    }
-                }
-
-                if (refreshPop || refreshTop) {
-                    orderBy = "movie/" + orderBy;
-                    new FetchMoviePostersTask(this).execute(orderBy);
-                    new PersistMovieTask(this).execute(orderBy);
-
-                    if (refreshPop) {
-                        Log.i(TAG, getString(R.string.log_information_refreshPop_true));
-                    }
-                    if (refreshTop) {
-                        Log.i(TAG, getString(R.string.log_information_refreshTop_true));
-                    }
-                } else {
-                    initCursorLoader();
+                orderBy = "movie/" + orderBy;
+                new FetchMoviePostersTask(this).execute(orderBy);
+                new PersistMovieTask(this).execute(orderBy);
+                if (mToast != null) {
+                    mToast.cancel();
                 }
             } else {
-                // if selected "fav"
-                // if has network
+                initCursorLoader();
                 persistFavMovie();
             }
+            // First loading the app, don't show up to date toast if it is up to date.
         } else {
             hideLoadingIndicators();
             initCursorLoader();
@@ -272,16 +231,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
 
         downloadExtraFavMoviePosterFilePic();
         downloadExtraFavMovieImageThumbnailFilePic();
-
-        Calendar calendar = Calendar.getInstance();
-        Date currentTime = calendar.getTime();
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putLong(getString(R.string.pref_fav_date_key), currentTime.getTime());
-        editor.apply();
-
-        initCursorLoader();
 
         deleteExtraFavMoviePosterFilePic();
         deleteExtraFavMovieImageThumbnailFilePic();
@@ -315,8 +264,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
 
             cursor.moveToFirst();
 
+            int i = 0;
+            String[] newDataArray = new String[cursor.getCount()];
+
             while (!cursor.isAfterLast()) {
                 String currentPosterPath = cursor.getString(cursor.getColumnIndex(FavMovieEntry.COLUMN_POSTER_PATH));
+                newDataArray[i] = currentPosterPath;
+                i++;
                 String currentMovieId = cursor.getString(cursor.getColumnIndex(FavMovieEntry.COLUMN_MOVIE_ID));
                 if (!Arrays.asList(fileNameArray).contains(currentPosterPath)) {
                     Log.i(TAG, "download / filepath: download fav external poster pic:" + currentPosterPath);
@@ -328,6 +282,17 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                 cursor.moveToNext();
             }
             cursor.close();
+
+            if (mShowToast) {
+                if (Arrays.asList(fileNameArray).containsAll(Arrays.asList(newDataArray))) {
+                    if (mToast != null) {
+                        mToast.cancel();
+                    }
+                    mToast = Toast.makeText(MainActivity.this, getString(R.string.toast_message_refresh_fav_up_to_date), Toast.LENGTH_SHORT);
+                    mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                    mToast.show();
+                }
+            }
         } else {
             String[] projection = {FavMovieEntry.COLUMN_MOVIE_ID, FavMovieEntry.COLUMN_POSTER_PATH};
             Cursor cursor = getContentResolver().query(
@@ -493,100 +458,15 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
 
     private void refreshMovie() {
         if (getNetworkInfo() != null && getNetworkInfo().isConnected()) {
-
-            Calendar calendar = Calendar.getInstance();
-            calendar.roll(Calendar.MINUTE, -1);
-            Date oneMinuteAgo = calendar.getTime();
-
+            mShowToast = true;
             String orderBy = getPreference();
-
             if (!"favorites".equals(orderBy)) {
-
-                boolean refreshPop = false;
-                boolean refreshTop = false;
-
-                if ("popular".equals(orderBy)) {
-                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                    Long default_time = new Date().getTime();
-                    long mPopLatestRefreshed = preferences.getLong
-                            (getString(R.string.pref_pop_date_key), default_time);
-
-                    if (mPopLatestRefreshed == default_time) {
-                        refreshPop = true;
-                    } else {
-                        if (new Date(mPopLatestRefreshed).before(oneMinuteAgo)) {
-                            refreshPop = true;
-                        } else {
-                            if (mToast != null) {
-                                mToast.cancel();
-                            }
-                            mToast = Toast.makeText(MainActivity.this, getString(R.string.toast_message_refresh_pop_in_one_minute), Toast.LENGTH_SHORT);
-                            mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                            mToast.show();
-                        }
-                    }
-                } else {
-                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                    Long default_time = new Date().getTime();
-                    long mTopLatestRefreshed = preferences.getLong
-                            (getString(R.string.pref_top_date_key), default_time);
-
-                    if (mTopLatestRefreshed == default_time) {
-                        refreshTop = true;
-                    } else {
-                        if (new Date(mTopLatestRefreshed).before(oneMinuteAgo)) {
-                            refreshTop = true;
-                        } else {
-                            if (mToast != null) {
-                                mToast.cancel();
-                            }
-                            mToast = Toast.makeText(MainActivity.this, getString(R.string.toast_message_refresh_top_in_one_minute), Toast.LENGTH_SHORT);
-                            mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                            mToast.show();
-                        }
-                    }
-                }
-
-                if (refreshPop || refreshTop) {
-                    orderBy = "movie/" + orderBy;
-                    new FetchMoviePostersTask(MainActivity.this).execute(orderBy);
-                    new PersistMovieTask(MainActivity.this).execute(orderBy);
-
-                    if (refreshPop) {
-                        Log.i(TAG, getString(R.string.log_information_refreshPop_true));
-                    }
-                    if (refreshTop) {
-                        Log.i(TAG, getString(R.string.log_information_refreshTop_true));
-                    }
-                } else {
-                    initCursorLoader();
-                }
+                orderBy = "movie/" + orderBy;
+                new FetchMoviePostersTask(MainActivity.this).execute(orderBy);
+                new PersistMovieTask(MainActivity.this).execute(orderBy);
             } else {
-                boolean refreshFav = false;
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                Long default_time = new Date().getTime();
-                long mFavLatestRefreshed = preferences.getLong
-                        (getString(R.string.pref_fav_date_key), default_time);
-
-                if (mFavLatestRefreshed == default_time) {
-                    refreshFav = true;
-                } else {
-                    if (new Date(mFavLatestRefreshed).before(oneMinuteAgo)) {
-                        refreshFav = true;
-                    } else {
-                        if (mToast != null) {
-                            mToast.cancel();
-                        }
-                        mToast = Toast.makeText(MainActivity.this, getString(R.string.toast_message_refresh_fav_in_one_minute), Toast.LENGTH_SHORT);
-                        mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                        mToast.show();
-                    }
-                }
-                if (refreshFav) {
-                    persistFavMovie();
-                } else {
-                    initCursorLoader();
-                }
+                initCursorLoader();
+                persistFavMovie();
             }
         } else {
             hideLoadingIndicators();
