@@ -31,11 +31,11 @@
 
     <!-- Toast message for refresh when there is no internet connection in MainActivity and DetailActivity. -->
     <string name="toast_message_refresh_no_internet">Cannot refresh without internet connection.</string>
-    <!-- Toast message for refresh Pop movies in one minute, no need to refresh. List up to date. -->
+    <!-- Toast message for refresh Pop movies when the external folder already has all the images. List up to date. -->
     <string name="toast_message_refresh_pop_up_to_date">Your Most Popular Movies list is up-to-date.</string>
-    <!-- Toast message for refresh Top movies in one minute, no need to refresh. List up to date. -->
+    <!-- Toast message for refresh Top movies when the external folder already has all the images. List up to date. -->
     <string name="toast_message_refresh_top_up_to_date">Your Top Rated Movies list is up-to-date.</string>
-    <!-- Toast message for refresh Fav movies in one minute, no need to refresh. List up to date. -->
+    <!-- Toast message for refresh Fav movies when the external folder already has all the images. List up to date. -->
     <string name="toast_message_refresh_fav_up_to_date">Your Favorite Movies list is up-to-date.</string>
 
     <!-- Toast message when you want to save the movie to favDatabase but the movie's reviews and trailers haven't loaded yet. -->
