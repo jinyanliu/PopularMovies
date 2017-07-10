@@ -1,13 +1,10 @@
 package se.sugarest.jane.popularmovies.tasks;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
-import android.view.Gravity;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -17,7 +14,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import se.sugarest.jane.popularmovies.ui.MainActivity;
 import se.sugarest.jane.popularmovies.R;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedEntry;
 import se.sugarest.jane.popularmovies.movie.MovieBasicInfo;
@@ -28,10 +24,10 @@ import se.sugarest.jane.popularmovies.movie.MovieBasicInfo;
 
 public class FetchExternalStorageTopMoviePosterImagesTask extends AsyncTask<MovieBasicInfo, Void, String> {
 
-    private MainActivity mainActivity;
+    private Context context;
 
-    public FetchExternalStorageTopMoviePosterImagesTask(MainActivity mainActivity) {
-        this.mainActivity = mainActivity;
+    public FetchExternalStorageTopMoviePosterImagesTask(Context context) {
+        this.context = context;
     }
 
     private static final String TAG = FetchExternalStorageTopMoviePosterImagesTask.class.getSimpleName();
@@ -70,7 +66,7 @@ public class FetchExternalStorageTopMoviePosterImagesTask extends AsyncTask<Movi
             String[] parts = urlToBeDownloaded.split("/");
             String lastPart = parts[7];
             String filename = lastPart;
-            Log.i(TAG, mainActivity.getString(R.string.log_information_message_download_filename) + filename);
+            Log.i(TAG, context.getString(R.string.log_information_message_download_filename) + filename);
 
             File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
                     + "/topratedmovies/" + filename);
@@ -92,8 +88,8 @@ public class FetchExternalStorageTopMoviePosterImagesTask extends AsyncTask<Movi
             while ((bufferLength = inputStream.read(buffer)) > 0) {
                 fileOutput.write(buffer, 0, bufferLength);
                 downloadedSize += bufferLength;
-                Log.i(TAG, mainActivity.getString(R.string.log_information_message_download_downloadedSize)
-                        + downloadedSize + mainActivity.getString(R.string.log_information_message_download_totalSize)
+                Log.i(TAG, context.getString(R.string.log_information_message_download_downloadedSize)
+                        + downloadedSize + context.getString(R.string.log_information_message_download_totalSize)
                         + totalSize);
             }
             fileOutput.close();
@@ -106,7 +102,7 @@ public class FetchExternalStorageTopMoviePosterImagesTask extends AsyncTask<Movi
             filepath = null;
             Log.e(TAG, e.getMessage());
         }
-        Log.i(TAG, mainActivity.getString(R.string.log_information_message_download_filepath) + filepath);
+        Log.i(TAG, context.getString(R.string.log_information_message_download_filepath) + filepath);
         return filepath;
     }
 
@@ -118,7 +114,7 @@ public class FetchExternalStorageTopMoviePosterImagesTask extends AsyncTask<Movi
             String selection = CacheMovieTopRatedEntry.COLUMN_MOVIE_ID;
             selection = selection + "=?";
             String[] selectionArgs = {movieId};
-            int rowsUpdated = mainActivity.getContentResolver()
+            int rowsUpdated = context.getContentResolver()
                     .update(CacheMovieTopRatedEntry.CONTENT_URI,
                             contentValues,
                             selection,
@@ -128,25 +124,25 @@ public class FetchExternalStorageTopMoviePosterImagesTask extends AsyncTask<Movi
                 Log.i(TAG, "Insert external poster path into cache popular movie table successful.");
             }
         } else {
-            Log.e(TAG, mainActivity.getString(R.string.log_error_message_offline_before_download_pics_finish));
-            String expectedMsg = mainActivity.getString(R.string.toast_message_offline_before_download_finish);
+            Log.e(TAG, context.getString(R.string.log_error_message_offline_before_download_pics_finish));
+            String expectedMsg = context.getString(R.string.toast_message_offline_before_download_finish);
 
-            if (this.mainActivity.getmToast() != null) {
-                String displayedText = ((TextView) ((LinearLayout) this.mainActivity.getmToast().getView())
+/*            if (this.context.getmToast() != null) {
+                String displayedText = ((TextView) ((LinearLayout) this.context.getmToast().getView())
                         .getChildAt(0)).getText().toString();
                 if (!displayedText.equals(expectedMsg)) {
-                    this.mainActivity.getmToast().cancel();
-                    Toast newToast = Toast.makeText(mainActivity, mainActivity.getString(R.string.toast_message_offline_before_download_finish), Toast.LENGTH_SHORT);
-                    this.mainActivity.setmToast(newToast);
-                    this.mainActivity.getmToast().setGravity(Gravity.BOTTOM, 0, 0);
-                    this.mainActivity.getmToast().show();
+                    this.context.getmToast().cancel();
+                    Toast newToast = Toast.makeText(context, context.getString(R.string.toast_message_offline_before_download_finish), Toast.LENGTH_SHORT);
+                    this.context.setmToast(newToast);
+                    this.context.getmToast().setGravity(Gravity.BOTTOM, 0, 0);
+                    this.context.getmToast().show();
                 }
             } else {
-                Toast newToast = Toast.makeText(mainActivity, expectedMsg, Toast.LENGTH_SHORT);
-                this.mainActivity.setmToast(newToast);
-                this.mainActivity.getmToast().setGravity(Gravity.BOTTOM, 0, 0);
-                this.mainActivity.getmToast().show();
-            }
+                Toast newToast = Toast.makeText(context, expectedMsg, Toast.LENGTH_SHORT);
+                this.context.setmToast(newToast);
+                this.context.getmToast().setGravity(Gravity.BOTTOM, 0, 0);
+                this.context.getmToast().show();
+            }*/
         }
     }
 }
