@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -27,12 +26,13 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.util.ArrayList;
 
-import se.sugarest.jane.popularmovies.ui.MainActivity;
 import se.sugarest.jane.popularmovies.R;
 import se.sugarest.jane.popularmovies.data.MovieContract;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.FavMovieEntry;
+import se.sugarest.jane.popularmovies.ui.MainActivity;
+import se.sugarest.jane.popularmovies.utilities.ExternalPathUtils;
 
 /**
  * Created by jane on 2/26/17.
@@ -48,16 +48,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
     private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
     private final String IMAGE_SIZE_W185 = "w185/";
-
-    private final String BASE_POP_POSTER_EXTERNAL_URL
-            = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
-            + "/popularmovies";
-    private final String BASE_TOP_POSTER_EXTERNAL_URL
-            = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
-            + "/topratedmovies";
-    private final String BASE_FAV_POSTER_EXTERNAL_URL
-            = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
-            + "/favmovies";
 
     private Cursor mCursor;
     private boolean mLoadFromDb;
@@ -266,7 +256,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                 mCursor.moveToPosition(position);
                 String moviePosterForOneMovie = mCursor.getString(mCursor
                         .getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH));
-                String fullMoviePosterForOneMovie = BASE_POP_POSTER_EXTERNAL_URL
+                String basePopPosterExternalUrl = ExternalPathUtils.getExternalPathBasicFileName(this.mainActivity)
+                        + "/popularmovies";
+                String fullMoviePosterForOneMovie = basePopPosterExternalUrl
                         .concat(moviePosterForOneMovie);
                 File pathToPic = new File(fullMoviePosterForOneMovie);
 
@@ -324,7 +316,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                 mCursor.moveToPosition(position);
                 String moviePosterForOneMovie = mCursor.getString(mCursor
                         .getColumnIndex(CacheMovieTopRatedEntry.COLUMN_POSTER_PATH));
-                String fullMoviePosterForOneMovie = BASE_TOP_POSTER_EXTERNAL_URL
+                String baseTopPosterExternalUrl = ExternalPathUtils.getExternalPathBasicFileName(this.mainActivity)
+                        + "/topratedmovies";
+                String fullMoviePosterForOneMovie = baseTopPosterExternalUrl
                         .concat(moviePosterForOneMovie);
                 File pathToPic = new File(fullMoviePosterForOneMovie);
 
@@ -382,17 +376,23 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                         .getColumnIndex(FavMovieEntry.COLUMN_POSTER_PATH));
 
                 // If the fav movie is saved from pop list and still in pop list
-                String fullMoviePopPosterForOneMovie = BASE_POP_POSTER_EXTERNAL_URL
+                String basePopPosterExternalUrl = ExternalPathUtils.getExternalPathBasicFileName(this.mainActivity)
+                        + "/popularmovies";
+                String fullMoviePopPosterForOneMovie = basePopPosterExternalUrl
                         .concat(moviePosterForOneMovie);
                 File pathToPopPic = new File(fullMoviePopPosterForOneMovie);
 
                 // If the fav movie is saved from top list and still in top list
-                String fullMovieTopPosterForOneMovie = BASE_TOP_POSTER_EXTERNAL_URL
+                String baseTopPosterExternalUrl = ExternalPathUtils.getExternalPathBasicFileName(this.mainActivity)
+                        + "/topratedmovies";
+                String fullMovieTopPosterForOneMovie = baseTopPosterExternalUrl
                         .concat(moviePosterForOneMovie);
                 File pathToTopPic = new File(fullMovieTopPosterForOneMovie);
 
                 // If the fav movie is not existing anymore in any of the pop or top list
-                String fullMovieFavPosterForOneMovie = BASE_FAV_POSTER_EXTERNAL_URL
+                String baseFavPosterExternalUrl = ExternalPathUtils.getExternalPathBasicFileName(this.mainActivity)
+                        + "/favmovies";
+                String fullMovieFavPosterForOneMovie = baseFavPosterExternalUrl
                         .concat(moviePosterForOneMovie);
                 File pathToFavPic = new File(fullMovieFavPosterForOneMovie);
 

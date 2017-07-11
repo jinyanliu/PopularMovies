@@ -12,7 +12,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -54,6 +53,7 @@ import se.sugarest.jane.popularmovies.tasks.FetchTrailerTask;
 import se.sugarest.jane.popularmovies.trailer.Trailer;
 import se.sugarest.jane.popularmovies.trailer.TrailerAdapter;
 import se.sugarest.jane.popularmovies.trailer.TrailerAdapter.TrailerAdapterOnClickHandler;
+import se.sugarest.jane.popularmovies.utilities.ExternalPathUtils;
 
 /**
  * Created by jane on 3/1/17.
@@ -85,13 +85,6 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
 
     private int saveTrailerRecordNumber;
     private int deleteTrailerRecordNumber;
-
-    private final String BASE_POP_THUMBNAIL_EXTERNAL_URL = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
-            + "/popthumbnails";
-    private final String BASE_TOP_THUMBNAIL_EXTERNAL_URL = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
-            + "/topthumbnails";
-    private final String BASE_FAV_THUMBNAIL_EXTERNAL_URL = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
-            + "/favthumbnails";
 
     private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
     private final String IMAGE_SIZE_W780 = "w780/";
@@ -366,7 +359,9 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         String orderBy = getPreference();
         if ("popular".equals(orderBy)) {
             String currentMovieImageThumbnail = mCurrentMovie.getmMoviePosterImageThumbnail();
-            String fullMovieImageThumbnailForOneMovie = BASE_POP_THUMBNAIL_EXTERNAL_URL
+            String basePopThumbnailExternalUrl = ExternalPathUtils.getExternalPathBasicFileName(this)
+                    + "/popthumbnails";
+            String fullMovieImageThumbnailForOneMovie = basePopThumbnailExternalUrl
                     .concat(currentMovieImageThumbnail);
             File pathToPic = new File(fullMovieImageThumbnailForOneMovie);
 
@@ -376,7 +371,9 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                     .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
         } else if ("top_rated".equals(orderBy)) {
             String currentMovieImageThumbnail = mCurrentMovie.getmMoviePosterImageThumbnail();
-            String fullMovieImageThumbnailForOneMovie = BASE_TOP_THUMBNAIL_EXTERNAL_URL
+            String baseTopThumbnailExternalUrl = ExternalPathUtils.getExternalPathBasicFileName(this)
+                    + "/topthumbnails";
+            String fullMovieImageThumbnailForOneMovie = baseTopThumbnailExternalUrl
                     .concat(currentMovieImageThumbnail);
             File pathToPic = new File(fullMovieImageThumbnailForOneMovie);
 
@@ -387,15 +384,21 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         } else {
             String currentMovieImageThumbnail = mCurrentMovie.getmMoviePosterImageThumbnail();
 
-            String fullMoviePopImageThumbnailForOneMovie = BASE_POP_THUMBNAIL_EXTERNAL_URL
+            String basePopThumbnailExternalUrl = ExternalPathUtils.getExternalPathBasicFileName(this)
+                    + "/popthumbnails";
+            String fullMoviePopImageThumbnailForOneMovie = basePopThumbnailExternalUrl
                     .concat(currentMovieImageThumbnail);
             File pathToPopPic = new File(fullMoviePopImageThumbnailForOneMovie);
 
-            String fullMovieTopImageThumbnailForOneMovie = BASE_TOP_THUMBNAIL_EXTERNAL_URL
+            String baseTopThumbnailExternalUrl = ExternalPathUtils.getExternalPathBasicFileName(this)
+                    + "/topthumbnails";
+            String fullMovieTopImageThumbnailForOneMovie = baseTopThumbnailExternalUrl
                     .concat(currentMovieImageThumbnail);
             File pathToTopPic = new File(fullMovieTopImageThumbnailForOneMovie);
 
-            String fullMovieFavImageThumbnailForOneMovie = BASE_FAV_THUMBNAIL_EXTERNAL_URL
+            String baseFavThumbnailExternalUrl = ExternalPathUtils.getExternalPathBasicFileName(this)
+                    + "/favthumbnails";
+            String fullMovieFavImageThumbnailForOneMovie = baseFavThumbnailExternalUrl
                     .concat(currentMovieImageThumbnail);
             File pathToFavPic = new File(fullMovieFavImageThumbnailForOneMovie);
 
