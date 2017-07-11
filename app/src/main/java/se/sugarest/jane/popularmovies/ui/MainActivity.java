@@ -1,5 +1,8 @@
 package se.sugarest.jane.popularmovies.ui;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
@@ -37,6 +40,7 @@ import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedEntry
 import se.sugarest.jane.popularmovies.data.MovieContract.FavMovieEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.ReviewEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.TrailerEntry;
+import se.sugarest.jane.popularmovies.jobscheduler.FetchMovieService;
 import se.sugarest.jane.popularmovies.movie.FullMovie;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter.MovieAdapterOnClickHandler;
@@ -198,9 +202,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                 orderBy = "movie/" + orderBy;
                 new FetchMoviePostersTask(this).execute(orderBy);
                 new PersistMovieTask(this).execute(orderBy);
-                if (mToast != null) {
-                    mToast.cancel();
-                }
+
+                scheduleFetchMovieJob();
+
             } else {
                 initCursorLoader();
                 persistFavMovie();
@@ -209,6 +213,20 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         } else {
             hideLoadingIndicators();
             initCursorLoader();
+        }
+    }
+
+    private void scheduleFetchMovieJob() {
+        Log.i(TAG, "Scheduling job.");
+        ComponentName serviceName = new ComponentName(this, FetchMovieService.class);
+        JobInfo jobInfo = new JobInfo.Builder(444, serviceName)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setPeriodic(JobInfo.getMinPeriodMillis(), JobInfo.getMinFlexMillis())
+                .build();
+        JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        int result = scheduler.schedule(jobInfo);
+        if (result == JobScheduler.RESULT_SUCCESS) {
+            Log.i(TAG, "Job scheduled successfully!");
         }
     }
 
