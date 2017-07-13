@@ -42,7 +42,7 @@ import se.sugarest.jane.popularmovies.data.MovieContract.FavMovieEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.ReviewEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.TrailerEntry;
 import se.sugarest.jane.popularmovies.jobscheduler.FetchMovieService;
-import se.sugarest.jane.popularmovies.movie.FullMovie;
+import se.sugarest.jane.popularmovies.movie.Movie;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter.MovieAdapterOnClickHandler;
 import se.sugarest.jane.popularmovies.movie.MovieBasicInfo;
@@ -233,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         }
     }
 
-    private void persistFavMovie() {
+    public void persistFavMovie() {
         /*
         download pictures for favorite movies.
 
@@ -511,7 +511,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
      * clicks.
      */
     @Override
-    public void onClick(FullMovie movie) {
+    public void onClick(Movie movie) {
         Context context = this;
         Class destinationClass = DetailActivity.class;
         Intent intentToStartDetailActivity = new Intent(context, destinationClass);

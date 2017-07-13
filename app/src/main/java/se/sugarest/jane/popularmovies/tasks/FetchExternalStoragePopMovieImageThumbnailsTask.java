@@ -1,6 +1,5 @@
 package se.sugarest.jane.popularmovies.tasks;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -19,7 +18,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import se.sugarest.jane.popularmovies.R;
-import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
 import se.sugarest.jane.popularmovies.movie.MovieBasicInfo;
 import se.sugarest.jane.popularmovies.ui.MainActivity;
 import se.sugarest.jane.popularmovies.utilities.ExternalPathUtils;
@@ -113,21 +111,7 @@ public class FetchExternalStoragePopMovieImageThumbnailsTask extends AsyncTask<M
     @Override
     protected void onPostExecute(String s) {
         if (s != null) {
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(CacheMovieMostPopularEntry.COLUMN_EXTERNAL_STORAGE_IMAGE_THUMBNAIL, s);
-            String selection = CacheMovieMostPopularEntry.COLUMN_MOVIE_ID;
-            selection = selection + " =?";
-            String[] selectionArgs = {movieId};
-            Log.i(TAG, "This is movie Id: " + movieId + ", image thumbnail external path: " + s);
-            int rowsUpdated = this.context.getContentResolver()
-                    .update(CacheMovieMostPopularEntry.CONTENT_URI,
-                            contentValues,
-                            selection,
-                            selectionArgs);
-
-            if (rowsUpdated > 0) {
-                Log.i(TAG, "Insert external image thumbnail poster path into cache popular movie table successful.");
-            }
+            Log.i(TAG, "Insert external image thumbnail poster path: " + s + " into cache popular movie folder successful.");
         } else {
             Log.e(TAG, context.getString(R.string.log_error_message_offline_before_download_pics_finish));
             String expectedMsg = context.getString(R.string.toast_message_offline_before_download_finish);

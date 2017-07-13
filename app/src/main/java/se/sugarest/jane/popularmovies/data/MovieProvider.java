@@ -238,7 +238,7 @@ public class MovieProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case MOVIES:
-                return MovieContract.FavMovieEntry.CONTENT_LIST_TYPE;
+                return FavMovieEntry.CONTENT_LIST_TYPE;
             case MOVIE_ID:
                 return FavMovieEntry.CONTENT_ITEM_TYPE;
             case REVIEWS:
@@ -249,6 +249,10 @@ public class MovieProvider extends ContentProvider {
                 return TrailerEntry.CONTENT_LIST_TYPE;
             case TRAILER_ID:
                 return TrailerEntry.CONTENT_ITEM_TYPE;
+            case CACHE_MOVIES_MOST_POPULAR:
+                return CacheMovieMostPopularEntry.CONTENT_LIST_TYPE;
+            case CACHE_MOVIES_TOP_RATED:
+                return CacheMovieTopRatedEntry.CONTENT_LIST_TYPE;
             default:
                 throw new IllegalArgumentException(getContext().getString(R.string.get_type_default_illegal_argument_exception_message_part_one)
                         + uri + getContext().getString(R.string.get_type_default_illegal_argument_exception_message_part_two) + match);

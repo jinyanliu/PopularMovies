@@ -84,12 +84,6 @@ public class MovieContract {
         public static final String COLUMN_POSTER_PATH = "poster_path";
 
         /**
-         * External Storage poster path is stored as a String representing movie's external poster_path
-         * url, used for display on main screen when it is offline.
-         */
-        public static final String COLUMN_EXTERNAL_STORAGE_POSTER_PATH = "external_storage_poster_path";
-
-        /**
          * OriginalTitle is stored as a String representing movie's original title.
          */
         public static final String COLUMN_ORIGINAL_TITLE = "original_title";
@@ -100,12 +94,6 @@ public class MovieContract {
          */
         public static final String COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL
                 = "movie_poster_image_thumbnail";
-
-        /**
-         * External Storage image thumbnail is stored as a String representing movie's external image_thumbnail
-         * url, used for display on detail screen when it is offline.
-         */
-        public static final String COLUMN_EXTERNAL_STORAGE_IMAGE_THUMBNAIL = "external_storage_image_thumbnail";
 
         /**
          * APlotSynopsis is stored as a String representing movie's plot synopsis.
@@ -238,12 +226,6 @@ public class MovieContract {
         public static final String COLUMN_POSTER_PATH = "poster_path";
 
         /**
-         * External Storage poster path is stored as a String representing movie's external poster_path
-         * url, used for display on main screen when it is offline.
-         */
-        public static final String COLUMN_EXTERNAL_STORAGE_POSTER_PATH = "external_storage_poster_path";
-
-        /**
          * OriginalTitle is stored as a String representing movie's original title.
          */
         public static final String COLUMN_ORIGINAL_TITLE = "original_title";
@@ -254,12 +236,6 @@ public class MovieContract {
          */
         public static final String COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL
                 = "movie_poster_image_thumbnail";
-
-        /**
-         * External Storage image thumbnail is stored as a String representing movie's external image
-         * thumbnail path url, used for display on detail screen when it is offline.
-         */
-        public static final String COLUMN_EXTERNAL_STORAGE_IMAGE_THUMBNAIL = "external_storage_image_thumbnail";
 
         /**
          * APlotSynopsis is stored as a String representing movie's plot synopsis.
@@ -314,12 +290,6 @@ public class MovieContract {
         public static final String COLUMN_POSTER_PATH = "poster_path";
 
         /**
-         * External Storage poster path is stored as a String representing movie's external poster_path
-         * url, used for display on main screen when it is offline.
-         */
-        public static final String COLUMN_EXTERNAL_STORAGE_POSTER_PATH = "external_storage_poster_path";
-
-        /**
          * OriginalTitle is stored as a String representing movie's original title.
          */
         public static final String COLUMN_ORIGINAL_TITLE = "original_title";
@@ -330,12 +300,6 @@ public class MovieContract {
          */
         public static final String COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL
                 = "movie_poster_image_thumbnail";
-
-        /**
-         * External Storage image thumbnail is stored as a String representing movie's external image
-         * thumbnail path url, used for display on detail screen when it is offline.
-         */
-        public static final String COLUMN_EXTERNAL_STORAGE_IMAGE_THUMBNAIL = "external_storage_image_thumbnail";
 
         /**
          * APlotSynopsis is stored as a String representing movie's plot synopsis.
@@ -358,3 +322,4 @@ public class MovieContract {
         public static final String COLUMN_MOVIE_ID = "movie_id";
     }
 }
+
