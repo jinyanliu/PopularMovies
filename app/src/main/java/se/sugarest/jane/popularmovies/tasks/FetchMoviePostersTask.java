@@ -40,7 +40,6 @@ public class FetchMoviePostersTask extends AsyncTask<String, Void, List<Movie>> 
         this.mainActivity = mainActivity;
     }
 
-
     @Override
     protected void onPreExecute() {
         super.onPreExecute();

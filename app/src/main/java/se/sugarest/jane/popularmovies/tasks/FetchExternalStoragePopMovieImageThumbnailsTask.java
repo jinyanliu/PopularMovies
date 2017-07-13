@@ -5,6 +5,10 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
+import android.view.Gravity;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -17,6 +21,8 @@ import java.net.URL;
 import se.sugarest.jane.popularmovies.R;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
 import se.sugarest.jane.popularmovies.movie.MovieBasicInfo;
+import se.sugarest.jane.popularmovies.ui.MainActivity;
+import se.sugarest.jane.popularmovies.utilities.ExternalPathUtils;
 
 /**
  * Created by jane on 17-6-20.
@@ -67,8 +73,7 @@ public class FetchExternalStoragePopMovieImageThumbnailsTask extends AsyncTask<M
             String filename = lastPart;
             Log.i(TAG, this.context.getString(R.string.log_information_message_download_filename) + filename);
 
-            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
-                    + "/popthumbnails/" + filename);
+            File file = new File(ExternalPathUtils.getExternalPathBasicFileName(this.context) + "/popthumbnails/" + filename);
 
             if (!file.exists()) {
                 file.getParentFile().mkdirs();
@@ -127,22 +132,20 @@ public class FetchExternalStoragePopMovieImageThumbnailsTask extends AsyncTask<M
             Log.e(TAG, context.getString(R.string.log_error_message_offline_before_download_pics_finish));
             String expectedMsg = context.getString(R.string.toast_message_offline_before_download_finish);
 
-/*            if (this.context.getmToast() != null) {
-                String displayedText = ((TextView) ((LinearLayout) this.context.getmToast().getView())
+            if (MainActivity.mToast != null) {
+                String displayedText = ((TextView) ((LinearLayout) MainActivity.mToast.getView())
                         .getChildAt(0)).getText().toString();
                 if (!displayedText.equals(expectedMsg)) {
-                    this.context.getmToast().cancel();
-                    Toast newToast = Toast.makeText(context, context.getString(R.string.toast_message_offline_before_download_finish), Toast.LENGTH_SHORT);
-                    this.context.setmToast(newToast);
-                    this.context.getmToast().setGravity(Gravity.BOTTOM, 0, 0);
-                    this.context.getmToast().show();
+                    MainActivity.mToast.cancel();
+                    MainActivity.mToast = Toast.makeText(context, context.getString(R.string.toast_message_offline_before_download_finish), Toast.LENGTH_SHORT);
+                    MainActivity.mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                    MainActivity.mToast.show();
                 }
             } else {
-                Toast newToast = Toast.makeText(context, expectedMsg, Toast.LENGTH_SHORT);
-                this.context.setmToast(newToast);
-                this.context.getmToast().setGravity(Gravity.BOTTOM, 0, 0);
-                this.context.getmToast().show();
-            }*/
+                MainActivity.mToast = Toast.makeText(context, expectedMsg, Toast.LENGTH_SHORT);
+                MainActivity.mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                MainActivity.mToast.show();
+            }
         }
     }
 }

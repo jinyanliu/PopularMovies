@@ -1,6 +1,7 @@
 package se.sugarest.jane.popularmovies.tasks;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
@@ -17,10 +18,11 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import se.sugarest.jane.popularmovies.ui.MainActivity;
 import se.sugarest.jane.popularmovies.R;
 import se.sugarest.jane.popularmovies.data.MovieContract.FavMovieEntry;
 import se.sugarest.jane.popularmovies.movie.MovieBasicInfo;
+import se.sugarest.jane.popularmovies.ui.MainActivity;
+import se.sugarest.jane.popularmovies.utilities.ExternalPathUtils;
 
 /**
  * Created by jane on 17-5-31.
@@ -28,10 +30,10 @@ import se.sugarest.jane.popularmovies.movie.MovieBasicInfo;
 
 public class FetchExternalStorageFavMoviePosterImagesTask extends AsyncTask<MovieBasicInfo, Void, String> {
 
-    private MainActivity mainActivity;
+    private Context context;
 
-    public FetchExternalStorageFavMoviePosterImagesTask(MainActivity mainActivity) {
-        this.mainActivity = mainActivity;
+    public FetchExternalStorageFavMoviePosterImagesTask(Context context) {
+        this.context = context;
     }
 
     private static final String TAG = FetchExternalStorageFavMoviePosterImagesTask.class.getSimpleName();
@@ -70,10 +72,9 @@ public class FetchExternalStorageFavMoviePosterImagesTask extends AsyncTask<Movi
             String[] parts = urlToBeDownloaded.split("/");
             String lastPart = parts[7];
             String filename = lastPart;
-            Log.i(TAG, mainActivity.getString(R.string.log_information_message_download_filename) + filename);
+            Log.i(TAG, context.getString(R.string.log_information_message_download_filename) + filename);
 
-            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
-                    + "/favmovies/" + filename);
+            File file = new File(ExternalPathUtils.getExternalPathBasicFileName(this.context) + "/favmovies/" + filename);
 
             if (!file.exists()) {
                 file.getParentFile().mkdirs();
@@ -92,8 +93,8 @@ public class FetchExternalStorageFavMoviePosterImagesTask extends AsyncTask<Movi
             while ((bufferLength = inputStream.read(buffer)) > 0) {
                 fileOutput.write(buffer, 0, bufferLength);
                 downloadedSize += bufferLength;
-                Log.i(TAG, mainActivity.getString(R.string.log_information_message_download_downloadedSize)
-                        + downloadedSize + mainActivity.getString(R.string.log_information_message_download_totalSize)
+                Log.i(TAG, context.getString(R.string.log_information_message_download_downloadedSize)
+                        + downloadedSize + context.getString(R.string.log_information_message_download_totalSize)
                         + totalSize);
             }
             fileOutput.close();
@@ -106,7 +107,7 @@ public class FetchExternalStorageFavMoviePosterImagesTask extends AsyncTask<Movi
             filepath = null;
             Log.e(TAG, e.getMessage());
         }
-        Log.i(TAG, mainActivity.getString(R.string.log_information_message_download_filepath) + filepath);
+        Log.i(TAG, context.getString(R.string.log_information_message_download_filepath) + filepath);
         return filepath;
     }
 
@@ -119,7 +120,7 @@ public class FetchExternalStorageFavMoviePosterImagesTask extends AsyncTask<Movi
             selection = selection + " =?";
             String[] selectionArgs = {movieId};
             Log.i(TAG, "This is movie Id: " + movieId + ", external path: " + s);
-            int rowsUpdated = mainActivity.getContentResolver()
+            int rowsUpdated = context.getContentResolver()
                     .update(FavMovieEntry.CONTENT_URI,
                             contentValues,
                             selection,
@@ -129,24 +130,22 @@ public class FetchExternalStorageFavMoviePosterImagesTask extends AsyncTask<Movi
                 Log.i(TAG, "Insert external poster path into fav movie table successful.");
             }
         } else {
-            Log.e(TAG, mainActivity.getString(R.string.log_error_message_offline_before_download_pics_finish));
-            String expectedMsg = mainActivity.getString(R.string.toast_message_offline_before_download_finish);
+            Log.e(TAG, context.getString(R.string.log_error_message_offline_before_download_pics_finish));
+            String expectedMsg = context.getString(R.string.toast_message_offline_before_download_finish);
 
-            if (this.mainActivity.getmToast() != null) {
-                String displayedText = ((TextView) ((LinearLayout) this.mainActivity.getmToast().getView())
+            if (MainActivity.mToast != null) {
+                String displayedText = ((TextView) ((LinearLayout) MainActivity.mToast.getView())
                         .getChildAt(0)).getText().toString();
                 if (!displayedText.equals(expectedMsg)) {
-                    this.mainActivity.getmToast().cancel();
-                    Toast newToast = Toast.makeText(mainActivity, mainActivity.getString(R.string.toast_message_offline_before_download_finish), Toast.LENGTH_SHORT);
-                    this.mainActivity.setmToast(newToast);
-                    this.mainActivity.getmToast().setGravity(Gravity.BOTTOM, 0, 0);
-                    this.mainActivity.getmToast().show();
+                    MainActivity.mToast.cancel();
+                    MainActivity.mToast = Toast.makeText(context, context.getString(R.string.toast_message_offline_before_download_finish), Toast.LENGTH_SHORT);
+                    MainActivity.mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                    MainActivity.mToast.show();
                 }
             } else {
-                Toast newToast = Toast.makeText(mainActivity, expectedMsg, Toast.LENGTH_SHORT);
-                this.mainActivity.setmToast(newToast);
-                this.mainActivity.getmToast().setGravity(Gravity.BOTTOM, 0, 0);
-                this.mainActivity.getmToast().show();
+                MainActivity.mToast = Toast.makeText(context, expectedMsg, Toast.LENGTH_SHORT);
+                MainActivity.mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                MainActivity.mToast.show();
             }
         }
     }

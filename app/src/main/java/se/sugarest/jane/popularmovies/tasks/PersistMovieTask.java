@@ -4,10 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -23,12 +20,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
-import se.sugarest.jane.popularmovies.ui.MainActivity;
 import se.sugarest.jane.popularmovies.R;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedEntry;
 import se.sugarest.jane.popularmovies.movie.Movie;
 import se.sugarest.jane.popularmovies.movie.MovieBasicInfo;
+import se.sugarest.jane.popularmovies.ui.MainActivity;
+import se.sugarest.jane.popularmovies.utilities.ExternalPathUtils;
 import se.sugarest.jane.popularmovies.utilities.MovieJsonUtils;
 import se.sugarest.jane.popularmovies.utilities.NetworkUtils;
 
@@ -43,10 +41,10 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
     private final String IMAGE_SIZE_W780 = "w780/";
     private final String IMAGE_SIZE_W185 = "w185/";
 
-    MainActivity mainActivity;
+    Context context;
 
-    public PersistMovieTask(MainActivity mainActivity) {
-        this.mainActivity = mainActivity;
+    public PersistMovieTask(Context context) {
+        this.context = context;
     }
 
 
@@ -57,6 +55,8 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
     @Override
     protected List<Movie> doInBackground(String... params) {
+
+        Log.i(TAG, "Halloooooooooo, jag ar pa vag.");
 
         // If there's no sortBy method, there's no way of showing movies.
         if (params.length == 0) {
@@ -89,7 +89,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
             if ("popular".equals(orderBy)) {
 
                 // When latest movie data fetches, delete CacheMovieMostPopularTable
-                this.mainActivity.getContentResolver().delete(
+                this.context.getContentResolver().delete(
                         CacheMovieMostPopularEntry.CONTENT_URI,
                         null,
                         null);
@@ -108,9 +108,8 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                     String fullImageThumbnailForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W780)
                             .concat(movieData.get(i).getMoviePosterImageThumbnail());
 
+                    // Don't really need this column now. So what's inside doesn't matter.
                     values.put(CacheMovieMostPopularEntry.COLUMN_EXTERNAL_STORAGE_IMAGE_THUMBNAIL, fullImageThumbnailForOneMovie);
-
-                    // new FetchExternalStoragePopMovieImageThumbnailsTask(this.mainActivity).execute(new MovieBasicInfo(movieId, fullImageThumbnailForOneMovie));
 
                     values.put(CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE, movieData.get(i).getOriginalTitle());
 
@@ -122,8 +121,6 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                     // Don't really need this column now. So what's inside doesn't matter.
                     values.put(CacheMovieMostPopularEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH, fullMoviePosterForOneMovie);
 
-                    // new FetchExternalStoragePopMoviePosterImagesTask(this.mainActivity).execute(new MovieBasicInfo(movieId, fullMoviePosterForOneMovie));
-
                     values.put(CacheMovieMostPopularEntry.COLUMN_RELEASE_DATE, movieData.get(i).getReleaseDate());
                     values.put(CacheMovieMostPopularEntry.COLUMN_USER_RATING, movieData.get(i).getUserRating());
 
@@ -133,7 +130,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                 if (cVVector.size() > 0) {
                     ContentValues[] cvArray = new ContentValues[cVVector.size()];
                     cVVector.toArray(cvArray);
-                    int bulkInsertRows = this.mainActivity.getContentResolver().bulkInsert(
+                    int bulkInsertRows = this.context.getContentResolver().bulkInsert(
                             CacheMovieMostPopularEntry.CONTENT_URI,
                             cvArray);
                     if (bulkInsertRows == cVVector.size()) {
@@ -159,7 +156,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
             } else {
 
                 // When latest movie data fetches, delete CacheMovieTopRatedTable
-                this.mainActivity.getContentResolver().delete(
+                this.context.getContentResolver().delete(
                         CacheMovieTopRatedEntry.CONTENT_URI,
                         null,
                         null);
@@ -180,9 +177,6 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
                     values.put(CacheMovieTopRatedEntry.COLUMN_EXTERNAL_STORAGE_IMAGE_THUMBNAIL, fullImageThumbnailForOneMovie);
 
-                    // new FetchExternalStorageTopMovieImageThumbnailsTask(this.mainActivity).execute(new MovieBasicInfo(movieId, fullImageThumbnailForOneMovie));
-
-
                     values.put(CacheMovieTopRatedEntry.COLUMN_ORIGINAL_TITLE, movieData.get(i).getOriginalTitle());
 
                     values.put(CacheMovieTopRatedEntry.COLUMN_POSTER_PATH, movieData.get(i).getPosterPath());
@@ -191,8 +185,6 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                             .concat(movieData.get(i).getPosterPath());
 
                     values.put(CacheMovieTopRatedEntry.COLUMN_EXTERNAL_STORAGE_POSTER_PATH, fullMoviePosterForOneMovie);
-
-                    // new FetchExternalStorageTopMoviePosterImagesTask(this.mainActivity).execute(new MovieBasicInfo(movieId, fullMoviePosterForOneMovie));
 
                     values.put(CacheMovieTopRatedEntry.COLUMN_RELEASE_DATE, movieData.get(i).getReleaseDate());
                     values.put(CacheMovieTopRatedEntry.COLUMN_USER_RATING, movieData.get(i).getUserRating());
@@ -203,7 +195,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                 if (cVVector.size() > 0) {
                     ContentValues[] cvArray = new ContentValues[cVVector.size()];
                     cVVector.toArray(cvArray);
-                    int bulkInsertRows = this.mainActivity.getContentResolver().bulkInsert(
+                    int bulkInsertRows = this.context.getContentResolver().bulkInsert(
                             CacheMovieTopRatedEntry.CONTENT_URI,
                             cvArray);
                     if (bulkInsertRows == cVVector.size()) {
@@ -220,35 +212,29 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                 deleteExtraTopMovieImageThumbnailFilePic();
             }
         } else {
-            Log.e(TAG, mainActivity.getString(R.string.log_error_message_offline_before_fetch_movie_data_finish));
-            String expectedMsg = mainActivity.getString(R.string.toast_message_offline_before_fetch_movie_data_finish);
-
-            if (this.mainActivity.getmToast() != null) {
-                String displayedText = ((TextView) ((LinearLayout) this.mainActivity.getmToast().getView())
+            Log.e(TAG, context.getString(R.string.log_error_message_offline_before_fetch_movie_data_finish));
+            String expectedMsg = context.getString(R.string.toast_message_offline_before_fetch_movie_data_finish);
+            if (MainActivity.mToast != null) {
+                String displayedText = ((TextView) ((LinearLayout) MainActivity.mToast.getView())
                         .getChildAt(0)).getText().toString();
                 if (!displayedText.equals(expectedMsg)) {
-                    this.mainActivity.getmToast().cancel();
-                    Toast newToast = Toast.makeText(mainActivity, mainActivity.getString(R.string.toast_message_offline_before_fetch_movie_data_finish), Toast.LENGTH_SHORT);
-                    this.mainActivity.setmToast(newToast);
-                    this.mainActivity.getmToast().setGravity(Gravity.BOTTOM, 0, 0);
-                    this.mainActivity.getmToast().show();
+                    MainActivity.mToast.cancel();
+                    MainActivity.mToast = Toast.makeText(context, context.getString(R.string.toast_message_offline_before_fetch_movie_data_finish), Toast.LENGTH_SHORT);
+                    MainActivity.mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                    MainActivity.mToast.show();
                 }
             } else {
-                Toast newToast = Toast.makeText(mainActivity, expectedMsg, Toast.LENGTH_SHORT);
-                this.mainActivity.setmToast(newToast);
-                this.mainActivity.getmToast().setGravity(Gravity.BOTTOM, 0, 0);
-                this.mainActivity.getmToast().show();
+                MainActivity.mToast = Toast.makeText(context, expectedMsg, Toast.LENGTH_SHORT);
+                MainActivity.mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                MainActivity.mToast.show();
             }
         }
-
-        this.mainActivity.initCursorLoader();
-
     }
 
     private void downloadExtraPopMoviePosterFilePic() {
 
         File popularMoviePicsFolder
-                = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+                = new File(ExternalPathUtils.getExternalPathBasicFileName(this.context)
                 + "/popularmovies/");
 
         if (popularMoviePicsFolder.exists()) {
@@ -264,7 +250,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
             }
 
             String[] projection = {CacheMovieMostPopularEntry.COLUMN_MOVIE_ID, CacheMovieMostPopularEntry.COLUMN_POSTER_PATH};
-            Cursor cursor = mainActivity.getContentResolver().query(
+            Cursor cursor = context.getContentResolver().query(
                     CacheMovieMostPopularEntry.CONTENT_URI,
                     projection,
                     null,
@@ -284,30 +270,29 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                     Log.i(TAG, "download / filepath: download pop external poster pic:" + currentPosterPath);
                     String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
                             .concat(currentPosterPath);
-                    new FetchExternalStoragePopMoviePosterImagesTask(this.mainActivity).execute(
+                    new FetchExternalStoragePopMoviePosterImagesTask(this.context).execute(
                             new MovieBasicInfo(currentMovieId, fullMoviePosterForOneMovie));
                 }
                 cursor.moveToNext();
             }
             cursor.close();
 
-            if (this.mainActivity.getmShowToast()) {
+            if (MainActivity.mShowToast) {
                 if (Arrays.asList(fileNameArray).containsAll(Arrays.asList(newDataArray))) {
-
-                    if (this.mainActivity.getmToast() != null) {
-                        this.mainActivity.getmToast().cancel();
+                    if (MainActivity.mToast != null) {
+                        MainActivity.mToast.cancel();
                     }
-                    Toast newToast = Toast.makeText(this.mainActivity, this.mainActivity.getString(R.string.toast_message_refresh_pop_up_to_date), Toast.LENGTH_SHORT);
-                    this.mainActivity.setmToast(newToast);
-                    this.mainActivity.getmToast().setGravity(Gravity.BOTTOM, 0, 0);
-                    this.mainActivity.getmToast().show();
-
+                    MainActivity.mToast = Toast.makeText(this.context, this.context.getString(R.string.toast_message_refresh_pop_up_to_date), Toast.LENGTH_SHORT);
+                    MainActivity.mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                    MainActivity.mToast.show();
                 }
+                // When job scheduler refresh automatically mShowToast should be false.
+                MainActivity.mShowToast = false;
             }
 
         } else {
             String[] projection = {CacheMovieMostPopularEntry.COLUMN_MOVIE_ID, CacheMovieMostPopularEntry.COLUMN_POSTER_PATH};
-            Cursor cursor = mainActivity.getContentResolver().query(
+            Cursor cursor = context.getContentResolver().query(
                     CacheMovieMostPopularEntry.CONTENT_URI,
                     projection,
                     null,
@@ -322,7 +307,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                 Log.i(TAG, "download / filepath: download pop external poster pic:" + currentPosterPath);
                 String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
                         .concat(currentPosterPath);
-                new FetchExternalStoragePopMoviePosterImagesTask(this.mainActivity).execute(
+                new FetchExternalStoragePopMoviePosterImagesTask(this.context).execute(
                         new MovieBasicInfo(currentMovieId, fullMoviePosterForOneMovie));
                 cursor.moveToNext();
             }
@@ -333,7 +318,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
     private void downloadExtraPopMovieImageThumbnailFilePic() {
 
         File popularMovieThumbnailImagesFolder
-                = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+                = new File(ExternalPathUtils.getExternalPathBasicFileName(this.context)
                 + "/popthumbnails/");
 
         if (popularMovieThumbnailImagesFolder.exists()) {
@@ -349,7 +334,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
             }
 
             String[] projection = {CacheMovieMostPopularEntry.COLUMN_MOVIE_ID, CacheMovieMostPopularEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL};
-            Cursor cursor = mainActivity.getContentResolver().query(
+            Cursor cursor = context.getContentResolver().query(
                     CacheMovieMostPopularEntry.CONTENT_URI,
                     projection,
                     null,
@@ -365,7 +350,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                     Log.i(TAG, "download / filepath: download pop external image thumbnail pic:" + currentImageThumbnail);
                     String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W780)
                             .concat(currentImageThumbnail);
-                    new FetchExternalStoragePopMovieImageThumbnailsTask(this.mainActivity).execute(
+                    new FetchExternalStoragePopMovieImageThumbnailsTask(this.context).execute(
                             new MovieBasicInfo(currentMovieId, fullMoviePosterForOneMovie));
                 }
                 cursor.moveToNext();
@@ -373,7 +358,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
             cursor.close();
         } else {
             String[] projection = {CacheMovieMostPopularEntry.COLUMN_MOVIE_ID, CacheMovieMostPopularEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL};
-            Cursor cursor = mainActivity.getContentResolver().query(
+            Cursor cursor = context.getContentResolver().query(
                     CacheMovieMostPopularEntry.CONTENT_URI,
                     projection,
                     null,
@@ -388,7 +373,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                 Log.i(TAG, "download / filepath: download pop external image thumbnail pic:" + currentImageThumbnail);
                 String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W780)
                         .concat(currentImageThumbnail);
-                new FetchExternalStoragePopMovieImageThumbnailsTask(this.mainActivity).execute(
+                new FetchExternalStoragePopMovieImageThumbnailsTask(this.context).execute(
                         new MovieBasicInfo(currentMovieId, fullMoviePosterForOneMovie));
                 cursor.moveToNext();
             }
@@ -398,7 +383,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
     private void deleteExtraPopMoviePosterFilePic() {
         String[] projection = {CacheMovieMostPopularEntry.COLUMN_POSTER_PATH};
-        Cursor cursor = mainActivity.getContentResolver().query(
+        Cursor cursor = context.getContentResolver().query(
                 CacheMovieMostPopularEntry.CONTENT_URI,
                 projection,
                 null,
@@ -419,7 +404,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
         cursor.close();
 
         File popularMoviePicsFolder
-                = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+                = new File(ExternalPathUtils.getExternalPathBasicFileName(this.context)
                 + "/popularmovies/");
         if (popularMoviePicsFolder.exists()) {
             for (File pic : popularMoviePicsFolder.listFiles()) {
@@ -434,7 +419,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
     private void deleteExtraPopMovieImageThumbnailFilePic() {
         String[] projection = {CacheMovieMostPopularEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL};
-        Cursor cursor = mainActivity.getContentResolver().query(
+        Cursor cursor = context.getContentResolver().query(
                 CacheMovieMostPopularEntry.CONTENT_URI,
                 projection,
                 null,
@@ -455,7 +440,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
         cursor.close();
 
         File popularMovieThumbnailImagesFolder
-                = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+                = new File(ExternalPathUtils.getExternalPathBasicFileName(this.context)
                 + "/popthumbnails/");
         if (popularMovieThumbnailImagesFolder.exists()) {
             for (File pic : popularMovieThumbnailImagesFolder.listFiles()) {
@@ -471,7 +456,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
     private void downloadExtraTopMoviePosterFilePic() {
 
         File topRatedMoviePicsFolder
-                = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+                = new File(ExternalPathUtils.getExternalPathBasicFileName(this.context)
                 + "/topratedmovies/");
 
         if (topRatedMoviePicsFolder.exists()) {
@@ -487,7 +472,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
             }
 
             String[] projection = {CacheMovieTopRatedEntry.COLUMN_MOVIE_ID, CacheMovieTopRatedEntry.COLUMN_POSTER_PATH};
-            Cursor cursor = mainActivity.getContentResolver().query(
+            Cursor cursor = context.getContentResolver().query(
                     CacheMovieTopRatedEntry.CONTENT_URI,
                     projection,
                     null,
@@ -507,30 +492,29 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                     Log.i(TAG, "download / filepath: download top external poster pic:" + currentPosterPath);
                     String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
                             .concat(currentPosterPath);
-                    new FetchExternalStorageTopMoviePosterImagesTask(this.mainActivity).execute(
+                    new FetchExternalStorageTopMoviePosterImagesTask(this.context).execute(
                             new MovieBasicInfo(currentMovieId, fullMoviePosterForOneMovie));
                 }
                 cursor.moveToNext();
             }
             cursor.close();
 
-            if (this.mainActivity.getmShowToast()) {
+            if (MainActivity.mShowToast) {
                 if (Arrays.asList(fileNameArray).containsAll(Arrays.asList(newDataArray))) {
-
-                    if (this.mainActivity.getmToast() != null) {
-                        this.mainActivity.getmToast().cancel();
+                    if (MainActivity.mToast != null) {
+                        MainActivity.mToast.cancel();
                     }
-                    Toast newToast = Toast.makeText(this.mainActivity, this.mainActivity.getString(R.string.toast_message_refresh_top_up_to_date), Toast.LENGTH_SHORT);
-                    this.mainActivity.setmToast(newToast);
-                    this.mainActivity.getmToast().setGravity(Gravity.BOTTOM, 0, 0);
-                    this.mainActivity.getmToast().show();
-
+                    MainActivity.mToast = Toast.makeText(this.context, this.context.getString(R.string.toast_message_refresh_top_up_to_date), Toast.LENGTH_SHORT);
+                    MainActivity.mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                    MainActivity.mToast.show();
                 }
+                // When job scheduler refresh automatically mShowToast should be false.
+                MainActivity.mShowToast = false;
             }
 
         } else {
             String[] projection = {CacheMovieTopRatedEntry.COLUMN_MOVIE_ID, CacheMovieTopRatedEntry.COLUMN_POSTER_PATH};
-            Cursor cursor = mainActivity.getContentResolver().query(
+            Cursor cursor = context.getContentResolver().query(
                     CacheMovieTopRatedEntry.CONTENT_URI,
                     projection,
                     null,
@@ -545,7 +529,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                 Log.i(TAG, "download / filepath: download top external poster pic:" + currentPosterPath);
                 String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
                         .concat(currentPosterPath);
-                new FetchExternalStorageTopMoviePosterImagesTask(this.mainActivity).execute(
+                new FetchExternalStorageTopMoviePosterImagesTask(this.context).execute(
                         new MovieBasicInfo(currentMovieId, fullMoviePosterForOneMovie));
                 cursor.moveToNext();
             }
@@ -556,7 +540,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
     private void downloadExtraTopMovieImageThumbnailFilePic() {
 
         File topRatedMovieThumbnailImagesFolder
-                = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+                = new File(ExternalPathUtils.getExternalPathBasicFileName(this.context)
                 + "/topthumbnails/");
 
         if (topRatedMovieThumbnailImagesFolder.exists()) {
@@ -572,7 +556,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
             }
 
             String[] projection = {CacheMovieTopRatedEntry.COLUMN_MOVIE_ID, CacheMovieTopRatedEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL};
-            Cursor cursor = mainActivity.getContentResolver().query(
+            Cursor cursor = context.getContentResolver().query(
                     CacheMovieTopRatedEntry.CONTENT_URI,
                     projection,
                     null,
@@ -588,7 +572,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                     Log.i(TAG, "download / filepath: download top external image thumbnail pic:" + currentImageThumbnail);
                     String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W780)
                             .concat(currentImageThumbnail);
-                    new FetchExternalStorageTopMovieImageThumbnailsTask(this.mainActivity).execute(
+                    new FetchExternalStorageTopMovieImageThumbnailsTask(this.context).execute(
                             new MovieBasicInfo(currentMovieId, fullMoviePosterForOneMovie));
                 }
                 cursor.moveToNext();
@@ -596,7 +580,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
             cursor.close();
         } else {
             String[] projection = {CacheMovieTopRatedEntry.COLUMN_MOVIE_ID, CacheMovieTopRatedEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL};
-            Cursor cursor = mainActivity.getContentResolver().query(
+            Cursor cursor = context.getContentResolver().query(
                     CacheMovieTopRatedEntry.CONTENT_URI,
                     projection,
                     null,
@@ -611,7 +595,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
                 Log.i(TAG, "download / filepath: download top external image thumbnail pic:" + currentImageThumbnail);
                 String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W780)
                         .concat(currentImageThumbnail);
-                new FetchExternalStorageTopMovieImageThumbnailsTask(this.mainActivity).execute(
+                new FetchExternalStorageTopMovieImageThumbnailsTask(this.context).execute(
                         new MovieBasicInfo(currentMovieId, fullMoviePosterForOneMovie));
                 cursor.moveToNext();
             }
@@ -621,7 +605,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
     private void deleteExtraTopMoviePosterFilePic() {
         String[] projection = {CacheMovieTopRatedEntry.COLUMN_POSTER_PATH};
-        Cursor cursor = mainActivity.getContentResolver().query(
+        Cursor cursor = context.getContentResolver().query(
                 CacheMovieTopRatedEntry.CONTENT_URI,
                 projection,
                 null,
@@ -642,7 +626,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
         cursor.close();
 
         File topRatedMoviePicsFolder
-                = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+                = new File(ExternalPathUtils.getExternalPathBasicFileName(this.context)
                 + "/topratedmovies/");
         if (topRatedMoviePicsFolder.exists()) {
             for (File pic : topRatedMoviePicsFolder.listFiles()) {
@@ -657,7 +641,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
     private void deleteExtraTopMovieImageThumbnailFilePic() {
         String[] projection = {CacheMovieTopRatedEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL};
-        Cursor cursor = mainActivity.getContentResolver().query(
+        Cursor cursor = context.getContentResolver().query(
                 CacheMovieTopRatedEntry.CONTENT_URI,
                 projection,
                 null,
@@ -678,7 +662,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
         cursor.close();
 
         File topRatedMovieThumbnailImagesFolder
-                = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+                = new File(ExternalPathUtils.getExternalPathBasicFileName(this.context)
                 + "/topthumbnails/");
         if (topRatedMovieThumbnailImagesFolder.exists()) {
             for (File pic : topRatedMovieThumbnailImagesFolder.listFiles()) {
@@ -693,17 +677,10 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
     @NonNull
     private String getPreference() {
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.mainActivity);
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.context);
         return sharedPrefs.getString(
-                this.mainActivity.getString(R.string.settings_order_by_key),
-                this.mainActivity.getString(R.string.settings_order_by_default)
+                this.context.getString(R.string.settings_order_by_key),
+                this.context.getString(R.string.settings_order_by_default)
         );
-    }
-
-    private NetworkInfo getNetworkInfo() {
-        // Get a reference to the ConnectivityManager to check state of network connectivity.
-        ConnectivityManager connMgr = (ConnectivityManager) this.mainActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
-        // Get details on the currently active default data network
-        return connMgr.getActiveNetworkInfo();
     }
 }

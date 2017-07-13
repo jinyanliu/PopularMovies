@@ -12,10 +12,11 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -49,19 +50,22 @@ import se.sugarest.jane.popularmovies.tasks.FetchExternalStorageFavMovieImageThu
 import se.sugarest.jane.popularmovies.tasks.FetchExternalStorageFavMoviePosterImagesTask;
 import se.sugarest.jane.popularmovies.tasks.FetchMoviePostersTask;
 import se.sugarest.jane.popularmovies.tasks.PersistMovieTask;
+import se.sugarest.jane.popularmovies.utilities.ExternalPathUtils;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapterOnClickHandler
         , android.app.LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    public static Toast mToast;
+
+    public static Boolean mShowToast = false;
+
     private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
     private final String IMAGE_SIZE_W780 = "w780/";
     private final String IMAGE_SIZE_W185 = "w185/";
 
     public static final int MOVIE_LOADER = 0;
-
-    private Toast mToast;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -91,12 +95,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
 
     public void setmToast(Toast mToast) {
         this.mToast = mToast;
-    }
-
-    private Boolean mShowToast;
-
-    public Boolean getmShowToast() {
-        return mShowToast;
     }
 
     @Override
@@ -196,26 +194,31 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
 
         // If there is a network connection, fetch data
         if (getNetworkInfo() != null && getNetworkInfo().isConnected()) {
+            // First loading the app, don't show up to date toast if it is up to date.
             mShowToast = false;
             String orderBy = getPreference();
             if (!"favorites".equals(orderBy)) {
                 orderBy = "movie/" + orderBy;
                 new FetchMoviePostersTask(this).execute(orderBy);
                 new PersistMovieTask(this).execute(orderBy);
+                initCursorLoader();
 
-                scheduleFetchMovieJob();
+                // API 24 Android 7.0 Nougat
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    scheduleFetchMovieJob();
+                }
 
             } else {
                 initCursorLoader();
                 persistFavMovie();
             }
-            // First loading the app, don't show up to date toast if it is up to date.
         } else {
             hideLoadingIndicators();
             initCursorLoader();
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void scheduleFetchMovieJob() {
         Log.i(TAG, "Scheduling job.");
         ComponentName serviceName = new ComponentName(this, FetchMovieService.class);
@@ -258,7 +261,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     private void downloadExtraFavMoviePosterFilePic() {
 
         File favMoviePicsFolder
-                = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+                = new File(ExternalPathUtils.getExternalPathBasicFileName(this)
                 + "/favmovies/");
 
         if (favMoviePicsFolder.exists()) {
@@ -340,7 +343,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     private void downloadExtraFavMovieImageThumbnailFilePic() {
 
         File favMovieThumbnailsFolder
-                = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+                = new File(ExternalPathUtils.getExternalPathBasicFileName(this)
                 + "/favthumbnails/");
 
         if (favMovieThumbnailsFolder.exists()) {
@@ -426,7 +429,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         cursor.close();
 
         File favMoviePicsFolder
-                = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+                = new File(ExternalPathUtils.getExternalPathBasicFileName(this)
                 + "/favmovies/");
         if (favMoviePicsFolder.exists()) {
             for (File pic : favMoviePicsFolder.listFiles()) {
@@ -462,7 +465,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         cursor.close();
 
         File favMovieThumbnailsFolder
-                = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath()
+                = new File(ExternalPathUtils.getExternalPathBasicFileName(this)
                 + "/favthumbnails/");
         if (favMovieThumbnailsFolder.exists()) {
             for (File pic : favMovieThumbnailsFolder.listFiles()) {
@@ -483,6 +486,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                 orderBy = "movie/" + orderBy;
                 new FetchMoviePostersTask(MainActivity.this).execute(orderBy);
                 new PersistMovieTask(MainActivity.this).execute(orderBy);
+                initCursorLoader();
             } else {
                 initCursorLoader();
                 persistFavMovie();
