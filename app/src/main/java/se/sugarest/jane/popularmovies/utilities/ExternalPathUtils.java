@@ -5,8 +5,6 @@ package se.sugarest.jane.popularmovies.utilities;
  */
 
 import android.content.Context;
-import android.os.Build;
-import android.os.Environment;
 
 /**
  * Utility functions to handle external path in different API level.
@@ -16,15 +14,10 @@ public class ExternalPathUtils {
     private static final String TAG = ExternalPathUtils.class.getSimpleName();
 
     public static String getExternalPathBasicFileName(Context context) {
-        String externalPathBasicFileName;
-        // API 24 Android 7.0 Nougat
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            externalPathBasicFileName = context.getExternalCacheDir().getAbsolutePath();
-        } else {
-            externalPathBasicFileName = Environment
-                    .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-                    .getAbsolutePath();
-        }
-        return externalPathBasicFileName;
+        // Don't write into sd card, write into cache folder for Android apps.
+        // So when the users uninstall the app, the folder will be deleted either.
+        // If you hard write into the sd card, the folder will always be there unless the user delete
+        // them manually.
+        return context.getExternalCacheDir().getAbsolutePath();
     }
 }
