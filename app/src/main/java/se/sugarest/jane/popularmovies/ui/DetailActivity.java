@@ -956,7 +956,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                         selectionArgs,
                         null);
                 Log.i(TAG, "number of new cursor: " + newCursor.getCount());
-                if (newCursor != null & newCursor.getCount() > 0) {
+                if (newCursor != null && newCursor.getCount() > 0) {
                     newCursor.moveToFirst();
                     if (newCursor.getString(newCursor.getColumnIndex(FavMovieEntry.COLUMN_NUMBER_OF_REVIEWS)) != null) {
                         String numberOfReview = newCursor.getString(newCursor.getColumnIndex(FavMovieEntry.COLUMN_NUMBER_OF_REVIEWS));
