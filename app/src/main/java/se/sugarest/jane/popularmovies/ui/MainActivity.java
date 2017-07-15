@@ -196,22 +196,23 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         if (getNetworkInfo() != null && getNetworkInfo().isConnected()) {
             // First loading the app, don't show up to date toast if it is up to date.
             mShowToast = false;
+
             String orderBy = getPreference();
             if (!"favorites".equals(orderBy)) {
                 orderBy = "movie/" + orderBy;
                 new FetchMoviePostersTask(this).execute(orderBy);
                 new PersistMovieTask(this).execute(orderBy);
                 initCursorLoader();
-
-                // API 24 Android 7.0 Nougat
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    scheduleFetchMovieJob();
-                }
-
             } else {
                 initCursorLoader();
                 persistFavMovie();
             }
+
+            // API 24 Android 7.0 Nougat
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                scheduleFetchMovieJob();
+            }
+
         } else {
             hideLoadingIndicators();
             initCursorLoader();
@@ -233,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         }
     }
 
-    public void persistFavMovie() {
+    private void persistFavMovie() {
         /*
         download pictures for favorite movies.
 
@@ -314,6 +315,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                     mToast.setGravity(Gravity.BOTTOM, 0, 0);
                     mToast.show();
                 }
+                mShowToast = false;
             }
         } else {
             String[] projection = {FavMovieEntry.COLUMN_MOVIE_ID, FavMovieEntry.COLUMN_POSTER_PATH};

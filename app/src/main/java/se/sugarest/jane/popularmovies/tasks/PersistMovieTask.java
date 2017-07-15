@@ -56,7 +56,7 @@ public class PersistMovieTask extends AsyncTask<String, Void, List<Movie>> {
     @Override
     protected List<Movie> doInBackground(String... params) {
 
-        Log.i(TAG, "Halloooooooooo, jag ar pa vag.");
+        Log.i(TAG, "Halloooooooooo, jag ar pa " + getPreference() + " vag.");
 
         // If there's no sortBy method, there's no way of showing movies.
         if (params.length == 0) {
