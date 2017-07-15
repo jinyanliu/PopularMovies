@@ -62,6 +62,8 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                         FavMovieEntry.COLUMN_USER_RATING + " TEXT NOT NULL, " +
                         FavMovieEntry.COLUMN_RELEASE_DATE + " TEXT NOT NULL, " +
                         FavMovieEntry.COLUMN_MOVIE_ID + " TEXT NOT NULL, " +
+                        FavMovieEntry.COLUMN_NUMBER_OF_REVIEWS + " TEXT, " +
+                        FavMovieEntry.COLUMN_NUMBER_OF_TRAILERS + " TEXT, " +
                         /**
                          * To ensure this table can only contain one movie entry per movie, declaring
                          * the movie_id column to bu unique. Also specify "ON CONFLICT REPLACE". This

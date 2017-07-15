@@ -39,7 +39,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import se.sugarest.jane.popularmovies.R;
-import se.sugarest.jane.popularmovies.data.MovieContract;
 import se.sugarest.jane.popularmovies.data.MovieContract.FavMovieEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.ReviewEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.TrailerEntry;
@@ -430,6 +429,8 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         NetworkInfo networkInfo = getNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
             setCurrentMovieImageThumbnailOnLine();
+            mReviewRecyclerView.setVisibility(View.VISIBLE);
+            mTrailerRecyclerView.setVisibility(View.VISIBLE);
             loadReviewData(mCurrentMovie.getId());
             loadTrailerData(mCurrentMovie.getId());
         } else {
@@ -684,8 +685,8 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             }
         } else {
             // Happens when movie was saved when online. So reviews and trailers couldn't be null.
-            if (mCurrentMovieReviews.size() > 0) {
-                if (mCurrentMovieTrailers.size() > 0) {
+            if (mCurrentMovieReviews != null && mCurrentMovieReviews.size() > 0) {
+                if (mCurrentMovieTrailers != null && mCurrentMovieTrailers.size() > 0) {
                     deleteFavoriteMovie();
                     deleteFavoriteTrailer();
                     deleteFavoriteReview();
@@ -719,7 +720,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                     }
                 }
             } else {
-                if (mCurrentMovieTrailers.size() > 0) {
+                if (mCurrentMovieTrailers != null && mCurrentMovieTrailers.size() > 0) {
                     deleteFavoriteMovie();
                     deleteFavoriteTrailer();
                     if (mToast != null) {
@@ -751,12 +752,19 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                 }
             }
         }
+        NetworkInfo networkInfo = getNetworkInfo();
+        if (networkInfo == null || !networkInfo.isConnected()) {
+            loadTrailerData(mCurrentMovie.getId());
+            loadReviewData(mCurrentMovie.getId());
+            mTrailerRecyclerView.setVisibility(View.GONE);
+            mReviewRecyclerView.setVisibility(View.GONE);
+        }
     }
 
     /**
      * Save movie into database.
      */
-    private void saveFavoriteMovie() {
+    public void saveFavoriteMovie() {
 
         // Create a ContentValues object where column names are the keys, and current movie
         // attributes are the values.
@@ -768,9 +776,12 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         values.put(FavMovieEntry.COLUMN_USER_RATING, mCurrentMovie.getUserRating());
         values.put(FavMovieEntry.COLUMN_RELEASE_DATE, mCurrentMovie.getReleaseDate());
         values.put(FavMovieEntry.COLUMN_MOVIE_ID, mCurrentMovie.getId());
+        values.put(FavMovieEntry.COLUMN_NUMBER_OF_REVIEWS, mNumberOfReviewString);
+        Log.i(TAG, "number of reviews: " + mNumberOfReviewString);
+        values.put(FavMovieEntry.COLUMN_NUMBER_OF_TRAILERS, mNumberOfTrailerString);
 
         // Insert a new movie into the provider, returning the content URI for the new movie.
-        Uri newUri = getContentResolver().insert(MovieContract.FavMovieEntry.CONTENT_URI, values);
+        Uri newUri = getContentResolver().insert(FavMovieEntry.CONTENT_URI, values);
 
         // Show a log message depending on whether or not the insertion was successful
         if (newUri == null) {
@@ -833,7 +844,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     private void deleteFavoriteMovie() {
         String selection = FavMovieEntry.COLUMN_MOVIE_ID + "=?";
         String[] selectionArgs = {mCurrentMovie.getId()};
-        int rowsDeleted = getContentResolver().delete(MovieContract.FavMovieEntry.CONTENT_URI, selection, selectionArgs);
+        int rowsDeleted = getContentResolver().delete(FavMovieEntry.CONTENT_URI, selection, selectionArgs);
 
         if (rowsDeleted == 0) {
             deleteMovieRecordNumber = DELETE_MOVIE_FAIL;
@@ -859,6 +870,10 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             deleteReviewRecordNumber = DELETE_REVIEW_SUCCESS;
             Log.i(TAG, rowsDeleted + getString(R.string.delete_review_successful));
         }
+        NetworkInfo networkInfo = getNetworkInfo();
+        if (networkInfo == null || !networkInfo.isConnected()) {
+            mCurrentMovieReviews = null;
+        }
     }
 
     /**
@@ -876,13 +891,17 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             deleteTrailerRecordNumber = DELETE_TRAILER_SUCCESS;
             Log.i(TAG, rowsDeleted + getString(R.string.delete_trailer_successful));
         }
+        NetworkInfo networkInfo = getNetworkInfo();
+        if (networkInfo == null || !networkInfo.isConnected()) {
+            mCurrentMovieTrailers = null;
+        }
     }
 
     public void loadReviewDataFromDatabase(String movieId) {
         setReviewsLoadingIndicator();
         // Create an empty ArrayList that can start adding reviews to
         List<Review> reviews = new ArrayList<>();
-        String selection = ReviewEntry.COLUMN_MOVIE_ID;
+        String selection = ReviewEntry.COLUMN_MOVIE_ID + "=?";
         String[] selectionArgs = {movieId};
         // Perform a query on the provider using the ContentResolver.
         // Use the {@link ReviewEntry#CONTENT_URI} to access the review data.
@@ -928,7 +947,29 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                 new FetchReviewTask(this).execute(movieId);
             } else {
                 hideLoadingIndicators();
-                setNumberOfReviewTextViewText(getString(R.string.detail_activity_offline_reminder_text));
+
+                String[] projection = {FavMovieEntry.COLUMN_NUMBER_OF_REVIEWS};
+                Cursor newCursor = getContentResolver().query(
+                        FavMovieEntry.CONTENT_URI,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null);
+                Log.i(TAG, "number of new cursor: " + newCursor.getCount());
+                if (newCursor != null & newCursor.getCount() > 0) {
+                    newCursor.moveToFirst();
+                    if (newCursor.getString(newCursor.getColumnIndex(FavMovieEntry.COLUMN_NUMBER_OF_REVIEWS)) != null) {
+                        String numberOfReview = newCursor.getString(newCursor.getColumnIndex(FavMovieEntry.COLUMN_NUMBER_OF_REVIEWS));
+                        if (numberOfReview.equals("0")) {
+                            setNumberOfReviewTextViewText(numberOfReview);
+                        } else {
+                            setNumberOfReviewTextViewText(getString(R.string.detail_activity_offline_reminder_text));
+                        }
+                    } else {
+                        setNumberOfReviewTextViewText(getString(R.string.detail_activity_offline_reminder_text));
+                    }
+                }
+                newCursor.close();
             }
         }
     }
@@ -936,7 +977,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     public void loadTrailerDataFromDatabase(String movieId) {
         setTrailersLoadingIndicator();
         List<Trailer> trailers = new ArrayList<>();
-        String selection = TrailerEntry.COLUMN_MOVIE_ID;
+        String selection = TrailerEntry.COLUMN_MOVIE_ID + "=?";
         String[] selectionArgs = {movieId};
         Cursor cursor = getContentResolver().query(
                 TrailerEntry.CONTENT_URI,
@@ -972,7 +1013,29 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                 new FetchTrailerTask(this).execute(movieId);
             } else {
                 hideLoadingIndicators();
-                setNumberOfTrailerTextViewText(getString(R.string.detail_activity_offline_reminder_text));
+
+                String[] projection = {FavMovieEntry.COLUMN_NUMBER_OF_TRAILERS};
+                Cursor newCursor = getContentResolver().query(
+                        FavMovieEntry.CONTENT_URI,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null);
+                Log.i(TAG, "number of new cursor: " + newCursor.getCount());
+                if (newCursor != null & newCursor.getCount() > 0) {
+                    newCursor.moveToFirst();
+                    if (newCursor.getString(newCursor.getColumnIndex(FavMovieEntry.COLUMN_NUMBER_OF_TRAILERS)) != null) {
+                        String numberOfTrailer = newCursor.getString(newCursor.getColumnIndex(FavMovieEntry.COLUMN_NUMBER_OF_TRAILERS));
+                        if (numberOfTrailer.equals("0")) {
+                            setNumberOfTrailerTextViewText(numberOfTrailer);
+                        } else {
+                            setNumberOfTrailerTextViewText(getString(R.string.detail_activity_offline_reminder_text));
+                        }
+                    } else {
+                        setNumberOfTrailerTextViewText(getString(R.string.detail_activity_offline_reminder_text));
+                    }
+                }
+                newCursor.close();
             }
         }
     }

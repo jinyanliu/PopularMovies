@@ -74,6 +74,7 @@ public class FetchReviewTask extends AsyncTask<String, Void, List<Review>> {
             this.detailActivity.setNumberOfReviewTextViewText(numberOfReviewString);
             boolean movieIsInDatabase = this.detailActivity.checkIsMovieAlreadyInFavDatabase(movieId);
             if (movieIsInDatabase) {
+                this.detailActivity.saveFavoriteMovie();
                 this.detailActivity.saveFavoriteReview();
                 Log.i(TAG, "Save Reviews.");
             }

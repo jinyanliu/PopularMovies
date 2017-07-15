@@ -114,6 +114,9 @@ public class MovieContract {
          * MovieId is stored as a String representing movie's id, used to identify the movie.
          */
         public static final String COLUMN_MOVIE_ID = "movie_id";
+
+        public static final String COLUMN_NUMBER_OF_REVIEWS = "number_of_review";
+        public static final String COLUMN_NUMBER_OF_TRAILERS = "number_of_trailer";
     }
 
     /**

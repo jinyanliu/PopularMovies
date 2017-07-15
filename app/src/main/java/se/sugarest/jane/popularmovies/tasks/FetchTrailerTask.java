@@ -75,6 +75,7 @@ public class FetchTrailerTask extends AsyncTask<String, Void, List<Trailer>> {
             // Save secretly reviews and trailers for user.
             boolean movieIsInDatabase = this.detailActivity.checkIsMovieAlreadyInFavDatabase(movieId);
             if (movieIsInDatabase) {
+                this.detailActivity.saveFavoriteMovie();
                 this.detailActivity.saveFavoriteTrailer();
                 Log.i(TAG, "Save Trailers.");
             }
