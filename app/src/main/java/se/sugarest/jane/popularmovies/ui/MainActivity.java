@@ -40,11 +40,12 @@ import se.sugarest.jane.popularmovies.data.MovieContract.ReviewEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.TrailerEntry;
 import se.sugarest.jane.popularmovies.jobscheduler.FetchMovieService;
 import se.sugarest.jane.popularmovies.jobscheduler.PersistFavMovie;
+import se.sugarest.jane.popularmovies.jobscheduler.PersistPopMovieTask;
+import se.sugarest.jane.popularmovies.jobscheduler.PersistTopMovieTask;
 import se.sugarest.jane.popularmovies.movie.Movie;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter.MovieAdapterOnClickHandler;
 import se.sugarest.jane.popularmovies.tasks.FetchMoviePostersTask;
-import se.sugarest.jane.popularmovies.tasks.PersistMovieTask;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapterOnClickHandler
         , android.app.LoaderManager.LoaderCallbacks<Cursor> {
@@ -192,10 +193,15 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
             mShowToast = false;
 
             String orderBy = getPreference();
-            if (!"favorites".equals(orderBy)) {
+            if ("popular".equals(orderBy)) {
                 orderBy = "movie/" + orderBy;
                 new FetchMoviePostersTask(this).execute(orderBy);
-                new PersistMovieTask(this).execute(orderBy);
+                new PersistPopMovieTask(this).execute();
+                initCursorLoader();
+            } else if ("top_rated".equals(orderBy)) {
+                orderBy = "movie/" + orderBy;
+                new FetchMoviePostersTask(this).execute(orderBy);
+                new PersistTopMovieTask(this).execute();
                 initCursorLoader();
             } else {
                 initCursorLoader();
@@ -232,10 +238,15 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         if (getNetworkInfo() != null && getNetworkInfo().isConnected()) {
             mShowToast = true;
             String orderBy = getPreference();
-            if (!"favorites".equals(orderBy)) {
+            if ("popular".equals(orderBy)) {
                 orderBy = "movie/" + orderBy;
-                new FetchMoviePostersTask(MainActivity.this).execute(orderBy);
-                new PersistMovieTask(MainActivity.this).execute(orderBy);
+                new FetchMoviePostersTask(this).execute(orderBy);
+                new PersistPopMovieTask(this).execute();
+                initCursorLoader();
+            } else if ("top_rated".equals(orderBy)) {
+                orderBy = "movie/" + orderBy;
+                new FetchMoviePostersTask(this).execute(orderBy);
+                new PersistTopMovieTask(this).execute();
                 initCursorLoader();
             } else {
                 initCursorLoader();

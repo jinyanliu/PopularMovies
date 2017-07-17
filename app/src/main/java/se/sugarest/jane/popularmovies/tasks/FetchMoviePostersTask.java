@@ -28,7 +28,7 @@ import se.sugarest.jane.popularmovies.utilities.NetworkUtils;
 
 public class FetchMoviePostersTask extends AsyncTask<String, Void, List<Movie>> {
 
-    private static final String TAG = PersistMovieTask.class.getSimpleName();
+    private static final String TAG = FetchMoviePostersTask.class.getSimpleName();
 
     private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
     private final String IMAGE_SIZE_W780 = "w780/";
