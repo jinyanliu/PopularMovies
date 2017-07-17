@@ -11,10 +11,12 @@
             android:id="@+id/tv_trailers_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_detail_vertical_padding"
             android:layout_marginLeft="@dimen/activity_detail_horizontal_padding"
             android:layout_marginStart="@dimen/activity_detail_horizontal_padding"
             android:layout_marginTop="@dimen/activity_detail_vertical_padding"
             android:text="@string/detail_activity_trailers_label"
+            app:layout_constraintBottom_toTopOf="@+id/recyclerview_movie_trailers"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -48,9 +50,7 @@
             android:id="@+id/recyclerview_movie_trailers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_detail_vertical_padding"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_trailers_label" />
+            app:layout_constraintLeft_toLeftOf="parent" />
 
         <ImageView
             android:id="@+id/dividing_line_trailers_and_reviews"
@@ -66,7 +66,7 @@
             android:id="@+id/tv_user_review_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_detail_vertical_padding"
+            android:layout_marginTop="16dp"
             android:text="@string/detail_activity_user_review_label"
             android:textSize="12sp"
             app:layout_constraintLeft_toLeftOf="@+id/tv_trailers_label"
@@ -98,14 +98,20 @@
             app:layout_constraintTop_toTopOf="@+id/tv_user_review_label"
             tools:text="@string/fake_detail_movie_number_of_review" />
 
+        <TextView
+            android:id="@+id/tv_space_8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            app:layout_constraintTop_toBottomOf="@+id/tv_user_review_label" />
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerview_movie_reviews"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_detail_vertical_padding"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_number_of_user_review" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_space_8dp" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>
