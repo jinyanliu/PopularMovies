@@ -81,14 +81,16 @@
     <!-- Toast message for saving error when inserting a movie. [CHAR LIMIT=20] -->
     <string name="insert_movie_failed">Error with saving movie</string>
     <!-- Toast message for deleting success when deleting a movie. [CHAR LIMIT=20] -->
-    <string name="delete_movie_successful">Movie deleted</string>
+    <string name="delete_movie_successful">Movie unliked</string>
     <!-- Toast message for deleting error when deleting a movie. [CHAR LIMIT=20] -->
     <string name="delete_movie_failed">Error with deleting movie</string>
 
     <!-- Toast message for deleting success when deleting all movies from fav list. -->
-    <string name="delete_all_movie_successful">All Movies deleted.</string>
+    <string name="delete_all_movie_successful">All Movies unliked.</string>
     <!-- Toast message for deleting error when deleting all movies from fav list. -->
-    <string name="delete_all_movie_failed">Error with deleting all movies.</string>
+    <string name="delete_all_movie_failed">Error with unliking all movies.</string>
+    <!-- Toast message for deleting error when there are no movies to delete. -->
+    <string name="delete_all_movie_no_movies_to_delete">No movies to unlike.</string>
 
     <!-- Log message for saving success when inserting a movie object. [CHAR LIMIT=20] -->
     <string name="insert_movie_movie_successful">Movie movie saved</string>
@@ -172,9 +174,9 @@
     - Texts show on AlertDialog when clicking "deleteAll". -
     - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <!-- Dialog message to ask the user to confirm deleting all movies [CHAR LIMIT=NONE] -->
-    <string name="delete_all_dialog_msg">Delete all movies?</string>
+    <string name="delete_all_dialog_msg">Unlike all movies?</string>
     <!-- Dialog button text for the option to confirm deleting all pets [CHAR LIMIT=20] -->
-    <string name="delete">Delete</string>
+    <string name="delete">Unlike</string>
     <!-- Dialog button text for the option to cancel deletion of all movies [CHAR LIMIT=20] -->
     <string name="cancel">Cancel</string>
 
@@ -188,7 +190,7 @@
     <!-- Settings Activity Title -->
     <string name="settings_title">Movie Settings</string>
     <!-- Delete All Menu Item -->
-    <string name="delete_all_menu_item">Delete All Movies</string>
+    <string name="delete_all_menu_item">Unlike All Movies</string>
 
     <!-- - - - - - - - - - - - - - - -
     - DetailActivity Menu Item texts.  -

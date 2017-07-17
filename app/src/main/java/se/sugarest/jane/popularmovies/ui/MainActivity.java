@@ -56,10 +56,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
 
     public static Boolean mShowToast = false;
 
-    private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
-    private final String IMAGE_SIZE_W780 = "w780/";
-    private final String IMAGE_SIZE_W185 = "w185/";
-
     public static final int MOVIE_LOADER = 0;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -349,25 +345,42 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
 
     private void deleteAllMovies() {
 
-        int rowsDeletedFavMovie = getContentResolver().delete(FavMovieEntry.CONTENT_URI, null, null);
-        int rowsDeletedReview = getContentResolver().delete(ReviewEntry.CONTENT_URI, null, null);
-        int rowsDeletedTrailer = getContentResolver().delete(TrailerEntry.CONTENT_URI, null, null);
+        Cursor cursor = getContentResolver().query(
+                FavMovieEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null);
 
-        if (rowsDeletedFavMovie == 0) {
+        if (cursor.getCount() == 0 || cursor == null) {
             if (mToast != null) {
                 mToast.cancel();
             }
-            mToast = Toast.makeText(this, getString(R.string.delete_all_movie_failed), Toast.LENGTH_SHORT);
+            mToast = Toast.makeText(this, getString(R.string.delete_all_movie_no_movies_to_delete), Toast.LENGTH_SHORT);
             mToast.setGravity(Gravity.BOTTOM, 0, 0);
             mToast.show();
         } else {
-            if (mToast != null) {
-                mToast.cancel();
+            int rowsDeletedFavMovie = getContentResolver().delete(FavMovieEntry.CONTENT_URI, null, null);
+            int rowsDeletedReview = getContentResolver().delete(ReviewEntry.CONTENT_URI, null, null);
+            int rowsDeletedTrailer = getContentResolver().delete(TrailerEntry.CONTENT_URI, null, null);
+
+            if (rowsDeletedFavMovie == 0) {
+                if (mToast != null) {
+                    mToast.cancel();
+                }
+                mToast = Toast.makeText(this, getString(R.string.delete_all_movie_failed), Toast.LENGTH_SHORT);
+                mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                mToast.show();
+            } else {
+                if (mToast != null) {
+                    mToast.cancel();
+                }
+                mToast = Toast.makeText(this, getString(R.string.delete_all_movie_successful), Toast.LENGTH_SHORT);
+                mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                mToast.show();
             }
-            mToast = Toast.makeText(this, getString(R.string.delete_all_movie_successful), Toast.LENGTH_SHORT);
-            mToast.setGravity(Gravity.BOTTOM, 0, 0);
-            mToast.show();
         }
+        cursor.close();
     }
 
     @Override
