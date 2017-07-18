@@ -238,7 +238,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                         + "/popularmovies";
                 String fullMoviePosterForOneMovie = basePopPosterExternalUrl
                         .concat(moviePosterForOneMovie);
-                File pathToPic = new File(fullMoviePosterForOneMovie);
+                final File pathToPic = new File(fullMoviePosterForOneMovie);
 
                 Picasso.with(mainActivity)
                         // PosterPath from external storage
@@ -264,6 +264,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                                     movieAdapterViewHolder.mErrorMovieNameTextView
                                             .setText(currentMovieTitle);
                                 }
+                                if (pathToPic.exists()) {
+                                    pathToPic.delete();
+                                }
                             }
                         });
 
@@ -275,7 +278,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                         + "/topratedmovies";
                 String fullMoviePosterForOneMovie = baseTopPosterExternalUrl
                         .concat(moviePosterForOneMovie);
-                File pathToPic = new File(fullMoviePosterForOneMovie);
+                final File pathToPic = new File(fullMoviePosterForOneMovie);
 
                 Picasso.with(mainActivity)
                         // PosterPath from external storage
@@ -300,6 +303,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                                 } else {
                                     movieAdapterViewHolder.mErrorMovieNameTextView
                                             .setText(currentMovieTitle);
+                                }
+                                if (pathToPic.exists()) {
+                                    pathToPic.delete();
                                 }
                             }
                         });
@@ -333,7 +339,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                 // open fav page, but if the user save the movie from pop or top list, and cut off
                 // internet, the movie poster hasn't saved to fav folder, so I want to get them out
                 // from pop or top folder.
-                File pathToPic;
+                final File pathToPic;
                 if (pathToPopPic.exists()) {
                     pathToPic = pathToPopPic;
                 } else if (pathToTopPic.exists()) {
@@ -364,6 +370,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                                 } else {
                                     movieAdapterViewHolder.mErrorMovieNameTextView
                                             .setText(currentMovieTitle);
+                                }
+                                if (pathToPic.exists()) {
+                                    pathToPic.delete();
                                 }
                             }
                         });

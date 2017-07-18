@@ -32,6 +32,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -351,6 +352,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     }
 
     private void setCurrentMovieImageThumbnailOffLine() {
+        final File pathToPic;
         String orderBy = getPreference();
         if ("popular".equals(orderBy)) {
             String currentMovieImageThumbnail = mCurrentMovie.getMoviePosterImageThumbnail();
@@ -358,24 +360,14 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                     + "/popthumbnails";
             String fullMovieImageThumbnailForOneMovie = basePopThumbnailExternalUrl
                     .concat(currentMovieImageThumbnail);
-            File pathToPic = new File(fullMovieImageThumbnailForOneMovie);
-
-            Picasso.with(DetailActivity.this)
-                    .load(pathToPic)
-                    .error(R.drawable.pic_error_loading_1560_878)
-                    .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
+            pathToPic = new File(fullMovieImageThumbnailForOneMovie);
         } else if ("top_rated".equals(orderBy)) {
             String currentMovieImageThumbnail = mCurrentMovie.getMoviePosterImageThumbnail();
             String baseTopThumbnailExternalUrl = ExternalPathUtils.getExternalPathBasicFileName(this)
                     + "/topthumbnails";
             String fullMovieImageThumbnailForOneMovie = baseTopThumbnailExternalUrl
                     .concat(currentMovieImageThumbnail);
-            File pathToPic = new File(fullMovieImageThumbnailForOneMovie);
-
-            Picasso.with(DetailActivity.this)
-                    .load(pathToPic)
-                    .error(R.drawable.pic_error_loading_1560_878)
-                    .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
+            pathToPic = new File(fullMovieImageThumbnailForOneMovie);
         } else {
             String currentMovieImageThumbnail = mCurrentMovie.getMoviePosterImageThumbnail();
 
@@ -398,22 +390,28 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             File pathToFavPic = new File(fullMovieFavImageThumbnailForOneMovie);
 
             if (pathToPopPic.exists()) {
-                Picasso.with(DetailActivity.this)
-                        .load(pathToPopPic)
-                        .error(R.drawable.pic_error_loading_1560_878)
-                        .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
+                pathToPic = pathToPopPic;
             } else if (pathToTopPic.exists()) {
-                Picasso.with(DetailActivity.this)
-                        .load(pathToTopPic)
-                        .error(R.drawable.pic_error_loading_1560_878)
-                        .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
+                pathToPic = pathToTopPic;
             } else {
-                Picasso.with(DetailActivity.this)
-                        .load(pathToFavPic)
-                        .error(R.drawable.pic_error_loading_1560_878)
-                        .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail);
+                pathToPic = pathToFavPic;
             }
         }
+        Picasso.with(DetailActivity.this)
+                .load(pathToPic)
+                .error(R.drawable.pic_error_loading_1560_878)
+                .into(mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                    }
+
+                    @Override
+                    public void onError() {
+                        if (pathToPic.exists()) {
+                            pathToPic.delete();
+                        }
+                    }
+                });
     }
 
     private void setCurrentMovieImageThumbnailOnLine() {
