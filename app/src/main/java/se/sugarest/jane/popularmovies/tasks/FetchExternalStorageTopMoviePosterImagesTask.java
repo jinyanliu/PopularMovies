@@ -95,6 +95,7 @@ public class FetchExternalStorageTopMoviePosterImagesTask extends AsyncTask<Movi
                         + downloadedSize + context.getString(R.string.log_information_message_download_totalSize)
                         + totalSize);
             }
+            inputStream.close();
             fileOutput.close();
             if (downloadedSize == totalSize) {
                 filepath = file.getPath();
