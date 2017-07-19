@@ -23,6 +23,12 @@ import se.sugarest.jane.popularmovies.utilities.ExternalPathUtils;
 
 public class PersistFavMovie {
 
+    private static final int POSTER_UP_TO_DATE = 111;
+    private static final int THUMBNAIL_UP_TO_DATE = 112;
+
+    private static int mPosterUpToDateRecordNumber;
+    private static int mThumbnailUpToDateRecordNumber;
+
     private static final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
     private static final String IMAGE_SIZE_W780 = "w780/";
     private static final String IMAGE_SIZE_W185 = "w185/";
@@ -55,6 +61,18 @@ public class PersistFavMovie {
 
         deleteExtraFavMoviePosterFilePic(context);
         deleteExtraFavMovieImageThumbnailFilePic(context);
+
+        if (MainActivity.mShowToast) {
+            if (mPosterUpToDateRecordNumber == POSTER_UP_TO_DATE && mThumbnailUpToDateRecordNumber == THUMBNAIL_UP_TO_DATE) {
+                if (MainActivity.mToast != null) {
+                    MainActivity.mToast.cancel();
+                }
+                MainActivity.mToast = Toast.makeText(context, context.getString(R.string.toast_message_refresh_fav_up_to_date), Toast.LENGTH_SHORT);
+                MainActivity.mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                MainActivity.mToast.show();
+            }
+            MainActivity.mShowToast = false;
+        }
     }
 
     public static void downloadExtraFavMoviePosterFilePic(Context context) {
@@ -104,16 +122,8 @@ public class PersistFavMovie {
             }
             cursor.close();
 
-            if (MainActivity.mShowToast) {
-                if (Arrays.asList(fileNameArray).containsAll(Arrays.asList(newDataArray))) {
-                    if (MainActivity.mToast != null) {
-                        MainActivity.mToast.cancel();
-                    }
-                    MainActivity.mToast = Toast.makeText(context, context.getString(R.string.toast_message_refresh_fav_up_to_date), Toast.LENGTH_SHORT);
-                    MainActivity.mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                    MainActivity.mToast.show();
-                }
-                MainActivity.mShowToast = false;
+            if (Arrays.asList(fileNameArray).containsAll(Arrays.asList(newDataArray))) {
+                mPosterUpToDateRecordNumber = POSTER_UP_TO_DATE;
             }
         } else {
             String[] projection = {FavMovieEntry.COLUMN_MOVIE_ID, FavMovieEntry.COLUMN_POSTER_PATH};
@@ -168,8 +178,13 @@ public class PersistFavMovie {
 
             cursor.moveToFirst();
 
+            int i = 0;
+            String[] newDataArray = new String[cursor.getCount()];
+
             while (!cursor.isAfterLast()) {
                 String currentImageThumbnail = cursor.getString(cursor.getColumnIndex(FavMovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
+                newDataArray[i] = currentImageThumbnail;
+                i++;
                 String currentMovieId = cursor.getString(cursor.getColumnIndex(FavMovieEntry.COLUMN_MOVIE_ID));
                 if (!Arrays.asList(fileNameArray).contains(currentImageThumbnail)) {
                     Log.i(TAG, "download / filepath: download fav external image thumbnail pic:" + currentImageThumbnail);
@@ -181,6 +196,11 @@ public class PersistFavMovie {
                 cursor.moveToNext();
             }
             cursor.close();
+
+            if (Arrays.asList(fileNameArray).containsAll(Arrays.asList(newDataArray))) {
+                mThumbnailUpToDateRecordNumber = THUMBNAIL_UP_TO_DATE;
+
+            }
         } else {
             String[] projection = {FavMovieEntry.COLUMN_MOVIE_ID, FavMovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL};
             Cursor cursor = context.getContentResolver().query(

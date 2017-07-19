@@ -35,6 +35,12 @@ public class PersistTopMovieTask extends AsyncTask<Void, Void, List<Movie>> {
 
     private static final String TAG = PersistTopMovieTask.class.getSimpleName();
 
+    private static final int POSTER_UP_TO_DATE = 333;
+    private static final int THUMBNAIL_UP_TO_DATE = 334;
+
+    private static int mPosterUpToDateRecordNumber;
+    private static int mThumbnailUpToDateRecordNumber;
+
     private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
     private final String IMAGE_SIZE_W780 = "w780/";
     private final String IMAGE_SIZE_W185 = "w185/";
@@ -76,48 +82,61 @@ public class PersistTopMovieTask extends AsyncTask<Void, Void, List<Movie>> {
 
         if (movieData != null) {
 
-                // When latest movie data fetches, delete CacheMovieTopRatedTable
-                this.context.getContentResolver().delete(
+            // When latest movie data fetches, delete CacheMovieTopRatedTable
+            this.context.getContentResolver().delete(
+                    CacheMovieTopRatedEntry.CONTENT_URI,
+                    null,
+                    null);
+
+            int count = movieData.size();
+            Vector<ContentValues> cVVector = new Vector<ContentValues>(count);
+            for (int i = 0; i < count; i++) {
+                ContentValues values = new ContentValues();
+                values.put(CacheMovieTopRatedEntry.COLUMN_A_PLOT_SYNOPSIS, movieData.get(i).getAPlotSynopsis());
+
+                String movieId = movieData.get(i).getId();
+
+                values.put(CacheMovieTopRatedEntry.COLUMN_MOVIE_ID, movieId);
+                values.put(CacheMovieTopRatedEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL, movieData.get(i).getMoviePosterImageThumbnail());
+                values.put(CacheMovieTopRatedEntry.COLUMN_ORIGINAL_TITLE, movieData.get(i).getOriginalTitle());
+                values.put(CacheMovieTopRatedEntry.COLUMN_POSTER_PATH, movieData.get(i).getPosterPath());
+                values.put(CacheMovieTopRatedEntry.COLUMN_RELEASE_DATE, movieData.get(i).getReleaseDate());
+                values.put(CacheMovieTopRatedEntry.COLUMN_USER_RATING, movieData.get(i).getUserRating());
+
+                cVVector.add(values);
+            }
+
+            if (cVVector.size() > 0) {
+                ContentValues[] cvArray = new ContentValues[cVVector.size()];
+                cVVector.toArray(cvArray);
+                int bulkInsertRows = this.context.getContentResolver().bulkInsert(
                         CacheMovieTopRatedEntry.CONTENT_URI,
-                        null,
-                        null);
-
-                int count = movieData.size();
-                Vector<ContentValues> cVVector = new Vector<ContentValues>(count);
-                for (int i = 0; i < count; i++) {
-                    ContentValues values = new ContentValues();
-                    values.put(CacheMovieTopRatedEntry.COLUMN_A_PLOT_SYNOPSIS, movieData.get(i).getAPlotSynopsis());
-
-                    String movieId = movieData.get(i).getId();
-
-                    values.put(CacheMovieTopRatedEntry.COLUMN_MOVIE_ID, movieId);
-                    values.put(CacheMovieTopRatedEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL, movieData.get(i).getMoviePosterImageThumbnail());
-                    values.put(CacheMovieTopRatedEntry.COLUMN_ORIGINAL_TITLE, movieData.get(i).getOriginalTitle());
-                    values.put(CacheMovieTopRatedEntry.COLUMN_POSTER_PATH, movieData.get(i).getPosterPath());
-                    values.put(CacheMovieTopRatedEntry.COLUMN_RELEASE_DATE, movieData.get(i).getReleaseDate());
-                    values.put(CacheMovieTopRatedEntry.COLUMN_USER_RATING, movieData.get(i).getUserRating());
-
-                    cVVector.add(values);
+                        cvArray);
+                if (bulkInsertRows == cVVector.size()) {
+                    Log.i(TAG, "bulkInsertCacheMovie TopRated successful.");
+                } else {
+                    Log.i(TAG, "bulkInsertCacheMovie TopRated unsuccessful.");
                 }
+            }
 
-                if (cVVector.size() > 0) {
-                    ContentValues[] cvArray = new ContentValues[cVVector.size()];
-                    cVVector.toArray(cvArray);
-                    int bulkInsertRows = this.context.getContentResolver().bulkInsert(
-                            CacheMovieTopRatedEntry.CONTENT_URI,
-                            cvArray);
-                    if (bulkInsertRows == cVVector.size()) {
-                        Log.i(TAG, "bulkInsertCacheMovie TopRated successful.");
-                    } else {
-                        Log.i(TAG, "bulkInsertCacheMovie TopRated unsuccessful.");
+            downloadExtraTopMoviePosterFilePic();
+            downloadExtraTopMovieImageThumbnailFilePic();
+
+            deleteExtraTopMoviePosterFilePic();
+            deleteExtraTopMovieImageThumbnailFilePic();
+
+            if (MainActivity.mShowToast) {
+                if (mPosterUpToDateRecordNumber == POSTER_UP_TO_DATE && mThumbnailUpToDateRecordNumber == THUMBNAIL_UP_TO_DATE) {
+                    if (MainActivity.mToast != null) {
+                        MainActivity.mToast.cancel();
                     }
+                    MainActivity.mToast = Toast.makeText(this.context, this.context.getString(R.string.toast_message_refresh_top_up_to_date), Toast.LENGTH_SHORT);
+                    MainActivity.mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                    MainActivity.mToast.show();
                 }
-
-                downloadExtraTopMoviePosterFilePic();
-                downloadExtraTopMovieImageThumbnailFilePic();
-
-                deleteExtraTopMoviePosterFilePic();
-                deleteExtraTopMovieImageThumbnailFilePic();
+                // When job scheduler refresh automatically mShowToast should be false.
+                MainActivity.mShowToast = false;
+            }
 
         } else {
             Log.e(TAG, context.getString(R.string.log_error_message_offline_before_fetch_movie_data_finish));
@@ -185,17 +204,8 @@ public class PersistTopMovieTask extends AsyncTask<Void, Void, List<Movie>> {
             }
             cursor.close();
 
-            if (MainActivity.mShowToast) {
-                if (Arrays.asList(fileNameArray).containsAll(Arrays.asList(newDataArray))) {
-                    if (MainActivity.mToast != null) {
-                        MainActivity.mToast.cancel();
-                    }
-                    MainActivity.mToast = Toast.makeText(this.context, this.context.getString(R.string.toast_message_refresh_top_up_to_date), Toast.LENGTH_SHORT);
-                    MainActivity.mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                    MainActivity.mToast.show();
-                }
-                // When job scheduler refresh automatically mShowToast should be false.
-                MainActivity.mShowToast = false;
+            if (Arrays.asList(fileNameArray).containsAll(Arrays.asList(newDataArray))) {
+                mPosterUpToDateRecordNumber = POSTER_UP_TO_DATE;
             }
 
         } else {
@@ -251,8 +261,13 @@ public class PersistTopMovieTask extends AsyncTask<Void, Void, List<Movie>> {
 
             cursor.moveToFirst();
 
+            int i = 0;
+            String[] newDataArray = new String[cursor.getCount()];
+
             while (!cursor.isAfterLast()) {
                 String currentImageThumbnail = cursor.getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
+                newDataArray[i] = currentImageThumbnail;
+                i++;
                 String currentMovieId = cursor.getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_MOVIE_ID));
                 if (!Arrays.asList(fileNameArray).contains(currentImageThumbnail)) {
                     Log.i(TAG, "download / filepath: download top external image thumbnail pic:" + currentImageThumbnail);
@@ -264,6 +279,11 @@ public class PersistTopMovieTask extends AsyncTask<Void, Void, List<Movie>> {
                 cursor.moveToNext();
             }
             cursor.close();
+
+            if (Arrays.asList(fileNameArray).containsAll(Arrays.asList(newDataArray))) {
+                mThumbnailUpToDateRecordNumber = THUMBNAIL_UP_TO_DATE;
+            }
+
         } else {
             String[] projection = {CacheMovieTopRatedEntry.COLUMN_MOVIE_ID, CacheMovieTopRatedEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL};
             Cursor cursor = context.getContentResolver().query(
