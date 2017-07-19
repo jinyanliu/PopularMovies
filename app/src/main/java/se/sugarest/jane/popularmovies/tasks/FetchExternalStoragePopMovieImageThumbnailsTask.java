@@ -71,7 +71,7 @@ public class FetchExternalStoragePopMovieImageThumbnailsTask extends AsyncTask<M
             String filename = lastPart;
             Log.i(TAG, this.context.getString(R.string.log_information_message_download_filename) + filename);
 
-            File file = new File(ExternalPathUtils.getExternalPathBasicFileName(this.context) + "/popthumbnails/" + filename);
+            File file = new File(ExternalPathUtils.getExternalPathBasicFileName(this.context) + "/cachethumbnails/" + filename);
 
             if (!file.exists()) {
                 file.getParentFile().mkdirs();

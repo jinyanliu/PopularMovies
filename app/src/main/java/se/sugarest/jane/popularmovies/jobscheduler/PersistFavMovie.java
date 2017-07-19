@@ -32,6 +32,8 @@ public class PersistFavMovie {
     private static final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
     private static final String IMAGE_SIZE_W780 = "w780/";
     private static final String IMAGE_SIZE_W185 = "w185/";
+    private static final String CACHE_POSTERS_FOLDER_NAME = "/cacheposters/";
+    private static final String CACHE_THUMBNAILS_FOLDER_NAME = "/cachethumbnails/";
 
     private static final String TAG = PersistFavMovie.class.getSimpleName();
 
@@ -59,9 +61,6 @@ public class PersistFavMovie {
         downloadExtraFavMoviePosterFilePic(context);
         downloadExtraFavMovieImageThumbnailFilePic(context);
 
-        deleteExtraFavMoviePosterFilePic(context);
-        deleteExtraFavMovieImageThumbnailFilePic(context);
-
         if (MainActivity.mShowToast) {
             if (mPosterUpToDateRecordNumber == POSTER_UP_TO_DATE && mThumbnailUpToDateRecordNumber == THUMBNAIL_UP_TO_DATE) {
                 if (MainActivity.mToast != null) {
@@ -77,16 +76,16 @@ public class PersistFavMovie {
 
     public static void downloadExtraFavMoviePosterFilePic(Context context) {
 
-        File favMoviePicsFolder
+        File postersMoviePicsFolder
                 = new File(ExternalPathUtils.getExternalPathBasicFileName(context)
-                + "/favmovies/");
+                + CACHE_POSTERS_FOLDER_NAME);
 
-        if (favMoviePicsFolder.exists()) {
+        if (postersMoviePicsFolder.exists()) {
 
-            String[] fileNameArray = new String[favMoviePicsFolder.listFiles().length];
-            Log.i(TAG, "download / filepath: fav poster file name count in external folder: " + favMoviePicsFolder.listFiles().length);
+            String[] fileNameArray = new String[postersMoviePicsFolder.listFiles().length];
+            Log.i(TAG, "download / filepath: fav poster file name count in external folder: " + postersMoviePicsFolder.listFiles().length);
             int j = 0;
-            for (File pic : favMoviePicsFolder.listFiles()) {
+            for (File pic : postersMoviePicsFolder.listFiles()) {
                 String fileName = "/" + pic.getName();
                 fileNameArray[j] = fileName;
                 Log.i(TAG, "download / filepath: fav poster file name in external folder: " + fileNameArray[j]);
@@ -152,16 +151,16 @@ public class PersistFavMovie {
 
     public static void downloadExtraFavMovieImageThumbnailFilePic(Context context) {
 
-        File favMovieThumbnailsFolder
+        File thumbnailsMoviePicsFolder
                 = new File(ExternalPathUtils.getExternalPathBasicFileName(context)
-                + "/favthumbnails/");
+                + CACHE_THUMBNAILS_FOLDER_NAME);
 
-        if (favMovieThumbnailsFolder.exists()) {
+        if (thumbnailsMoviePicsFolder.exists()) {
 
-            String[] fileNameArray = new String[favMovieThumbnailsFolder.listFiles().length];
-            Log.i(TAG, "download / filepath: fav image thumbnail file name count in external folder: " + favMovieThumbnailsFolder.listFiles().length);
+            String[] fileNameArray = new String[thumbnailsMoviePicsFolder.listFiles().length];
+            Log.i(TAG, "download / filepath: fav image thumbnail file name count in external folder: " + thumbnailsMoviePicsFolder.listFiles().length);
             int j = 0;
-            for (File pic : favMovieThumbnailsFolder.listFiles()) {
+            for (File pic : thumbnailsMoviePicsFolder.listFiles()) {
                 String fileName = "/" + pic.getName();
                 fileNameArray[j] = fileName;
                 Log.i(TAG, "download / filepath: fav image thumbnail file name in external folder: " + fileNameArray[j]);
@@ -223,78 +222,6 @@ public class PersistFavMovie {
                 cursor.moveToNext();
             }
             cursor.close();
-        }
-    }
-
-    public static void deleteExtraFavMoviePosterFilePic(Context context) {
-        String[] projection = {FavMovieEntry.COLUMN_POSTER_PATH};
-        Cursor cursor = context.getContentResolver().query(
-                FavMovieEntry.CONTENT_URI,
-                projection,
-                null,
-                null,
-                null);
-
-        String[] posterPathArray = new String[cursor.getCount()];
-        int i = 0;
-
-        cursor.moveToFirst();
-
-        while (!cursor.isAfterLast()) {
-            posterPathArray[i] = cursor.getString(cursor.getColumnIndex(FavMovieEntry.COLUMN_POSTER_PATH));
-            Log.i(TAG, "delete / filepath: fav poster path in database: " + posterPathArray[i]);
-            i++;
-            cursor.moveToNext();
-        }
-        cursor.close();
-
-        File favMoviePicsFolder
-                = new File(ExternalPathUtils.getExternalPathBasicFileName(context)
-                + "/favmovies/");
-        if (favMoviePicsFolder.exists()) {
-            for (File pic : favMoviePicsFolder.listFiles()) {
-                String fileName = "/" + pic.getName();
-                if (!Arrays.asList(posterPathArray).contains(fileName)) {
-                    Log.i(TAG, "delete / filepath: delete fav external poster pic:" + fileName);
-                    pic.delete();
-                }
-            }
-        }
-    }
-
-    public static void deleteExtraFavMovieImageThumbnailFilePic(Context context) {
-        String[] projection = {FavMovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL};
-        Cursor cursor = context.getContentResolver().query(
-                FavMovieEntry.CONTENT_URI,
-                projection,
-                null,
-                null,
-                null);
-
-        String[] imageThumbnailArray = new String[cursor.getCount()];
-        int i = 0;
-
-        cursor.moveToFirst();
-
-        while (!cursor.isAfterLast()) {
-            imageThumbnailArray[i] = cursor.getString(cursor.getColumnIndex(FavMovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
-            Log.i(TAG, "delete / filepath: fav image thumbnail path in database: " + imageThumbnailArray[i]);
-            i++;
-            cursor.moveToNext();
-        }
-        cursor.close();
-
-        File favMovieThumbnailsFolder
-                = new File(ExternalPathUtils.getExternalPathBasicFileName(context)
-                + "/favthumbnails/");
-        if (favMovieThumbnailsFolder.exists()) {
-            for (File pic : favMovieThumbnailsFolder.listFiles()) {
-                String fileName = "/" + pic.getName();
-                if (!Arrays.asList(imageThumbnailArray).contains(fileName)) {
-                    Log.i(TAG, "delete / filepath: delete fav external thumbnail pic:" + fileName);
-                    pic.delete();
-                }
-            }
         }
     }
 }

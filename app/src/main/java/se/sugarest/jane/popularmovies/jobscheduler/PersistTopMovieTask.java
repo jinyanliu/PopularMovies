@@ -44,13 +44,14 @@ public class PersistTopMovieTask extends AsyncTask<Void, Void, List<Movie>> {
     private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
     private final String IMAGE_SIZE_W780 = "w780/";
     private final String IMAGE_SIZE_W185 = "w185/";
+    private final String CACHE_POSTERS_FOLDER_NAME = "/cacheposters/";
+    private final String CACHE_THUMBNAILS_FOLDER_NAME = "/cachethumbnails/";
 
     Context context;
 
     public PersistTopMovieTask(Context context) {
         this.context = context;
     }
-
 
     @Override
     protected void onPreExecute() {
@@ -122,9 +123,6 @@ public class PersistTopMovieTask extends AsyncTask<Void, Void, List<Movie>> {
             downloadExtraTopMoviePosterFilePic();
             downloadExtraTopMovieImageThumbnailFilePic();
 
-            deleteExtraTopMoviePosterFilePic();
-            deleteExtraTopMovieImageThumbnailFilePic();
-
             if (MainActivity.mShowToast) {
                 if (mPosterUpToDateRecordNumber == POSTER_UP_TO_DATE && mThumbnailUpToDateRecordNumber == THUMBNAIL_UP_TO_DATE) {
                     if (MainActivity.mToast != null) {
@@ -160,16 +158,16 @@ public class PersistTopMovieTask extends AsyncTask<Void, Void, List<Movie>> {
 
     private void downloadExtraTopMoviePosterFilePic() {
 
-        File topRatedMoviePicsFolder
+        File postersMoviePicsFolder
                 = new File(ExternalPathUtils.getExternalPathBasicFileName(this.context)
-                + "/topratedmovies/");
+                + CACHE_POSTERS_FOLDER_NAME);
 
-        if (topRatedMoviePicsFolder.exists()) {
+        if (postersMoviePicsFolder.exists()) {
 
-            String[] fileNameArray = new String[topRatedMoviePicsFolder.listFiles().length];
-            Log.i(TAG, "download / filepath: top poster file name count in external folder: " + topRatedMoviePicsFolder.listFiles().length);
+            String[] fileNameArray = new String[postersMoviePicsFolder.listFiles().length];
+            Log.i(TAG, "download / filepath: top poster file name count in external folder: " + postersMoviePicsFolder.listFiles().length);
             int j = 0;
-            for (File pic : topRatedMoviePicsFolder.listFiles()) {
+            for (File pic : postersMoviePicsFolder.listFiles()) {
                 String fileName = "/" + pic.getName();
                 fileNameArray[j] = fileName;
                 Log.i(TAG, "download / filepath: top poster file name in external folder: " + fileNameArray[j]);
@@ -235,16 +233,16 @@ public class PersistTopMovieTask extends AsyncTask<Void, Void, List<Movie>> {
 
     private void downloadExtraTopMovieImageThumbnailFilePic() {
 
-        File topRatedMovieThumbnailImagesFolder
+        File thumbnailsMoviePicsFolder
                 = new File(ExternalPathUtils.getExternalPathBasicFileName(this.context)
-                + "/topthumbnails/");
+                + CACHE_THUMBNAILS_FOLDER_NAME);
 
-        if (topRatedMovieThumbnailImagesFolder.exists()) {
+        if (thumbnailsMoviePicsFolder.exists()) {
 
-            String[] fileNameArray = new String[topRatedMovieThumbnailImagesFolder.listFiles().length];
-            Log.i(TAG, "download / filepath: top image thumbnail file name count in external folder: " + topRatedMovieThumbnailImagesFolder.listFiles().length);
+            String[] fileNameArray = new String[thumbnailsMoviePicsFolder.listFiles().length];
+            Log.i(TAG, "download / filepath: top image thumbnail file name count in external folder: " + thumbnailsMoviePicsFolder.listFiles().length);
             int j = 0;
-            for (File pic : topRatedMovieThumbnailImagesFolder.listFiles()) {
+            for (File pic : thumbnailsMoviePicsFolder.listFiles()) {
                 String fileName = "/" + pic.getName();
                 fileNameArray[j] = fileName;
                 Log.i(TAG, "download / filepath: top image thumbnail file name in external folder: " + fileNameArray[j]);
@@ -306,78 +304,6 @@ public class PersistTopMovieTask extends AsyncTask<Void, Void, List<Movie>> {
                 cursor.moveToNext();
             }
             cursor.close();
-        }
-    }
-
-    private void deleteExtraTopMoviePosterFilePic() {
-        String[] projection = {CacheMovieTopRatedEntry.COLUMN_POSTER_PATH};
-        Cursor cursor = context.getContentResolver().query(
-                CacheMovieTopRatedEntry.CONTENT_URI,
-                projection,
-                null,
-                null,
-                null);
-
-        String[] posterPathArray = new String[cursor.getCount()];
-        int i = 0;
-
-        cursor.moveToFirst();
-
-        while (!cursor.isAfterLast()) {
-            posterPathArray[i] = cursor.getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_POSTER_PATH));
-            Log.i(TAG, "delete / filepath: top poster path in database: " + posterPathArray[i]);
-            i++;
-            cursor.moveToNext();
-        }
-        cursor.close();
-
-        File topRatedMoviePicsFolder
-                = new File(ExternalPathUtils.getExternalPathBasicFileName(this.context)
-                + "/topratedmovies/");
-        if (topRatedMoviePicsFolder.exists()) {
-            for (File pic : topRatedMoviePicsFolder.listFiles()) {
-                String fileName = "/" + pic.getName();
-                if (!Arrays.asList(posterPathArray).contains(fileName)) {
-                    Log.i(TAG, "delete / filepath:delete top external poster pic:" + fileName);
-                    pic.delete();
-                }
-            }
-        }
-    }
-
-    private void deleteExtraTopMovieImageThumbnailFilePic() {
-        String[] projection = {CacheMovieTopRatedEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL};
-        Cursor cursor = context.getContentResolver().query(
-                CacheMovieTopRatedEntry.CONTENT_URI,
-                projection,
-                null,
-                null,
-                null);
-
-        String[] imageThumbnailArray = new String[cursor.getCount()];
-        int i = 0;
-
-        cursor.moveToFirst();
-
-        while (!cursor.isAfterLast()) {
-            imageThumbnailArray[i] = cursor.getString(cursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
-            Log.i(TAG, "delete / filepath: top image thumbnail path in database: " + imageThumbnailArray[i]);
-            i++;
-            cursor.moveToNext();
-        }
-        cursor.close();
-
-        File topRatedMovieThumbnailImagesFolder
-                = new File(ExternalPathUtils.getExternalPathBasicFileName(this.context)
-                + "/topthumbnails/");
-        if (topRatedMovieThumbnailImagesFolder.exists()) {
-            for (File pic : topRatedMovieThumbnailImagesFolder.listFiles()) {
-                String fileName = "/" + pic.getName();
-                if (!Arrays.asList(imageThumbnailArray).contains(fileName)) {
-                    Log.i(TAG, "delete / filepath:delete top external thumbnail pic:" + fileName);
-                    pic.delete();
-                }
-            }
         }
     }
 }

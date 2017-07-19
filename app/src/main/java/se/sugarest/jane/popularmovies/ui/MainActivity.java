@@ -46,6 +46,7 @@ import se.sugarest.jane.popularmovies.movie.Movie;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter.MovieAdapterOnClickHandler;
 import se.sugarest.jane.popularmovies.tasks.FetchMoviePostersTask;
+import se.sugarest.jane.popularmovies.utilities.DeleteExternalFolderExtraPic;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapterOnClickHandler
         , android.app.LoaderManager.LoaderCallbacks<Cursor> {
@@ -204,6 +205,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                 PersistFavMovie.persistFavMovie(this);
             }
 
+            DeleteExternalFolderExtraPic.deleteExtraMoviePosterFilePic(this);
+            DeleteExternalFolderExtraPic.deleteExtraMovieThumbnailFilePic(this);
+
             // API 24 Android 7.0 Nougat
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 scheduleFetchMovieJob();
@@ -248,6 +252,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                 initCursorLoader();
                 PersistFavMovie.persistFavMovie(this);
             }
+
+            DeleteExternalFolderExtraPic.deleteExtraMoviePosterFilePic(this);
+            DeleteExternalFolderExtraPic.deleteExtraMovieThumbnailFilePic(this);
+
         } else {
             hideLoadingIndicators();
             if (mToast != null) {

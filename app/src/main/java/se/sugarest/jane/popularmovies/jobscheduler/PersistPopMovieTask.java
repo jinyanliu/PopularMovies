@@ -44,6 +44,8 @@ public class PersistPopMovieTask extends AsyncTask<Void, Void, List<Movie>> {
     private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
     private final String IMAGE_SIZE_W780 = "w780/";
     private final String IMAGE_SIZE_W185 = "w185/";
+    private final String CACHE_POSTERS_FOLDER_NAME = "/cacheposters/";
+    private final String CACHE_THUMBNAILS_FOLDER_NAME = "/cachethumbnails/";
 
     Context context;
 
@@ -121,16 +123,6 @@ public class PersistPopMovieTask extends AsyncTask<Void, Void, List<Movie>> {
             downloadExtraPopMoviePosterFilePic();
             downloadExtraPopMovieImageThumbnailFilePic();
 
-            // After new movie data is fetched from internet, check, loop through the pics folder, only
-            // delete those pics which are outdated, not in the new list, so the pics folder can be more
-            // stable(movie update is not very quick and frequent, we don't need to delete everything
-            // from the very beginning and start fresh). And in MovieAdapter and DetailActivity, we use
-            // the external path directly to get the image file paths, even the background task hasn't
-            // completely when refresh, we can still get most of the movie poster and thumbnail show up
-            // when offline.
-            deleteExtraPopMoviePosterFilePic();
-            deleteExtraPopMovieImageThumbnailFilePic();
-
             if (MainActivity.mShowToast) {
                 if (mPosterUpToDateRecordNumber == POSTER_UP_TO_DATE && mThumbnailUpToDateRecordNumber == THUMBNAIL_UP_TO_DATE) {
                     if (MainActivity.mToast != null) {
@@ -166,16 +158,16 @@ public class PersistPopMovieTask extends AsyncTask<Void, Void, List<Movie>> {
 
     private void downloadExtraPopMoviePosterFilePic() {
 
-        File popularMoviePicsFolder
+        File postersMoviePicsFolder
                 = new File(ExternalPathUtils.getExternalPathBasicFileName(this.context)
-                + "/popularmovies/");
+                + CACHE_POSTERS_FOLDER_NAME);
 
-        if (popularMoviePicsFolder.exists()) {
+        if (postersMoviePicsFolder.exists()) {
 
-            String[] fileNameArray = new String[popularMoviePicsFolder.listFiles().length];
-            Log.i(TAG, "download / filepath: pop poster file name count in external folder: " + popularMoviePicsFolder.listFiles().length);
+            String[] fileNameArray = new String[postersMoviePicsFolder.listFiles().length];
+            Log.i(TAG, "download / filepath: pop poster file name count in external folder: " + postersMoviePicsFolder.listFiles().length);
             int j = 0;
-            for (File pic : popularMoviePicsFolder.listFiles()) {
+            for (File pic : postersMoviePicsFolder.listFiles()) {
                 String fileName = "/" + pic.getName();
                 fileNameArray[j] = fileName;
                 Log.i(TAG, "download / filepath: pop poster file name in external folder: " + fileNameArray[j]);
@@ -241,16 +233,16 @@ public class PersistPopMovieTask extends AsyncTask<Void, Void, List<Movie>> {
 
     private void downloadExtraPopMovieImageThumbnailFilePic() {
 
-        File popularMovieThumbnailImagesFolder
+        File thumbnailsMoviePicsFolder
                 = new File(ExternalPathUtils.getExternalPathBasicFileName(this.context)
-                + "/popthumbnails/");
+                + CACHE_THUMBNAILS_FOLDER_NAME);
 
-        if (popularMovieThumbnailImagesFolder.exists()) {
+        if (thumbnailsMoviePicsFolder.exists()) {
 
-            String[] fileNameArray = new String[popularMovieThumbnailImagesFolder.listFiles().length];
-            Log.i(TAG, "download / filepath: pop image thumbnail file name count in external folder: " + popularMovieThumbnailImagesFolder.listFiles().length);
+            String[] fileNameArray = new String[thumbnailsMoviePicsFolder.listFiles().length];
+            Log.i(TAG, "download / filepath: pop image thumbnail file name count in external folder: " + thumbnailsMoviePicsFolder.listFiles().length);
             int j = 0;
-            for (File pic : popularMovieThumbnailImagesFolder.listFiles()) {
+            for (File pic : thumbnailsMoviePicsFolder.listFiles()) {
                 String fileName = "/" + pic.getName();
                 fileNameArray[j] = fileName;
                 Log.i(TAG, "download / filepath: pop image thumbnail file name in external folder: " + fileNameArray[j]);
@@ -312,78 +304,6 @@ public class PersistPopMovieTask extends AsyncTask<Void, Void, List<Movie>> {
                 cursor.moveToNext();
             }
             cursor.close();
-        }
-    }
-
-    private void deleteExtraPopMoviePosterFilePic() {
-        String[] projection = {CacheMovieMostPopularEntry.COLUMN_POSTER_PATH};
-        Cursor cursor = context.getContentResolver().query(
-                CacheMovieMostPopularEntry.CONTENT_URI,
-                projection,
-                null,
-                null,
-                null);
-
-        String[] posterPathArray = new String[cursor.getCount()];
-        int i = 0;
-
-        cursor.moveToFirst();
-
-        while (!cursor.isAfterLast()) {
-            posterPathArray[i] = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH));
-            Log.i(TAG, "delete / filepath: pop poster path in database: " + posterPathArray[i]);
-            i++;
-            cursor.moveToNext();
-        }
-        cursor.close();
-
-        File popularMoviePicsFolder
-                = new File(ExternalPathUtils.getExternalPathBasicFileName(this.context)
-                + "/popularmovies/");
-        if (popularMoviePicsFolder.exists()) {
-            for (File pic : popularMoviePicsFolder.listFiles()) {
-                String fileName = "/" + pic.getName();
-                if (!Arrays.asList(posterPathArray).contains(fileName)) {
-                    Log.i(TAG, "delete / filepath: delete pop external poster pic:" + fileName);
-                    pic.delete();
-                }
-            }
-        }
-    }
-
-    private void deleteExtraPopMovieImageThumbnailFilePic() {
-        String[] projection = {CacheMovieMostPopularEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL};
-        Cursor cursor = context.getContentResolver().query(
-                CacheMovieMostPopularEntry.CONTENT_URI,
-                projection,
-                null,
-                null,
-                null);
-
-        String[] imageThumbnailArray = new String[cursor.getCount()];
-        int i = 0;
-
-        cursor.moveToFirst();
-
-        while (!cursor.isAfterLast()) {
-            imageThumbnailArray[i] = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
-            Log.i(TAG, "delete / filepath: pop image thumbnail path in database: " + imageThumbnailArray[i]);
-            i++;
-            cursor.moveToNext();
-        }
-        cursor.close();
-
-        File popularMovieThumbnailImagesFolder
-                = new File(ExternalPathUtils.getExternalPathBasicFileName(this.context)
-                + "/popthumbnails/");
-        if (popularMovieThumbnailImagesFolder.exists()) {
-            for (File pic : popularMovieThumbnailImagesFolder.listFiles()) {
-                String fileName = "/" + pic.getName();
-                if (!Arrays.asList(imageThumbnailArray).contains(fileName)) {
-                    Log.i(TAG, "delete / filepath: delete pop external thumbnail pic:" + fileName);
-                    pic.delete();
-                }
-            }
         }
     }
 }

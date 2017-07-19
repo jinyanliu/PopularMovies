@@ -4,7 +4,6 @@ import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.databinding.DataBindingUtil;
@@ -12,7 +11,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ShareCompat;
@@ -90,6 +88,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
     private final String IMAGE_SIZE_W780 = "w780/";
     private final String BASE_YOUTUBE_URL_APP = "vnd.youtube:";
     private final String BASE_YOUTUBE_URL_WEB = "http://www.youtube.com/watch?v=";
+    private final String CACHE_THUMBNAILS_FOLDER_NAME = "/cachethumbnails/";
 
     private Movie mCurrentMovie;
 
@@ -353,50 +352,13 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
 
     private void setCurrentMovieImageThumbnailOffLine() {
         final File pathToPic;
-        String orderBy = getPreference();
-        if ("popular".equals(orderBy)) {
-            String currentMovieImageThumbnail = mCurrentMovie.getMoviePosterImageThumbnail();
-            String basePopThumbnailExternalUrl = ExternalPathUtils.getExternalPathBasicFileName(this)
-                    + "/popthumbnails";
-            String fullMovieImageThumbnailForOneMovie = basePopThumbnailExternalUrl
-                    .concat(currentMovieImageThumbnail);
-            pathToPic = new File(fullMovieImageThumbnailForOneMovie);
-        } else if ("top_rated".equals(orderBy)) {
-            String currentMovieImageThumbnail = mCurrentMovie.getMoviePosterImageThumbnail();
-            String baseTopThumbnailExternalUrl = ExternalPathUtils.getExternalPathBasicFileName(this)
-                    + "/topthumbnails";
-            String fullMovieImageThumbnailForOneMovie = baseTopThumbnailExternalUrl
-                    .concat(currentMovieImageThumbnail);
-            pathToPic = new File(fullMovieImageThumbnailForOneMovie);
-        } else {
-            String currentMovieImageThumbnail = mCurrentMovie.getMoviePosterImageThumbnail();
+        String currentMovieImageThumbnail = mCurrentMovie.getMoviePosterImageThumbnail();
+        String baseThumbnailExternalUrl = ExternalPathUtils.getExternalPathBasicFileName(this)
+                + CACHE_THUMBNAILS_FOLDER_NAME;
+        String fullMovieImageThumbnailForOneMovie = baseThumbnailExternalUrl
+                .concat(currentMovieImageThumbnail);
+        pathToPic = new File(fullMovieImageThumbnailForOneMovie);
 
-            String basePopThumbnailExternalUrl = ExternalPathUtils.getExternalPathBasicFileName(this)
-                    + "/popthumbnails";
-            String fullMoviePopImageThumbnailForOneMovie = basePopThumbnailExternalUrl
-                    .concat(currentMovieImageThumbnail);
-            File pathToPopPic = new File(fullMoviePopImageThumbnailForOneMovie);
-
-            String baseTopThumbnailExternalUrl = ExternalPathUtils.getExternalPathBasicFileName(this)
-                    + "/topthumbnails";
-            String fullMovieTopImageThumbnailForOneMovie = baseTopThumbnailExternalUrl
-                    .concat(currentMovieImageThumbnail);
-            File pathToTopPic = new File(fullMovieTopImageThumbnailForOneMovie);
-
-            String baseFavThumbnailExternalUrl = ExternalPathUtils.getExternalPathBasicFileName(this)
-                    + "/favthumbnails";
-            String fullMovieFavImageThumbnailForOneMovie = baseFavThumbnailExternalUrl
-                    .concat(currentMovieImageThumbnail);
-            File pathToFavPic = new File(fullMovieFavImageThumbnailForOneMovie);
-
-            if (pathToPopPic.exists()) {
-                pathToPic = pathToPopPic;
-            } else if (pathToTopPic.exists()) {
-                pathToPic = pathToTopPic;
-            } else {
-                pathToPic = pathToFavPic;
-            }
-        }
         Picasso.with(DetailActivity.this)
                 .load(pathToPic)
                 .error(R.drawable.pic_error_loading_1560_878)
@@ -1134,12 +1096,5 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         // Get details on the currently active default data network
         return connMgr.getActiveNetworkInfo();
-    }
-
-    private String getPreference() {
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPrefs.getString(
-                getString(R.string.settings_order_by_key),
-                getString(R.string.settings_order_by_default));
     }
 }

@@ -48,6 +48,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
     private final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
     private final String IMAGE_SIZE_W185 = "w185/";
+    private final String CACHE_POSTERS_FOLDER_NAME = "/cacheposters/";
 
     private Cursor mCursor;
     private boolean mLoadFromDb;
@@ -114,269 +115,250 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
         NetworkInfo networkInfo = getNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
+            setMoviePostersOnline(movieAdapterViewHolder, position);
+        } else {
+            setMoviePostersOffline(movieAdapterViewHolder, position);
+        }
+    }
 
-            String orderBy = getPreference();
+    private void setMoviePostersOffline(final MovieAdapterViewHolder movieAdapterViewHolder, final int position) {
 
-            if (!"favorites".equals(orderBy)) {
-                if (mLoadFromDb == false) {
-                    String moviePosterForOneMovie = mMoviePostersUrlStrings.get(position);
+        String basePosterExternalUrl = ExternalPathUtils.getExternalPathBasicFileName(this.mainActivity)
+                + CACHE_POSTERS_FOLDER_NAME;
+
+        String orderBy = getPreference();
+        if ("popular".equals(orderBy)) {
+            mCursor.moveToPosition(position);
+            String moviePosterForOneMovie = mCursor.getString(mCursor
+                    .getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH));
+
+            String fullMoviePosterForOneMovie = basePosterExternalUrl
+                    .concat(moviePosterForOneMovie);
+
+            final File pathToPic = new File(fullMoviePosterForOneMovie);
+
+            Picasso.with(mainActivity)
+                    // PosterPath from external storage
+                    .load(pathToPic)
+                    .error(R.drawable.pic_error_loading_w370)
+                    .into(movieAdapterViewHolder.mMoviePosterImageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.INVISIBLE);
+                        }
+
+                        @Override
+                        public void onError() {
+                            movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.VISIBLE);
+                            Log.i(TAG, "Current Position: " + position + "\nCurrent Movie Title: " + mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE)));
+                            mCursor.moveToPosition(position);
+                            String currentMovieTitle = mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE));
+                            if (currentMovieTitle.contains(":")) {
+                                String[] separated = currentMovieTitle.split(":");
+                                // separate[1].trim() will remove the empty space to the second string
+                                movieAdapterViewHolder.mErrorMovieNameTextView.setText(separated[0] + ":" + "\n" + separated[1].trim());
+                            } else {
+                                movieAdapterViewHolder.mErrorMovieNameTextView
+                                        .setText(currentMovieTitle);
+                            }
+                            if (pathToPic.exists()) {
+                                pathToPic.delete();
+                            }
+                        }
+                    });
+
+        } else if ("top_rated".equals(orderBy)) {
+            mCursor.moveToPosition(position);
+            String moviePosterForOneMovie = mCursor.getString(mCursor
+                    .getColumnIndex(CacheMovieTopRatedEntry.COLUMN_POSTER_PATH));
+
+            String fullMoviePosterForOneMovie = basePosterExternalUrl
+                    .concat(moviePosterForOneMovie);
+            final File pathToPic = new File(fullMoviePosterForOneMovie);
+
+            Picasso.with(mainActivity)
+                    // PosterPath from external storage
+                    .load(pathToPic)
+                    .error(R.drawable.pic_error_loading_w370)
+                    .into(movieAdapterViewHolder.mMoviePosterImageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.INVISIBLE);
+                        }
+
+                        @Override
+                        public void onError() {
+                            movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.VISIBLE);
+                            Log.i(TAG, "Current Position: " + position + "\nCurrent Movie Title: " + mCursor.getString(mCursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_ORIGINAL_TITLE)));
+                            mCursor.moveToPosition(position);
+                            String currentMovieTitle = mCursor.getString(mCursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_ORIGINAL_TITLE));
+                            if (currentMovieTitle.contains(":")) {
+                                String[] separated = currentMovieTitle.split(":");
+                                // separate[1].trim() will remove the empty space to the second string
+                                movieAdapterViewHolder.mErrorMovieNameTextView.setText(separated[0] + ":" + "\n" + separated[1].trim());
+                            } else {
+                                movieAdapterViewHolder.mErrorMovieNameTextView
+                                        .setText(currentMovieTitle);
+                            }
+                            if (pathToPic.exists()) {
+                                pathToPic.delete();
+                            }
+                        }
+                    });
+        } else {
+            mCursor.moveToPosition(position);
+            String moviePosterForOneMovie = mCursor.getString(mCursor
+                    .getColumnIndex(FavMovieEntry.COLUMN_POSTER_PATH));
+
+            String fullMovieFavPosterForOneMovie = basePosterExternalUrl
+                    .concat(moviePosterForOneMovie);
+            final File pathToPic = new File(fullMovieFavPosterForOneMovie);
+
+            Picasso.with(mainActivity)
+                    // PosterPath from external storage
+                    .load(pathToPic)
+                    .error(R.drawable.pic_error_loading_w370)
+                    .into(movieAdapterViewHolder.mMoviePosterImageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.INVISIBLE);
+                        }
+
+                        @Override
+                        public void onError() {
+                            movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.VISIBLE);
+                            Log.i(TAG, "Current Position: " + position + "\nCurrent Movie Title: " + mCursor.getString(mCursor.getColumnIndex(FavMovieEntry.COLUMN_ORIGINAL_TITLE)));
+                            mCursor.moveToPosition(position);
+                            String currentMovieTitle = mCursor.getString(mCursor.getColumnIndex(FavMovieEntry.COLUMN_ORIGINAL_TITLE));
+                            if (currentMovieTitle.contains(":")) {
+                                String[] separated = currentMovieTitle.split(":");
+                                // separate[1].trim() will remove the empty space to the second string
+                                movieAdapterViewHolder.mErrorMovieNameTextView.setText(separated[0] + ":" + "\n" + separated[1].trim());
+                            } else {
+                                movieAdapterViewHolder.mErrorMovieNameTextView
+                                        .setText(currentMovieTitle);
+                            }
+                            if (pathToPic.exists()) {
+                                pathToPic.delete();
+                            }
+                        }
+                    });
+        }
+    }
+
+    private void setMoviePostersOnline(final MovieAdapterViewHolder movieAdapterViewHolder, final int position) {
+        String orderBy = getPreference();
+
+        if (!"favorites".equals(orderBy)) {
+            if (mLoadFromDb == false) {
+                String moviePosterForOneMovie = mMoviePostersUrlStrings.get(position);
+
+                Picasso.with(mainActivity)
+                        .load(moviePosterForOneMovie)
+                        .error(R.drawable.pic_error_loading_w370)
+                        .into(movieAdapterViewHolder.mMoviePosterImageView);
+            } else {
+                if ("popular".equals(orderBy)) {
+                    mCursor.moveToPosition(position);
+                    String moviePosterForOneMovie = mCursor.getString(mCursor
+                            .getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH));
+                    String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
+                            .concat(moviePosterForOneMovie);
 
                     Picasso.with(mainActivity)
-                            .load(moviePosterForOneMovie)
+                            // PosterPath from web
+                            .load(fullMoviePosterForOneMovie)
                             .error(R.drawable.pic_error_loading_w370)
-                            .into(movieAdapterViewHolder.mMoviePosterImageView);
-                } else {
-                    if ("popular".equals(orderBy)) {
-                        mCursor.moveToPosition(position);
-                        String moviePosterForOneMovie = mCursor.getString(mCursor
-                                .getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH));
-                        String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
-                                .concat(moviePosterForOneMovie);
-
-                        Picasso.with(mainActivity)
-                                // PosterPath from web
-                                .load(fullMoviePosterForOneMovie)
-                                .error(R.drawable.pic_error_loading_w370)
-                                .into(movieAdapterViewHolder.mMoviePosterImageView, new Callback() {
-                                    @Override
-                                    public void onSuccess() {
-                                        movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.INVISIBLE);
-                                    }
-
-                                    @Override
-                                    public void onError() {
-                                        movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.VISIBLE);
-                                        Log.i(TAG, "Current Position: " + position + "\nCurrent Movie Title: " + mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE)));
-                                        mCursor.moveToPosition(position);
-                                        String currentMovieTitle = mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE));
-                                        if (currentMovieTitle.contains(":")) {
-                                            String[] separated = currentMovieTitle.split(":");
-                                            // separate[1].trim() will remove the empty space to the second string
-                                            movieAdapterViewHolder.mErrorMovieNameTextView.setText(separated[0] + ":" + "\n" + separated[1].trim());
-                                        } else {
-                                            movieAdapterViewHolder.mErrorMovieNameTextView
-                                                    .setText(currentMovieTitle);
-                                        }
-                                    }
-                                });
-                    } else {
-                        mCursor.moveToPosition(position);
-                        String moviePosterForOneMovie = mCursor.getString(mCursor
-                                .getColumnIndex(CacheMovieTopRatedEntry.COLUMN_POSTER_PATH));
-                        String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
-                                .concat(moviePosterForOneMovie);
-
-                        Picasso.with(mainActivity)
-                                // PosterPath from web
-                                .load(fullMoviePosterForOneMovie)
-                                .error(R.drawable.pic_error_loading_w370)
-                                .into(movieAdapterViewHolder.mMoviePosterImageView, new Callback() {
-                                    @Override
-                                    public void onSuccess() {
-                                        movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.INVISIBLE);
-                                    }
-
-                                    @Override
-                                    public void onError() {
-                                        movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.VISIBLE);
-                                        Log.i(TAG, "Current Position: " + position + "\nCurrent Movie Title: " + mCursor.getString(mCursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_ORIGINAL_TITLE)));
-                                        mCursor.moveToPosition(position);
-                                        String currentMovieTitle = mCursor.getString(mCursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_ORIGINAL_TITLE));
-                                        if (currentMovieTitle.contains(":")) {
-                                            String[] separated = currentMovieTitle.split(":");
-                                            // separate[1].trim() will remove the empty space to the second string
-                                            movieAdapterViewHolder.mErrorMovieNameTextView.setText(separated[0] + ":" + "\n" + separated[1].trim());
-                                        } else {
-                                            movieAdapterViewHolder.mErrorMovieNameTextView
-                                                    .setText(currentMovieTitle);
-                                        }
-                                    }
-                                });
-                    }
-                }
-            } else {
-                mCursor.moveToPosition(position);
-                String moviePosterForOneMovie = mCursor.getString(mCursor
-                        .getColumnIndex(FavMovieEntry.COLUMN_POSTER_PATH));
-                String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
-                        .concat(moviePosterForOneMovie);
-
-                Picasso.with(mainActivity)
-                        // PosterPath from web
-                        .load(fullMoviePosterForOneMovie)
-                        .error(R.drawable.pic_error_loading_w370)
-                        .into(movieAdapterViewHolder.mMoviePosterImageView, new Callback() {
-                            @Override
-                            public void onSuccess() {
-                                movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.INVISIBLE);
-                            }
-
-                            @Override
-                            public void onError() {
-                                movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.VISIBLE);
-                                Log.i(TAG, "Current Position: " + position + "\nCurrent Movie Title: " + mCursor.getString(mCursor.getColumnIndex(FavMovieEntry.COLUMN_ORIGINAL_TITLE)));
-                                mCursor.moveToPosition(position);
-                                String currentMovieTitle = mCursor.getString(mCursor.getColumnIndex(FavMovieEntry.COLUMN_ORIGINAL_TITLE));
-                                if (currentMovieTitle.contains(":")) {
-                                    String[] separated = currentMovieTitle.split(":");
-                                    // separate[1].trim() will remove the empty space to the second string
-                                    movieAdapterViewHolder.mErrorMovieNameTextView.setText(separated[0] + ":" + "\n" + separated[1].trim());
-                                } else {
-                                    movieAdapterViewHolder.mErrorMovieNameTextView
-                                            .setText(currentMovieTitle);
+                            .into(movieAdapterViewHolder.mMoviePosterImageView, new Callback() {
+                                @Override
+                                public void onSuccess() {
+                                    movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.INVISIBLE);
                                 }
-                            }
-                        });
+
+                                @Override
+                                public void onError() {
+                                    movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.VISIBLE);
+                                    Log.i(TAG, "Current Position: " + position + "\nCurrent Movie Title: " + mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE)));
+                                    mCursor.moveToPosition(position);
+                                    String currentMovieTitle = mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE));
+                                    if (currentMovieTitle.contains(":")) {
+                                        String[] separated = currentMovieTitle.split(":");
+                                        // separate[1].trim() will remove the empty space to the second string
+                                        movieAdapterViewHolder.mErrorMovieNameTextView.setText(separated[0] + ":" + "\n" + separated[1].trim());
+                                    } else {
+                                        movieAdapterViewHolder.mErrorMovieNameTextView
+                                                .setText(currentMovieTitle);
+                                    }
+                                }
+                            });
+                } else {
+                    mCursor.moveToPosition(position);
+                    String moviePosterForOneMovie = mCursor.getString(mCursor
+                            .getColumnIndex(CacheMovieTopRatedEntry.COLUMN_POSTER_PATH));
+                    String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
+                            .concat(moviePosterForOneMovie);
+
+                    Picasso.with(mainActivity)
+                            // PosterPath from web
+                            .load(fullMoviePosterForOneMovie)
+                            .error(R.drawable.pic_error_loading_w370)
+                            .into(movieAdapterViewHolder.mMoviePosterImageView, new Callback() {
+                                @Override
+                                public void onSuccess() {
+                                    movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.INVISIBLE);
+                                }
+
+                                @Override
+                                public void onError() {
+                                    movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.VISIBLE);
+                                    Log.i(TAG, "Current Position: " + position + "\nCurrent Movie Title: " + mCursor.getString(mCursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_ORIGINAL_TITLE)));
+                                    mCursor.moveToPosition(position);
+                                    String currentMovieTitle = mCursor.getString(mCursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_ORIGINAL_TITLE));
+                                    if (currentMovieTitle.contains(":")) {
+                                        String[] separated = currentMovieTitle.split(":");
+                                        // separate[1].trim() will remove the empty space to the second string
+                                        movieAdapterViewHolder.mErrorMovieNameTextView.setText(separated[0] + ":" + "\n" + separated[1].trim());
+                                    } else {
+                                        movieAdapterViewHolder.mErrorMovieNameTextView
+                                                .setText(currentMovieTitle);
+                                    }
+                                }
+                            });
+                }
             }
         } else {
-            String orderBy = getPreference();
-            if ("popular".equals(orderBy)) {
-                mCursor.moveToPosition(position);
-                String moviePosterForOneMovie = mCursor.getString(mCursor
-                        .getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH));
-                String basePopPosterExternalUrl = ExternalPathUtils.getExternalPathBasicFileName(this.mainActivity)
-                        + "/popularmovies";
-                String fullMoviePosterForOneMovie = basePopPosterExternalUrl
-                        .concat(moviePosterForOneMovie);
-                final File pathToPic = new File(fullMoviePosterForOneMovie);
+            mCursor.moveToPosition(position);
+            String moviePosterForOneMovie = mCursor.getString(mCursor
+                    .getColumnIndex(FavMovieEntry.COLUMN_POSTER_PATH));
+            String fullMoviePosterForOneMovie = BASE_IMAGE_URL.concat(IMAGE_SIZE_W185)
+                    .concat(moviePosterForOneMovie);
 
-                Picasso.with(mainActivity)
-                        // PosterPath from external storage
-                        .load(pathToPic)
-                        .error(R.drawable.pic_error_loading_w370)
-                        .into(movieAdapterViewHolder.mMoviePosterImageView, new Callback() {
-                            @Override
-                            public void onSuccess() {
-                                movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.INVISIBLE);
+            Picasso.with(mainActivity)
+                    // PosterPath from web
+                    .load(fullMoviePosterForOneMovie)
+                    .error(R.drawable.pic_error_loading_w370)
+                    .into(movieAdapterViewHolder.mMoviePosterImageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.INVISIBLE);
+                        }
+
+                        @Override
+                        public void onError() {
+                            movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.VISIBLE);
+                            Log.i(TAG, "Current Position: " + position + "\nCurrent Movie Title: " + mCursor.getString(mCursor.getColumnIndex(FavMovieEntry.COLUMN_ORIGINAL_TITLE)));
+                            mCursor.moveToPosition(position);
+                            String currentMovieTitle = mCursor.getString(mCursor.getColumnIndex(FavMovieEntry.COLUMN_ORIGINAL_TITLE));
+                            if (currentMovieTitle.contains(":")) {
+                                String[] separated = currentMovieTitle.split(":");
+                                // separate[1].trim() will remove the empty space to the second string
+                                movieAdapterViewHolder.mErrorMovieNameTextView.setText(separated[0] + ":" + "\n" + separated[1].trim());
+                            } else {
+                                movieAdapterViewHolder.mErrorMovieNameTextView
+                                        .setText(currentMovieTitle);
                             }
-
-                            @Override
-                            public void onError() {
-                                movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.VISIBLE);
-                                Log.i(TAG, "Current Position: " + position + "\nCurrent Movie Title: " + mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE)));
-                                mCursor.moveToPosition(position);
-                                String currentMovieTitle = mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE));
-                                if (currentMovieTitle.contains(":")) {
-                                    String[] separated = currentMovieTitle.split(":");
-                                    // separate[1].trim() will remove the empty space to the second string
-                                    movieAdapterViewHolder.mErrorMovieNameTextView.setText(separated[0] + ":" + "\n" + separated[1].trim());
-                                } else {
-                                    movieAdapterViewHolder.mErrorMovieNameTextView
-                                            .setText(currentMovieTitle);
-                                }
-                                if (pathToPic.exists()) {
-                                    pathToPic.delete();
-                                }
-                            }
-                        });
-
-            } else if ("top_rated".equals(orderBy)) {
-                mCursor.moveToPosition(position);
-                String moviePosterForOneMovie = mCursor.getString(mCursor
-                        .getColumnIndex(CacheMovieTopRatedEntry.COLUMN_POSTER_PATH));
-                String baseTopPosterExternalUrl = ExternalPathUtils.getExternalPathBasicFileName(this.mainActivity)
-                        + "/topratedmovies";
-                String fullMoviePosterForOneMovie = baseTopPosterExternalUrl
-                        .concat(moviePosterForOneMovie);
-                final File pathToPic = new File(fullMoviePosterForOneMovie);
-
-                Picasso.with(mainActivity)
-                        // PosterPath from external storage
-                        .load(pathToPic)
-                        .error(R.drawable.pic_error_loading_w370)
-                        .into(movieAdapterViewHolder.mMoviePosterImageView, new Callback() {
-                            @Override
-                            public void onSuccess() {
-                                movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.INVISIBLE);
-                            }
-
-                            @Override
-                            public void onError() {
-                                movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.VISIBLE);
-                                Log.i(TAG, "Current Position: " + position + "\nCurrent Movie Title: " + mCursor.getString(mCursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_ORIGINAL_TITLE)));
-                                mCursor.moveToPosition(position);
-                                String currentMovieTitle = mCursor.getString(mCursor.getColumnIndex(CacheMovieTopRatedEntry.COLUMN_ORIGINAL_TITLE));
-                                if (currentMovieTitle.contains(":")) {
-                                    String[] separated = currentMovieTitle.split(":");
-                                    // separate[1].trim() will remove the empty space to the second string
-                                    movieAdapterViewHolder.mErrorMovieNameTextView.setText(separated[0] + ":" + "\n" + separated[1].trim());
-                                } else {
-                                    movieAdapterViewHolder.mErrorMovieNameTextView
-                                            .setText(currentMovieTitle);
-                                }
-                                if (pathToPic.exists()) {
-                                    pathToPic.delete();
-                                }
-                            }
-                        });
-            } else {
-                mCursor.moveToPosition(position);
-                String moviePosterForOneMovie = mCursor.getString(mCursor
-                        .getColumnIndex(FavMovieEntry.COLUMN_POSTER_PATH));
-
-                // If the fav movie is saved from pop list and still in pop list
-                String basePopPosterExternalUrl = ExternalPathUtils.getExternalPathBasicFileName(this.mainActivity)
-                        + "/popularmovies";
-                String fullMoviePopPosterForOneMovie = basePopPosterExternalUrl
-                        .concat(moviePosterForOneMovie);
-                File pathToPopPic = new File(fullMoviePopPosterForOneMovie);
-
-                // If the fav movie is saved from top list and still in top list
-                String baseTopPosterExternalUrl = ExternalPathUtils.getExternalPathBasicFileName(this.mainActivity)
-                        + "/topratedmovies";
-                String fullMovieTopPosterForOneMovie = baseTopPosterExternalUrl
-                        .concat(moviePosterForOneMovie);
-                File pathToTopPic = new File(fullMovieTopPosterForOneMovie);
-
-                // If the fav movie is not existing anymore in any of the pop or top list
-                String baseFavPosterExternalUrl = ExternalPathUtils.getExternalPathBasicFileName(this.mainActivity)
-                        + "/favmovies";
-                String fullMovieFavPosterForOneMovie = baseFavPosterExternalUrl
-                        .concat(moviePosterForOneMovie);
-                File pathToFavPic = new File(fullMovieFavPosterForOneMovie);
-
-                // I do 3 check because the fav movie poster is only saved to fav folder when user
-                // open fav page, but if the user save the movie from pop or top list, and cut off
-                // internet, the movie poster hasn't saved to fav folder, so I want to get them out
-                // from pop or top folder.
-                final File pathToPic;
-                if (pathToPopPic.exists()) {
-                    pathToPic = pathToPopPic;
-                } else if (pathToTopPic.exists()) {
-                    pathToPic = pathToTopPic;
-                } else {
-                    pathToPic = pathToFavPic;
-                }
-                Picasso.with(mainActivity)
-                        // PosterPath from external storage
-                        .load(pathToPic)
-                        .error(R.drawable.pic_error_loading_w370)
-                        .into(movieAdapterViewHolder.mMoviePosterImageView, new Callback() {
-                            @Override
-                            public void onSuccess() {
-                                movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.INVISIBLE);
-                            }
-
-                            @Override
-                            public void onError() {
-                                movieAdapterViewHolder.mErrorMovieNameTextView.setVisibility(View.VISIBLE);
-                                Log.i(TAG, "Current Position: " + position + "\nCurrent Movie Title: " + mCursor.getString(mCursor.getColumnIndex(FavMovieEntry.COLUMN_ORIGINAL_TITLE)));
-                                mCursor.moveToPosition(position);
-                                String currentMovieTitle = mCursor.getString(mCursor.getColumnIndex(FavMovieEntry.COLUMN_ORIGINAL_TITLE));
-                                if (currentMovieTitle.contains(":")) {
-                                    String[] separated = currentMovieTitle.split(":");
-                                    // separate[1].trim() will remove the empty space to the second string
-                                    movieAdapterViewHolder.mErrorMovieNameTextView.setText(separated[0] + ":" + "\n" + separated[1].trim());
-                                } else {
-                                    movieAdapterViewHolder.mErrorMovieNameTextView
-                                            .setText(currentMovieTitle);
-                                }
-                                if (pathToPic.exists()) {
-                                    pathToPic.delete();
-                                }
-                            }
-                        });
-            }
+                        }
+                    });
         }
     }
 

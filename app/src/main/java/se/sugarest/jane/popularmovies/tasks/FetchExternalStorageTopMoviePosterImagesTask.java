@@ -72,7 +72,7 @@ public class FetchExternalStorageTopMoviePosterImagesTask extends AsyncTask<Movi
             String filename = lastPart;
             Log.i(TAG, context.getString(R.string.log_information_message_download_filename) + filename);
 
-            File file = new File(ExternalPathUtils.getExternalPathBasicFileName(this.context) + "/topratedmovies/" + filename);
+            File file = new File(ExternalPathUtils.getExternalPathBasicFileName(this.context) + "/cacheposters/" + filename);
 
             if (!file.exists()) {
                 file.getParentFile().mkdirs();
