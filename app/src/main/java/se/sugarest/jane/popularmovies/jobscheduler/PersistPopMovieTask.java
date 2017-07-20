@@ -2,8 +2,10 @@ package se.sugarest.jane.popularmovies.jobscheduler;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.LinearLayout;
@@ -120,22 +122,25 @@ public class PersistPopMovieTask extends AsyncTask<Void, Void, List<Movie>> {
                 }
             }
 
-            downloadExtraPopMoviePosterFilePic();
-            downloadExtraPopMovieImageThumbnailFilePic();
+            Boolean enableOffline = getEnableOfflinePreference();
+            if (enableOffline == true) {
 
-            if (MainActivity.mShowToast) {
-                if (mPosterUpToDateRecordNumber == POSTER_UP_TO_DATE && mThumbnailUpToDateRecordNumber == THUMBNAIL_UP_TO_DATE) {
-                    if (MainActivity.mToast != null) {
-                        MainActivity.mToast.cancel();
+                downloadExtraPopMoviePosterFilePic();
+                downloadExtraPopMovieImageThumbnailFilePic();
+
+                if (MainActivity.mShowToast) {
+                    if (mPosterUpToDateRecordNumber == POSTER_UP_TO_DATE && mThumbnailUpToDateRecordNumber == THUMBNAIL_UP_TO_DATE) {
+                        if (MainActivity.mToast != null) {
+                            MainActivity.mToast.cancel();
+                        }
+                        MainActivity.mToast = Toast.makeText(this.context, this.context.getString(R.string.toast_message_refresh_pop_up_to_date), Toast.LENGTH_SHORT);
+                        MainActivity.mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                        MainActivity.mToast.show();
                     }
-                    MainActivity.mToast = Toast.makeText(this.context, this.context.getString(R.string.toast_message_refresh_pop_up_to_date), Toast.LENGTH_SHORT);
-                    MainActivity.mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                    MainActivity.mToast.show();
+                    // When job scheduler refresh automatically mShowToast should be false.
+                    MainActivity.mShowToast = false;
                 }
-                // When job scheduler refresh automatically mShowToast should be false.
-                MainActivity.mShowToast = false;
             }
-
         } else {
             Log.e(TAG, context.getString(R.string.log_error_message_offline_before_fetch_movie_data_finish));
             String expectedMsg = context.getString(R.string.toast_message_offline_before_fetch_movie_data_finish);
@@ -305,5 +310,12 @@ public class PersistPopMovieTask extends AsyncTask<Void, Void, List<Movie>> {
             }
             cursor.close();
         }
+    }
+
+    private boolean getEnableOfflinePreference() {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.context);
+        return sharedPrefs.getBoolean(
+                this.context.getString(R.string.pref_enable_offline_key),
+                this.context.getResources().getBoolean(R.bool.pref_enable_offline_default));
     }
 }

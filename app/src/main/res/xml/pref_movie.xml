@@ -9,4 +9,11 @@
         android:key="@string/settings_order_by_key"
         android:title="@string/settings_order_by_label" />
 
+    <CheckBoxPreference
+        android:defaultValue="@bool/pref_enable_offline_default"
+        android:key="@string/pref_enable_offline_key"
+        android:summaryOff="@string/pref_show_false"
+        android:summaryOn="@string/pref_show_true"
+        android:title="@string/pref_enable_offline_label" />
+
 </PreferenceScreen>

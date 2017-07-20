@@ -24,11 +24,6 @@
     <!-- The text for Log information message (display filepath) when downloading the picture and put it into SD card storage. -->
     <string name="log_information_message_download_filepath">filepath: </string>
 
-    <!-- The text for Log information message when checking refreshPop true. -->
-    <string name="log_information_refreshPop_true">Check refresh Pop true.</string>
-    <!-- The text for Log information message when checking refreshTop true. -->
-    <string name="log_information_refreshTop_true">Check refresh Top true.</string>
-
     <!-- Toast message for refresh when there is no internet connection in MainActivity and DetailActivity. -->
     <string name="toast_message_refresh_no_internet">Cannot refresh without internet connection.</string>
     <!-- Toast message for refresh Pop movies when the external folder already has all the images. List up to date. -->
@@ -126,23 +121,15 @@
     <!-- The text for the TextView to display error message when there is no favorite movies to display. -->
     <string name="error_message_no_fav_movie">You don\'t have favorite movies !\nStart by pressing the STAR button on single movie\'s Page !</string>
     <!-- The text for the TextView to display error message when there is no popular movies to display. -->
-    <string name="error_message_no_popular_movie">No popular movies! Please check your network settings and refresh!</string>
+    <string name="error_message_no_popular_movie">No popular movies! Please enable the internet and refresh! </string>
     <!-- The text for the TextView to display error message when there is no top rated movies to display. -->
-    <string name="error_message_no_top_rated_movie">No top rated movies! Please check your network settings and refresh!</string>
+    <string name="error_message_no_top_rated_movie">No top rated movies! Please enable the internet and refresh! </string>
+    <!-- The text for the TextView to display error message when user disabled offline use and open the app when offline. -->
+    <string name="error_message_enable_offline_false">You have disabled offline use in the settings menu. Please reset and refresh! </string>
 
     <!-- - - - - - - - - -
     - SharedPreference.  -
     - - - - - - - - - - -->
-    <!-- SharedPreference Key to store time information to check the boolean refreshPop, refreshTop, refreshFav. -->
-    <string name="pref_pop_date_key" translatable="false">refresh_pop_movie</string>
-    <string name="pref_top_date_key" translatable="false">refresh_top_movie</string>
-    <string name="pref_fav_date_key" translatable="false">refresh_fav_movie</string>
-
-    <!-- SharedPreference Key to store first time called information to control toast message' loop stop. -->
-    <string name="pref_pop_download_interrupt_key" translatable="false">pop_download_interrupt</string>
-    <string name="pref_top_download_interrupt_key" translatable="false">top_download_interrupt</string>
-    <string name="pref_fav_download_interrupt_key" translatable="false">fav_download_interrupt</string>
-
     <!-- Strings For Order-By Preference [CHAR LIMIT=30] -->
     <string name="settings_order_by_label">Order By</string>
     <string name="settings_order_by_key" translatable="false">order_by</string>
@@ -159,6 +146,15 @@
     <!-- Label for order-by favorite movie option [CHAR LIMIT=20] -->
     <string name="settings_order_by_favorites_label">Favorite Movies</string>
     <string name="settings_order_by_favorites_value" translatable="false">favorites</string>
+
+    <!-- Label for the enable offline checkbox preference -->
+    <string name="pref_enable_offline_label">Enable Offline Use</string>
+    <!-- Key name for enable offline in SharedPreferences -->
+    <string name="pref_enable_offline_key" translatable="false">enable_offline</string>
+
+    <!-- Summary for Checkboxes -->
+    <string name="pref_show_true">Enabled</string>
+    <string name="pref_show_false">Disabled</string>
 
     <!-- - - - - - - - - - - - - - - - - - - - -
     - Texts show on MainActivity's Page Title. -

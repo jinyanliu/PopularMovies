@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String titleOrderBy = getPreference();
+        String titleOrderBy = getOrderByPreference();
         if ("popular".equals(titleOrderBy)) {
             setTitle(getString(R.string.main_activity_title_most_popular));
         } else if ("top_rated".equals(titleOrderBy)) {
@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
             // First loading the app, don't show up to date toast if it is up to date.
             mShowToast = false;
 
-            String orderBy = getPreference();
+            String orderBy = getOrderByPreference();
             if ("popular".equals(orderBy)) {
                 orderBy = "movie/" + orderBy;
                 new FetchMoviePostersTask(this).execute(orderBy);
@@ -214,8 +214,15 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
             }
 
         } else {
-            hideLoadingIndicators();
-            initCursorLoader();
+            Boolean enableOffline = getEnableOfflinePreference();
+            if (enableOffline) {
+                hideLoadingIndicators();
+                initCursorLoader();
+            } else {
+                hideLoadingIndicators();
+                showErrorMessage();
+                mErrorMessageDisplay.setText(getString(R.string.error_message_enable_offline_false));
+            }
         }
     }
 
@@ -237,7 +244,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     private void refreshMovie() {
         if (getNetworkInfo() != null && getNetworkInfo().isConnected()) {
             mShowToast = true;
-            String orderBy = getPreference();
+            String orderBy = getOrderByPreference();
             if ("popular".equals(orderBy)) {
                 orderBy = "movie/" + orderBy;
                 new FetchMoviePostersTask(this).execute(orderBy);
@@ -314,9 +321,18 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem deleteAll = menu.findItem(R.id.action_delete_all);
-        String orderBy = getPreference();
+        String orderBy = getOrderByPreference();
+        Boolean enableOffline = getEnableOfflinePreference();
         if ("favorites".equals(orderBy)) {
-            deleteAll.setVisible(true);
+            if (getNetworkInfo() != null && getNetworkInfo().isConnected()) {
+                deleteAll.setVisible(true);
+            } else {
+                if (enableOffline == true) {
+                    deleteAll.setVisible(true);
+                } else {
+                    deleteAll.setVisible(false);
+                }
+            }
         } else {
             deleteAll.setVisible(false);
         }
@@ -394,7 +410,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        String orderBy = getPreference();
+        String orderBy = getOrderByPreference();
 
         if ("popular".equals(orderBy)) {
             return new CursorLoader(
@@ -437,7 +453,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
             hideLoadingIndicators();
             showErrorMessage();
 
-            String orderBy = getPreference();
+            String orderBy = getOrderByPreference();
 
             if ("popular".equals(orderBy)) {
                 // Because we only fetch data when there is network, if there is no network, we load
@@ -475,7 +491,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     }
 
     @NonNull
-    private String getPreference() {
+    private String getOrderByPreference() {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         return sharedPrefs.getString(
                 getString(R.string.settings_order_by_key),
@@ -515,5 +531,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         // Create and show the AlertDialog
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    private boolean getEnableOfflinePreference() {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPrefs.getBoolean(
+                getString(R.string.pref_enable_offline_key),
+                getResources().getBoolean(R.bool.pref_enable_offline_default));
     }
 }

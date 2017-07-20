@@ -2,10 +2,12 @@ package se.sugarest.jane.popularmovies.ui;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
@@ -29,8 +31,19 @@ public class SettingsActivity extends AppCompatActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_movie);
 
-            Preference orderBy = findPreference(getString(R.string.settings_order_by_key));
-            bindPreferenceSummaryToValue(orderBy);
+            PreferenceScreen prefScreen = getPreferenceScreen();
+            int count = prefScreen.getPreferenceCount();
+
+            // Go through all of the preferences, and set up their preference summary.
+            for (int i = 0; i < count; i++) {
+                Preference p = prefScreen.getPreference(i);
+                // You don't need to set up preference summaries for checkbox preferences because
+                // they are already set up in xml using summaryOff and summary On
+                if (!(p instanceof CheckBoxPreference)) {
+                    Preference orderBy = findPreference(getString(R.string.settings_order_by_key));
+                    bindPreferenceSummaryToValue(orderBy);
+                }
+            }
         }
 
         @Override

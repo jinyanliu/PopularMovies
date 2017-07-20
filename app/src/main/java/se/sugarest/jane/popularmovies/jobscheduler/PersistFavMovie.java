@@ -1,7 +1,9 @@
 package se.sugarest.jane.popularmovies.jobscheduler;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
@@ -58,19 +60,22 @@ public class PersistFavMovie {
         We have to create folders for fav list to maintain its own data.
         */
 
-        downloadExtraFavMoviePosterFilePic(context);
-        downloadExtraFavMovieImageThumbnailFilePic(context);
+        Boolean enableOffline = getEnableOfflinePreference(context);
+        if (enableOffline == true) {
+            downloadExtraFavMoviePosterFilePic(context);
+            downloadExtraFavMovieImageThumbnailFilePic(context);
 
-        if (MainActivity.mShowToast) {
-            if (mPosterUpToDateRecordNumber == POSTER_UP_TO_DATE && mThumbnailUpToDateRecordNumber == THUMBNAIL_UP_TO_DATE) {
-                if (MainActivity.mToast != null) {
-                    MainActivity.mToast.cancel();
+            if (MainActivity.mShowToast) {
+                if (mPosterUpToDateRecordNumber == POSTER_UP_TO_DATE && mThumbnailUpToDateRecordNumber == THUMBNAIL_UP_TO_DATE) {
+                    if (MainActivity.mToast != null) {
+                        MainActivity.mToast.cancel();
+                    }
+                    MainActivity.mToast = Toast.makeText(context, context.getString(R.string.toast_message_refresh_fav_up_to_date), Toast.LENGTH_SHORT);
+                    MainActivity.mToast.setGravity(Gravity.BOTTOM, 0, 0);
+                    MainActivity.mToast.show();
                 }
-                MainActivity.mToast = Toast.makeText(context, context.getString(R.string.toast_message_refresh_fav_up_to_date), Toast.LENGTH_SHORT);
-                MainActivity.mToast.setGravity(Gravity.BOTTOM, 0, 0);
-                MainActivity.mToast.show();
+                MainActivity.mShowToast = false;
             }
-            MainActivity.mShowToast = false;
         }
     }
 
@@ -223,5 +228,12 @@ public class PersistFavMovie {
             }
             cursor.close();
         }
+    }
+
+    private static boolean getEnableOfflinePreference(Context context) {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPrefs.getBoolean(
+                context.getString(R.string.pref_enable_offline_key),
+                context.getResources().getBoolean(R.bool.pref_enable_offline_default));
     }
 }
