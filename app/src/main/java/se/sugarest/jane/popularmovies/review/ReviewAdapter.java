@@ -16,12 +16,9 @@ import se.sugarest.jane.popularmovies.R;
  */
 
 /**
- * {@link ReviewAdapter} exposes a list of current movie reviews to a
- * {@link RecyclerView}
+ * Exposes a list of current movie reviews to a {@link RecyclerView}.
  */
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewAdapterViewHolder> {
-
-    private static final String TAG = ReviewAdapter.class.getSimpleName();
 
     private List<Review> mReviewData;
 
@@ -81,13 +78,12 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewAdap
         return mReviewData.size();
     }
 
-    /**
-     * This method is used to set the review authors and contents on a ReviewAdapter if we've already
-     * created one. This is handy when getting new data from the web but don't want to create a
-     * new ReviewAdapter to display it.
-     *
-     * @param reviewData The new review data to be displayed.
-     */
+    /*
+    This method is used to set the review authors and contents on a ReviewAdapter if we've already
+    created one.
+    This is handy when getting new data from the web but don't want to create a new ReviewAdapter to
+    display it.
+    */
     public void setReviewData(List<Review> reviewData) {
         mReviewData = reviewData;
         String[] arrayAuthor = new String[reviewData.size()];
@@ -105,9 +101,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewAdap
         notifyDataSetChanged();
     }
 
-    /**
-     * Cache of the children views for a review.
-     */
+    // Cache of the children views for a review.
     public class ReviewAdapterViewHolder extends RecyclerView.ViewHolder {
         public final TextView mReviewAuthor;
         public final TextView mReviewContent;

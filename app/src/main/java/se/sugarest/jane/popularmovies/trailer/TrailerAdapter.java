@@ -43,6 +43,15 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
         mContext = context;
     }
 
+    /**
+     * This gets called when each new ViewHolder is created. This happens when the RecyclerView
+     * is laid out. Enough ViewHolders will be created to fill the screen and allow for scrolling.
+     *
+     * @param viewGroup The ViewGroup that these ViewHolders are contained within.
+     * @param viewType  If RecyclerView has more than one type of item (which this one don't)
+     *                  this viewType can be used to provide a different layout.
+     * @return A new ReviewAdapterViewHolder that holds the View for each list item
+     */
     @Override
     public TrailerAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         Context context = viewGroup.getContext();
@@ -54,6 +63,16 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
         return new TrailerAdapterViewHolder(view);
     }
 
+    /**
+     * OnBindViewHolder is called by the RecyclerView to display the data at the specified
+     * position. In this method, update the contents of the ViewHolder to display the different
+     * background color for each particular position, using the "position" argument that
+     * is conveniently passed in.
+     *
+     * @param trailerAdapterViewHolder The ViewHolder which should be updated to represent the
+     *                                 contents of the item at the given position in the data set.
+     * @param position                 The position of the item within the adapter's data set.
+     */
     @Override
     public void onBindViewHolder(TrailerAdapterViewHolder trailerAdapterViewHolder, int position) {
         int currentColor = getTrailerFabBackgroundColor(position);
@@ -61,7 +80,11 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
                 .valueOf(currentColor));
     }
 
-    // returns the number of items (trailers) to display
+    /**
+     * This method simply returns the number of items to display.
+     *
+     * @return The number of items available on the trailer section.
+     */
     @Override
     public int getItemCount() {
         if (mTrailerData == null) {

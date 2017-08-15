@@ -22,7 +22,7 @@ public class Trailer {
         mKeyOfTrailer = key;
     }
 
-    // Get the key string of a trailer
+    // Gets the key string of a trailer
     public String getKeyString() {
         return mKeyOfTrailer;
     }

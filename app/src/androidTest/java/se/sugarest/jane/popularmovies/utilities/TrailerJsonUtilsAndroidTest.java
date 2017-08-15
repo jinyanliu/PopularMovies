@@ -17,8 +17,11 @@ public class TrailerJsonUtilsAndroidTest {
 
     @Test
     public void testExtractResultsFromMovieTrailerJson_noTrailer() {
-        String noTrailerJson = "{\"id\": 321612, \"quicktime\": [],\n" +
-                "        \"youtube\": []\n" +
+        String noTrailerJson = "{\n" +
+                "\"id\": 321612,\n" +
+                "\"quicktime\": [],\n" +
+                "\"youtube\": [\n" +
+                "]\n" +
                 "}";
         Assert.assertTrue(TrailerJsonUtils.extractResultsFromMovieTrailerJson(noTrailerJson).isEmpty());
     }
@@ -26,16 +29,16 @@ public class TrailerJsonUtilsAndroidTest {
     @Test
     public void testExtractResultsFromMovieTrailerJson_invalidJson() {
         String invalidJson = "{\n" +
-                "        \"id\": 321612,\n" +
-                "            \"quicktime\": [],\n" +
-                "        \"youtube\": [\n" +
-                //          "        {\n" +
-                "            \"name\": \"Official US Teaser Trailer\",\n" +
-                "                \"size\": \"HD\",\n" +
-                "                \"source\": \"c38r-SAnTWM\",\n" +
-                "                \"type\": \"Trailer\"\n" +
-                "        }\n" +
-                "        ]\n" +
+                "\"id\": 321612,\n" +
+                "\"quicktime\": [],\n" +
+                "\"youtube\": [\n" +
+                //"{\n" +
+                "\"name\": \"Official US Teaser Trailer\",\n" +
+                "\"size\": \"HD\",\n" +
+                "\"source\": \"c38r-SAnTWM\",\n" +
+                "\"type\": \"Trailer\"\n" +
+                "}\n" +
+                "]\n" +
                 "}";
         Assert.assertTrue(TrailerJsonUtils.extractResultsFromMovieTrailerJson(invalidJson).isEmpty());
     }
@@ -43,16 +46,16 @@ public class TrailerJsonUtilsAndroidTest {
     @Test
     public void testExtractResultsFromMovieTrailerJson_oneTrailer() {
         String oneTrailerJson = "{\n" +
-                "        \"id\": 321612,\n" +
-                "            \"quicktime\": [],\n" +
-                "        \"youtube\": [\n" +
-                "        {\n" +
-                "            \"name\": \"Official US Teaser Trailer\",\n" +
-                "                \"size\": \"HD\",\n" +
-                "                \"source\": \"c38r-SAnTWM\",\n" +
-                "                \"type\": \"Trailer\"\n" +
-                "        }\n" +
-                "        ]\n" +
+                "\"id\": 321612,\n" +
+                "\"quicktime\": [],\n" +
+                "\"youtube\": [\n" +
+                "{\n" +
+                "\"name\": \"Official US Teaser Trailer\",\n" +
+                "\"size\": \"HD\",\n" +
+                "\"source\": \"c38r-SAnTWM\",\n" +
+                "\"type\": \"Trailer\"\n" +
+                "}\n" +
+                "]\n" +
                 "}";
         Assert.assertTrue(TrailerJsonUtils.extractResultsFromMovieTrailerJson(oneTrailerJson).size() == 1);
         Assert.assertEquals("c38r-SAnTWM",
@@ -61,21 +64,23 @@ public class TrailerJsonUtilsAndroidTest {
 
     @Test
     public void testExtractResultsFromMovieTrailerJson_twoTrailers() {
-        String twoTrailerJson = "{\"id\": 321612, \"quicktime\": [],\n" +
-                "        \"youtube\": [\n" +
-                "        {\n" +
-                "            \"name\": \"Official US Teaser Trailer\",\n" +
-                "                \"size\": \"HD\",\n" +
-                "                \"source\": \"c38r-SAnTWM\",\n" +
-                "                \"type\": \"Trailer\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "\t\t\t\"name\": \"Lumiere Motion Poster\",\n" +
-                "\t\t\t\"size\": \"HD\",\n" +
-                "\t\t\t\"source\": \"bgeSXHvPoBI\",\n" +
-                "\t\t\t\"type\": \"Clip\"\n" +
-                "\t\t}\n" +
-                "        ]\n" +
+        String twoTrailerJson = "{\n" +
+                "\"id\": 321612,\n" +
+                "\"quicktime\": [],\n" +
+                "\"youtube\": [\n" +
+                "{\n" +
+                "\"name\": \"Official US Teaser Trailer\",\n" +
+                "\"size\": \"HD\",\n" +
+                "\"source\": \"c38r-SAnTWM\",\n" +
+                "\"type\": \"Trailer\"\n" +
+                "},\n" +
+                "{\n" +
+                "\"name\": \"Lumiere Motion Poster\",\n" +
+                "\"size\": \"HD\",\n" +
+                "\"source\": \"bgeSXHvPoBI\",\n" +
+                "\"type\": \"Clip\"\n" +
+                "}\n" +
+                "]\n" +
                 "}";
         Assert.assertTrue(TrailerJsonUtils.extractResultsFromMovieTrailerJson(twoTrailerJson).size() == 2);
         Assert.assertEquals("c38r-SAnTWM",

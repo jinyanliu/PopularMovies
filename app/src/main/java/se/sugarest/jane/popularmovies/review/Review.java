@@ -10,14 +10,10 @@ package se.sugarest.jane.popularmovies.review;
  */
 public class Review {
 
-    /**
-     * Author of the review
-     */
+    // Author of the review
     private String mAuthor;
 
-    /**
-     * Content of the review
-     */
+    // Content of the review
     private String mReviewContent;
 
     /**
@@ -31,16 +27,12 @@ public class Review {
         mReviewContent = content;
     }
 
-    /**
-     * Get the author of the review
-     */
+    // Gets the author of the review
     public String getAuthor() {
         return mAuthor;
     }
 
-    /**
-     * Get the content of the review
-     */
+    // Gets the content of the review
     public String getReviewContent() {
         return mReviewContent;
     }

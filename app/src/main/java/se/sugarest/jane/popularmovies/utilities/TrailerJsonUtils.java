@@ -29,7 +29,7 @@ public class TrailerJsonUtils {
      */
     public static List<Trailer> extractResultsFromMovieTrailerJson(String movieTrailerJSON) {
 
-        // If the JSON string is empty or null, then return early.
+        // If the JSON string is empty or null, then return empty instead of null.
         if (TextUtils.isEmpty(movieTrailerJSON)) {
             return Collections.emptyList();
         }
