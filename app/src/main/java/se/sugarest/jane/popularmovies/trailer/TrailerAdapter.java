@@ -19,12 +19,9 @@ import java.util.List;
 import se.sugarest.jane.popularmovies.R;
 
 /**
- * {@link TrailerAdapter} exposes a list of current movie trailers to a
- * {@link RecyclerView}
+ * Exposes a list of current movie trailers to a {@link RecyclerView}.
  */
 public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerAdapterViewHolder> {
-
-    private static final String TAG = TrailerAdapter.class.getSimpleName();
 
     private List<Trailer> mTrailerData;
 
@@ -32,10 +29,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
 
     private Context mContext;
 
-    /**
-     * And On-click handler that defined tp make it easy for an Activity to interface with
-     * the RecyclerView
-     */
+    // Add On-click handler that defined to make it easy for an Activity to interface with the RecyclerView
     private final TrailerAdapterOnClickHandler mClickHandler;
 
     /**
@@ -67,11 +61,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
                 .valueOf(currentColor));
     }
 
-    /**
-     * This method simply returns the number of items to play.
-     *
-     * @return The number of items available on the trailer section.
-     */
+    // returns the number of items (trailers) to display
     @Override
     public int getItemCount() {
         if (mTrailerData == null) {
@@ -80,13 +70,11 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
         return mTrailerData.size();
     }
 
-    /**
-     * This method is used to pass a trailer key string on a TrailerAdapter if we've already
-     * created one. This is handy when getting new data from the web but don't want to create a
-     * new TrailerAdapter to display it.
-     *
-     * @param trailerData The new trailer data to be played.
-     */
+    /*
+    This method is used to pass a trailer key string on a TrailerAdapter if we've already created one.
+    This is handy when getting new data from the web but don't want to create a new TrailerAdapter to
+    display it.
+    */
     public void setTrailerData(List<Trailer> trailerData) {
         mTrailerData = trailerData;
         String[] arrayKeyString = new String[trailerData.size()];
@@ -99,9 +87,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
 
     }
 
-    /**
-     * Cache of the children views for a trailer.
-     */
+    // Cache of the children views for a trailer.
     public class TrailerAdapterViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
         public final FloatingActionButton mPlayTrailerFab;
 
@@ -119,16 +105,12 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
         }
     }
 
-    /**
-     * The interface that receives onClick messages.
-     */
+    // The interface that receives onClick messages.
     public interface TrailerAdapterOnClickHandler {
         void onClick(String trailerSourceKey);
     }
 
-    /**
-     * Use switch statement to set the different background color on trailer play icon.
-     */
+    // Use switch statement to set the different background color on trailer play icon.
     private int getTrailerFabBackgroundColor(int position) {
         int trailerFabBackgroundColorId;
         switch (position) {

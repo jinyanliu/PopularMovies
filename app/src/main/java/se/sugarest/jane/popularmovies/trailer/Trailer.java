@@ -10,9 +10,7 @@ package se.sugarest.jane.popularmovies.trailer;
  */
 public class Trailer {
 
-    /**
-     * Key string of a trailer
-     */
+    // Key string of a trailer
     private String mKeyOfTrailer;
 
     /**
@@ -24,9 +22,7 @@ public class Trailer {
         mKeyOfTrailer = key;
     }
 
-    /**
-     * Get the key string of the trailer
-     */
+    // Get the key string of a trailer
     public String getKeyString() {
         return mKeyOfTrailer;
     }
