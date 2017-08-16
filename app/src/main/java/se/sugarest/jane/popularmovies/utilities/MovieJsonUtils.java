@@ -1,7 +1,6 @@
 package se.sugarest.jane.popularmovies.utilities;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -11,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import se.sugarest.jane.popularmovies.movie.Movie;
-import se.sugarest.jane.popularmovies.R;
+import timber.log.Timber;
 
 /**
  * Created by jane on 2/27/17.
@@ -21,8 +20,6 @@ import se.sugarest.jane.popularmovies.R;
  * Utility functions to handle MovieDB JSON data.
  */
 public class MovieJsonUtils {
-
-    private static final String TAG = MovieJsonUtils.class.getSimpleName();
 
     /**
      * @return a list of {@link Movie} objects that has been built up from
@@ -91,7 +88,7 @@ public class MovieJsonUtils {
             // If an error is thrown when executing any of the above statements in the "try" block,
             // catch the exception here, so the app doesn't crash. Print a log message
             // with the message from the exception.
-            Log.e(TAG, String.valueOf(R.string.log_error_message_passing_JSON), e);
+            Timber.e(e, "Failed to pass Movie JSON.");
         }
 
         // Return the list of movies
