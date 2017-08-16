@@ -11,7 +11,7 @@ import org.junit.Test;
 public class ReviewTest {
 
     private String author = "Gimly";
-    private String content = "Disney's done a great job with Gaston and The Beast, the two aspects that I always thought would be the most important, and the most difficult, to nail.\\r\\n\\r\\n_Final rating:★★★ - I personally recommend you give it a go._";
+    private String content = "Disney's done a great job with Gaston and The Beast.";
 
     private Review review;
 
