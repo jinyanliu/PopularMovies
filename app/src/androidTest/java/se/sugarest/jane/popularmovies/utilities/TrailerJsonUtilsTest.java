@@ -7,7 +7,7 @@ import org.junit.Test;
  * Created by jane on 17-8-15.
  */
 
-public class TrailerJsonUtilsAndroidTest {
+public class TrailerJsonUtilsTest {
 
     @Test
     public void testExtractResultsFromMovieTrailerJson_emptyJson() {
@@ -57,7 +57,7 @@ public class TrailerJsonUtilsAndroidTest {
                 "}\n" +
                 "]\n" +
                 "}";
-        Assert.assertTrue(TrailerJsonUtils.extractResultsFromMovieTrailerJson(oneTrailerJson).size() == 1);
+        Assert.assertEquals(1, TrailerJsonUtils.extractResultsFromMovieTrailerJson(oneTrailerJson).size());
         Assert.assertEquals("c38r-SAnTWM",
                 TrailerJsonUtils.extractResultsFromMovieTrailerJson(oneTrailerJson).get(0).getKeyString());
     }
@@ -82,7 +82,7 @@ public class TrailerJsonUtilsAndroidTest {
                 "}\n" +
                 "]\n" +
                 "}";
-        Assert.assertTrue(TrailerJsonUtils.extractResultsFromMovieTrailerJson(twoTrailerJson).size() == 2);
+        Assert.assertEquals(2, TrailerJsonUtils.extractResultsFromMovieTrailerJson(twoTrailerJson).size());
         Assert.assertEquals("c38r-SAnTWM",
                 TrailerJsonUtils.extractResultsFromMovieTrailerJson(twoTrailerJson).get(0).getKeyString());
         Assert.assertEquals("bgeSXHvPoBI",

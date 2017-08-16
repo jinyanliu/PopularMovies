@@ -6,7 +6,7 @@ import org.junit.Test;
 /**
  * Created by jane on 17-8-15.
  */
-public class ReviewJsonUtilsAndroidTest {
+public class ReviewJsonUtilsTest {
 
     @Test
     public void testExtractResultsFromMovieReviewJson_emptyJson() {
@@ -56,7 +56,7 @@ public class ReviewJsonUtilsAndroidTest {
                 "}\n" +
                 "]\n" +
                 "}";
-        Assert.assertTrue(ReviewJsonUtils.extractResultsFromMovieReviewJson(oneReviewJson).size() == 1);
+        Assert.assertEquals(1, ReviewJsonUtils.extractResultsFromMovieReviewJson(oneReviewJson).size());
         Assert.assertEquals("Salt-and-Limes",
                 ReviewJsonUtils.extractResultsFromMovieReviewJson(oneReviewJson).get(0).getAuthor());
         Assert.assertEquals("It is good.",
@@ -83,7 +83,7 @@ public class ReviewJsonUtilsAndroidTest {
                 "}\n" +
                 "]\n" +
                 "}";
-        Assert.assertTrue(ReviewJsonUtils.extractResultsFromMovieReviewJson(twoReviewJson).size() == 2);
+        Assert.assertEquals(2, ReviewJsonUtils.extractResultsFromMovieReviewJson(twoReviewJson).size());
         Assert.assertEquals("Salt-and-Limes",
                 ReviewJsonUtils.extractResultsFromMovieReviewJson(twoReviewJson).get(0).getAuthor());
         Assert.assertEquals("It is good.",
@@ -93,5 +93,4 @@ public class ReviewJsonUtilsAndroidTest {
         Assert.assertEquals("It is fun.",
                 ReviewJsonUtils.extractResultsFromMovieReviewJson(twoReviewJson).get(1).getReviewContent());
     }
-
 }
