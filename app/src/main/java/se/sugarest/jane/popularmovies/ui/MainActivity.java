@@ -226,6 +226,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         }
     }
 
+    // N == api 24
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void scheduleFetchMovieJob() {
         Log.i(TAG, "Scheduling job.");

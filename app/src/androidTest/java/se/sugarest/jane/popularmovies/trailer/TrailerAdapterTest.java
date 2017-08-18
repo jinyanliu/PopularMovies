@@ -3,6 +3,7 @@ package se.sugarest.jane.popularmovies.trailer;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
+import android.support.v4.content.ContextCompat;
 
 import junit.framework.Assert;
 
@@ -12,6 +13,8 @@ import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import se.sugarest.jane.popularmovies.R;
 
 /**
  * Created by jane on 17-8-15.
@@ -74,5 +77,13 @@ public class TrailerAdapterTest {
         trailerData.add(trailerTwo);
         trailerAdapter.setTrailerData(trailerData);
         Assert.assertEquals(2, trailerAdapter.getItemCount());
+    }
+
+    @Test
+    public void getTrailerFabBackgroundColorText() throws Exception {
+        int position = 5;
+        int expectedBgColor = ContextCompat.getColor(instrumentationCtx, R.color.trailer5);
+        int realBgColor = trailerAdapter.getTrailerFabBackgroundColor(position);
+        Assert.assertEquals(expectedBgColor, realBgColor);
     }
 }

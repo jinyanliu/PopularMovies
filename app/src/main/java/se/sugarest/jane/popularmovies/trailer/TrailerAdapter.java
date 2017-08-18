@@ -134,7 +134,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
     }
 
     // Use switch statement to set the different background color on trailer play icon.
-    private int getTrailerFabBackgroundColor(int position) {
+    protected int getTrailerFabBackgroundColor(int position) {
         int trailerFabBackgroundColorId;
         switch (position) {
             case 0:
