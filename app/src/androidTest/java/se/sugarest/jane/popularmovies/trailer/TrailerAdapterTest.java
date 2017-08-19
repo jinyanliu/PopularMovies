@@ -1,9 +1,9 @@
 package se.sugarest.jane.popularmovies.trailer;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
+import android.support.v4.content.ContextCompat;
 
 import junit.framework.Assert;
 
@@ -16,8 +16,6 @@ import java.util.List;
 
 import se.sugarest.jane.popularmovies.R;
 
-import static android.support.test.InstrumentationRegistry.getInstrumentation;
-
 /**
  * Created by jane on 17-8-15.
  */
@@ -26,15 +24,17 @@ import static android.support.test.InstrumentationRegistry.getInstrumentation;
 public class TrailerAdapterTest {
 
     private Context instrumentationCtx;
+    private TrailerAdapter trailerAdapter;
+    private List<Trailer> trailerData = new ArrayList<>();
 
     @Before
     public void setUp() {
-        instrumentationCtx = InstrumentationRegistry.getContext();
+        //getContext() only gets unit test's context.
+        instrumentationCtx = InstrumentationRegistry.getTargetContext();
+        // have to write this line of code inside setUp(),
+        // otherwise, getTrailerFabBackgroundColorText() cannot find the context and resources
+        trailerAdapter = new TrailerAdapter(null, instrumentationCtx);
     }
-
-    List<Trailer> trailerData = new ArrayList<>();
-
-    TrailerAdapter trailerAdapter = new TrailerAdapter(null, instrumentationCtx);
 
     /***********************************************************************************************
      *                                                                                             *
@@ -84,8 +84,7 @@ public class TrailerAdapterTest {
     @Test
     public void getTrailerFabBackgroundColorText() throws Exception {
         int position = 5;
-        Resources res = getInstrumentation().getTargetContext().getResources();
-        int expectedBgColor = res.getColor(R.color.trailer5);
+        int expectedBgColor = ContextCompat.getColor(instrumentationCtx, R.color.trailer5);
         int realBgColor = trailerAdapter.getTrailerFabBackgroundColor(position);
         Assert.assertEquals(expectedBgColor, realBgColor);
     }
