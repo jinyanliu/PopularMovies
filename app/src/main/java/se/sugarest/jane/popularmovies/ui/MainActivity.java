@@ -89,6 +89,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         this.mToast = mToast;
     }
 
+    /* Interval for the periodic job, in milliseconds. */
+    private static final long PERIOD_MILLIS = 24 * 60 * 60 * 1000L;   // 24 * 60 minutes
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -233,7 +236,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         ComponentName serviceName = new ComponentName(this, FetchMovieService.class);
         JobInfo jobInfo = new JobInfo.Builder(444, serviceName)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                .setPeriodic(JobInfo.getMinPeriodMillis(), JobInfo.getMinFlexMillis())
+                .setPeriodic(PERIOD_MILLIS, JobInfo.getMinFlexMillis())
                 .build();
         JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         int result = scheduler.schedule(jobInfo);
