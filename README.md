@@ -1,5 +1,7 @@
 # PopularMovies
--- You can type in YOUR_API_KEY in se.sugarest.jane.popularmovies.utilities.NetworkUtils . Thank you. --
+You can type in YOUR_API_KEY in se.sugarest.jane.popularmovies.utilities.NetworkUtils . Thank you.
+
+See on Google Play Store : https://play.google.com/store/apps/details?id=se.sugarest.jane.popularmovies
 
 Present the user with a grid arrangement of movie posters upon launch. 
 
