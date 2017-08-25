@@ -39,7 +39,8 @@
         <provider
             android:name=".data.MovieProvider"
             android:authorities="se.sugarest.jane.popularmovies"
-            android:exported="false" />
+            android:exported="true"
+            android:grantUriPermissions="true" />
 
         <service
             android:name=".jobscheduler.FetchMovieService"
