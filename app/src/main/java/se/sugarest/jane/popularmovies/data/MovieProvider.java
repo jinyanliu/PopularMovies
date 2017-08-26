@@ -275,7 +275,7 @@ public class MovieProvider extends ContentProvider {
         int match = sUriMatcher.match(uri);
         switch (match) {
             case MOVIES:
-                // Insert a new movie into the pets database table with the given ContentValues
+                // Insert a new movie into the fav movie table with the given ContentValues
                 id = database.insert(FavMovieEntry.TABLE_NAME, null, values);
                 break;
             case REVIEWS:

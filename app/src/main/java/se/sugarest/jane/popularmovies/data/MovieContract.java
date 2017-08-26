@@ -10,7 +10,8 @@ import android.provider.BaseColumns;
 
 /**
  * Defines tables and column names for the movie database.
- * It contains FavMovieEntry, ReviewEntry and TrailerEntry.
+ * It contains FavMovieEntry, ReviewEntry, TrailerEntry, CacheMovieMostPopularEntry
+ * and CacheMovieTopRatedEntyr.
  */
 public class MovieContract {
 
