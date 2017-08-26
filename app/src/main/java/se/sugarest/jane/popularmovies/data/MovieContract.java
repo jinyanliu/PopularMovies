@@ -144,6 +144,9 @@ public class MovieContract {
         /* Used internally as the name of our review table. */
         public static final String TABLE_NAME = "review";
 
+        /* Used internally as the name of our index in review table. */
+        public static final String INDEX_NAME = "review_index";
+
         /**
          * MovieIdReview is stored as a String representing movie's id, used to identify the movie.
          */

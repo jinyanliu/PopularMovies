@@ -97,11 +97,17 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                         " FOREIGN KEY(" + ReviewEntry.COLUMN_MOVIE_ID + ") REFERENCES "
                         + MovieContract.FavMovieEntry.TABLE_NAME + "(" + MovieContract.FavMovieEntry.COLUMN_MOVIE_ID + "));";
 
+        final String SQL_CREATE_REVIEW_TABLE_INDEX =
+                "CREATE INDEX " + ReviewEntry.INDEX_NAME +
+                        " ON " + ReviewEntry.TABLE_NAME + " (" + ReviewEntry.COLUMN_MOVIE_ID + ");";
+
         /*
          * After spelling out the SQLite table creation statement above, actually execute
          * that SQL with the execSQL method of the SQLite database object.
          */
         sqLiteDatabase.execSQL(SQL_CREATE_REVIEW_TABLE);
+
+        sqLiteDatabase.execSQL(SQL_CREATE_REVIEW_TABLE_INDEX);
 
         /*
          * This String will contain a simple SQL statement that will create a table that will
