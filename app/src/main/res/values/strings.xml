@@ -229,5 +229,10 @@
         thoroughly positive \-\- see below.) The musical numbers are by far the best part of the movie, including Jennifer
         Hudson-voiced renditions of \"Golden Slumbers/Carry That Weight\" to the piggy duet of \"Shake It Off\" (by Witherspoon
         and comedian Nick Kroll as a German boar called Gunter) to Kelly\'s show-stopping version of "Hallelujah."</string>
+
+    <!-- Strings related to Widgets -->
+    <!-- Empty Movie List -->
+    <string name="empty_movie_list">No Movie Information Available</string>
+    <string name="title_widget_detail">Movie Details</string>
 </resources>
 
