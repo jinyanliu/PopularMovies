@@ -14,9 +14,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import se.sugarest.jane.popularmovies.R;
+import se.sugarest.jane.popularmovies.jobscheduler.UpdateWidgetService;
 import se.sugarest.jane.popularmovies.ui.DetailActivity;
 import se.sugarest.jane.popularmovies.ui.MainActivity;
 
@@ -25,6 +27,8 @@ import se.sugarest.jane.popularmovies.ui.MainActivity;
  */
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class DetailWidgetProvider extends AppWidgetProvider {
+
+    final static String TAG = DetailWidgetProvider.class.getSimpleName();
 
     private int titleCode;
 
@@ -62,27 +66,33 @@ public class DetailWidgetProvider extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        if (MainActivity.ACTION_DATA_UPDATED.equals(intent.getAction())) {
+        if (MainActivity.ACTION_DATA_UPDATED.equals(intent.getAction())
+                || UpdateWidgetService.ACTION_DATA_UPDATED.equals(intent.getAction())) {
+
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
                     new ComponentName(context, getClass()));
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list);
 
-            titleCode = intent.getExtras().getInt("title_code");
-            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_detail);
-            if (titleCode == 1) {
-                views.setImageViewResource(R.id.im_widget_title, R.drawable.widgettitle_popular);
+            if (intent.hasExtra("title_code")) {
+                titleCode = intent.getExtras().getInt("title_code");
+                RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_detail);
+                if (titleCode == 1) {
+                    views.setImageViewResource(R.id.im_widget_title, R.drawable.widgettitle_popular);
 
-            } else if (titleCode == 2) {
-                views.setImageViewResource(R.id.im_widget_title, R.drawable.widgettitle_toprated);
+                } else if (titleCode == 2) {
+                    views.setImageViewResource(R.id.im_widget_title, R.drawable.widgettitle_toprated);
 
-            } else if (titleCode == 3) {
-                views.setImageViewResource(R.id.im_widget_title, R.drawable.widgettitle_favorite);
+                } else if (titleCode == 3) {
+                    views.setImageViewResource(R.id.im_widget_title, R.drawable.widgettitle_favorite);
+                }
+                ComponentName thisWidget = new ComponentName(context, DetailWidgetProvider.class);
+                AppWidgetManager manager = AppWidgetManager.getInstance(context);
+                manager.updateAppWidget(thisWidget, views);
+            } else {
+                Log.i(TAG, "jag : widget provider on receive without titleCoder, not from initCursorLoader" +
+                        ", from JobSchedular.");
             }
-
-            ComponentName thisWidget = new ComponentName(context, DetailWidgetProvider.class);
-            AppWidgetManager manager = AppWidgetManager.getInstance(context);
-            manager.updateAppWidget(thisWidget, views);
         }
     }
 

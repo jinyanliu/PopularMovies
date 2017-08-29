@@ -48,6 +48,10 @@
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
+        <service android:name=".jobscheduler.UpdateWidgetService"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
         <receiver
             android:name=".widget.DetailWidgetProvider"
             android:enabled="true"

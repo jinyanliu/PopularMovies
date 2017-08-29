@@ -41,7 +41,7 @@ public class FetchMovieService extends JobService {
 
     @Override
     public boolean onStopJob(JobParameters params) {
-        Log.i(FetchMovieService.class.getName(), "Stop fetch movie service.");
+        Log.i(TAG, "Stop fetch movie service.");
         return true;
     }
 }

@@ -42,6 +42,7 @@ import se.sugarest.jane.popularmovies.jobscheduler.FetchMovieService;
 import se.sugarest.jane.popularmovies.jobscheduler.PersistFavMovie;
 import se.sugarest.jane.popularmovies.jobscheduler.PersistPopMovieTask;
 import se.sugarest.jane.popularmovies.jobscheduler.PersistTopMovieTask;
+import se.sugarest.jane.popularmovies.jobscheduler.UpdateWidgetService;
 import se.sugarest.jane.popularmovies.movie.Movie;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter.MovieAdapterOnClickHandler;
@@ -91,8 +92,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         this.mToast = mToast;
     }
 
-    /* Interval for the periodic job, in milliseconds. */
-    private static final long PERIOD_MILLIS = 24 * 60 * 60 * 1000L;   // 24 * 60 minutes
+    /* Interval for the update widget periodic job, in milliseconds. */
+    private static final long PERIOD_MILLIS_UPDATE_WIDGET = 1 * 60 * 1000L;   // 1 minute for test
+
+    /* Interval for the fetch movie periodic job, in milliseconds. */
+    private static final long PERIOD_MILLIS_FETCH_MOVIE = 24 * 60 * 60 * 1000L;   // 24 * 60 minutes
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -229,21 +233,43 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
                 mErrorMessageDisplay.setText(getString(R.string.error_message_enable_offline_false));
             }
         }
+
+        // API 24 Android 7.0 Nougat
+        // No internet activity involved
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            scheduleUpdateWidgetJob();
+        }
+    }
+
+    // N == api 24
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void scheduleUpdateWidgetJob() {
+        Log.i(TAG, "Scheduling update widget job.");
+        ComponentName serviceName = new ComponentName(this, UpdateWidgetService.class);
+        JobInfo jobInfo = new JobInfo.Builder(555, serviceName)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setPeriodic(JobInfo.getMinPeriodMillis(), JobInfo.getMinFlexMillis())
+                .build();
+        JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        int result = scheduler.schedule(jobInfo);
+        if (result == JobScheduler.RESULT_SUCCESS) {
+            Log.i(TAG, "Scheduler update widget job scheduled successfully!");
+        }
     }
 
     // N == api 24
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void scheduleFetchMovieJob() {
-        Log.i(TAG, "Scheduling job.");
+        Log.i(TAG, "Scheduling fetch movie job.");
         ComponentName serviceName = new ComponentName(this, FetchMovieService.class);
         JobInfo jobInfo = new JobInfo.Builder(444, serviceName)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                .setPeriodic(PERIOD_MILLIS, JobInfo.getMinFlexMillis())
+                .setPeriodic(JobInfo.getMinPeriodMillis(), JobInfo.getMinFlexMillis())
                 .build();
         JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         int result = scheduler.schedule(jobInfo);
         if (result == JobScheduler.RESULT_SUCCESS) {
-            Log.i(TAG, "Job scheduled successfully!");
+            Log.i(TAG, "Fetch movie job scheduled successfully!");
         }
     }
 
