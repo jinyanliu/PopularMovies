@@ -61,8 +61,6 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
 
     private static final String TAG = DetailActivity.class.getSimpleName();
 
-
-
     private static final int SAVE_MOVIE_SUCCESS = 10;
     private static final int SAVE_MOVIE_FAIL = 11;
     private static final int SAVE_REVIEW_SUCCESS = 20;

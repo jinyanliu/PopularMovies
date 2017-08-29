@@ -12,9 +12,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.widget.RemoteViews;
 
@@ -28,22 +26,12 @@ import se.sugarest.jane.popularmovies.ui.MainActivity;
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class DetailWidgetProvider extends AppWidgetProvider {
 
+    private int titleCode;
+
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         // Perform this loop procedure for each App Widget that belongs to this provider
         for (int appWidgetId : appWidgetIds) {
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_detail);
-
-            String orderBy = getOrderByPreference(context);
-
-            if ("popular".equals(orderBy)) {
-                views.setImageViewResource(R.id.im_widget_title, R.drawable.widgettitle_popular);
-
-            } else if ("top_rated".equals(orderBy)) {
-                views.setImageViewResource(R.id.im_widget_title, R.drawable.widgettitle_toprated);
-
-            } else if ("favorites".equals(orderBy)) {
-                views.setImageViewResource(R.id.im_widget_title, R.drawable.widgettitle_favorite);
-            }
 
             // Create an Intent to launch MainActivity
             Intent intent = new Intent(context, MainActivity.class);
@@ -79,6 +67,22 @@ public class DetailWidgetProvider extends AppWidgetProvider {
             int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
                     new ComponentName(context, getClass()));
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list);
+
+            titleCode = intent.getExtras().getInt("title_code");
+            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_detail);
+            if (titleCode == 1) {
+                views.setImageViewResource(R.id.im_widget_title, R.drawable.widgettitle_popular);
+
+            } else if (titleCode == 2) {
+                views.setImageViewResource(R.id.im_widget_title, R.drawable.widgettitle_toprated);
+
+            } else if (titleCode == 3) {
+                views.setImageViewResource(R.id.im_widget_title, R.drawable.widgettitle_favorite);
+            }
+
+            ComponentName thisWidget = new ComponentName(context, DetailWidgetProvider.class);
+            AppWidgetManager manager = AppWidgetManager.getInstance(context);
+            manager.updateAppWidget(thisWidget, views);
         }
     }
 
@@ -102,13 +106,5 @@ public class DetailWidgetProvider extends AppWidgetProvider {
     private void setRemoteAdapterV11(Context context, @NonNull final RemoteViews views) {
         views.setRemoteAdapter(0, R.id.widget_list,
                 new Intent(context, DetailWidgetRemoteViewsService.class));
-    }
-
-    @NonNull
-    public String getOrderByPreference(Context context) {
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return sharedPrefs.getString(
-                context.getString(R.string.settings_order_by_key),
-                context.getString(R.string.settings_order_by_default));
     }
 }

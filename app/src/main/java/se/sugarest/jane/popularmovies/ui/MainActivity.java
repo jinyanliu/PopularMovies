@@ -282,6 +282,16 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
 
     public void initCursorLoader() {
         Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED);
+        int titleCode;
+        String orderBy = getOrderByPreference();
+        if ("popular".equals(orderBy)) {
+            titleCode = 1;
+        } else if ("top_rated".equals(orderBy)) {
+            titleCode = 2;
+        } else {
+            titleCode = 3;
+        }
+        dataUpdatedIntent.putExtra("title_code", titleCode);
         this.sendBroadcast(dataUpdatedIntent);
         getLoaderManager().initLoader(MOVIE_LOADER, null, this);
     }
