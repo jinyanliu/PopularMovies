@@ -13,6 +13,7 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import se.sugarest.jane.popularmovies.R;
+import se.sugarest.jane.popularmovies.data.MovieContract.FavMovieEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedEntry;
 import se.sugarest.jane.popularmovies.movie.Movie;
@@ -54,6 +55,7 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
                 if (data != null) {
                     data.close();
                 }
+
                 final long identityToken = Binder.clearCallingIdentity();
 
                 String orderBy = getOrderByPreference();
@@ -89,6 +91,24 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
 
                     data = getContentResolver().query(
                             CacheMovieTopRatedEntry.CONTENT_URI,
+                            movieColumns,
+                            null,
+                            null,
+                            null);
+
+                } else if ("favorites".equals(orderBy)) {
+                    String[] movieColumns = {
+                            FavMovieEntry._ID,
+                            FavMovieEntry.COLUMN_POSTER_PATH,
+                            FavMovieEntry.COLUMN_ORIGINAL_TITLE,
+                            FavMovieEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL,
+                            FavMovieEntry.COLUMN_A_PLOT_SYNOPSIS,
+                            FavMovieEntry.COLUMN_USER_RATING,
+                            FavMovieEntry.COLUMN_RELEASE_DATE,
+                            FavMovieEntry.COLUMN_MOVIE_ID};
+
+                    data = getContentResolver().query(
+                            FavMovieEntry.CONTENT_URI,
                             movieColumns,
                             null,
                             null,

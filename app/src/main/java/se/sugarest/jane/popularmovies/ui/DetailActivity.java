@@ -61,7 +61,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
 
     private static final String TAG = DetailActivity.class.getSimpleName();
 
-    public static final String ACTION_DATA_UPDATED = "se.sugarest.jane.popularmovies.ACTION_DATA_UPDATED";
+
 
     private static final int SAVE_MOVIE_SUCCESS = 10;
     private static final int SAVE_MOVIE_FAIL = 11;
@@ -624,8 +624,6 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                 mToast.show();
             }
         }
-        Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED);
-        this.sendBroadcast(dataUpdatedIntent);
     }
 
     /**
@@ -723,8 +721,6 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
             mTrailerRecyclerView.setVisibility(View.GONE);
             mReviewRecyclerView.setVisibility(View.GONE);
         }
-        Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED);
-        this.sendBroadcast(dataUpdatedIntent);
     }
 
     /**

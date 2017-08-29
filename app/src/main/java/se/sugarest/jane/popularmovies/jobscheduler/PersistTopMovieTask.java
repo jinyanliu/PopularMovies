@@ -2,7 +2,6 @@ package se.sugarest.jane.popularmovies.jobscheduler;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -37,8 +36,6 @@ import se.sugarest.jane.popularmovies.utilities.NetworkUtils;
 public class PersistTopMovieTask extends AsyncTask<Void, Void, List<Movie>> {
 
     private static final String TAG = PersistTopMovieTask.class.getSimpleName();
-
-    public static final String ACTION_DATA_UPDATED = "se.sugarest.jane.popularmovies.ACTION_DATA_UPDATED";
 
     private static final int POSTER_UP_TO_DATE = 333;
     private static final int THUMBNAIL_UP_TO_DATE = 334;
@@ -124,9 +121,6 @@ public class PersistTopMovieTask extends AsyncTask<Void, Void, List<Movie>> {
                     Log.i(TAG, "bulkInsertCacheMovie TopRated unsuccessful.");
                 }
             }
-
-            Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED);
-            context.sendBroadcast(dataUpdatedIntent);
 
             Boolean enableOffline = getEnableOfflinePreference();
             if (enableOffline == true) {

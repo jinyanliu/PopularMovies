@@ -51,6 +51,8 @@ import se.sugarest.jane.popularmovies.utilities.DeleteExternalFolderExtraPic;
 public class MainActivity extends AppCompatActivity implements MovieAdapterOnClickHandler
         , android.app.LoaderManager.LoaderCallbacks<Cursor> {
 
+    public static final String ACTION_DATA_UPDATED = "se.sugarest.jane.popularmovies.ACTION_DATA_UPDATED";
+
     private static final String TAG = MainActivity.class.getSimpleName();
 
     public static Toast mToast;
@@ -279,6 +281,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     }
 
     public void initCursorLoader() {
+        Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED);
+        this.sendBroadcast(dataUpdatedIntent);
         getLoaderManager().initLoader(MOVIE_LOADER, null, this);
     }
 

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="@android:color/black"
     android:orientation="vertical">
 
     <FrameLayout
@@ -13,18 +13,19 @@
         android:background="@color/colorPrimary">
 
         <ImageView
+            android:id="@+id/im_widget_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:contentDescription="@string/app_name"
-            android:src="@drawable/widget_title" />
+            tools:src="@drawable/widget_title" />
     </FrameLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@android:color/white">
+        android:background="@android:color/black">
 
         <ListView
             android:id="@+id/widget_list"
@@ -41,7 +42,7 @@
             android:fontFamily="sans-serif-condensed"
             android:gravity="center"
             android:text="@string/empty_movie_list"
-            android:textAppearance="?android:textAppearanceLarge" />
+            android:textSize="18sp" />
     </FrameLayout>
 
 </LinearLayout>
