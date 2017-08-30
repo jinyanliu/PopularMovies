@@ -24,6 +24,8 @@ public class DeleteExternalFolderExtraPic {
 
     public static void deleteExtraMoviePosterFilePic(Context context) {
 
+        Log.i(TAG, "Halloooooooooo, jag ar pa delete extra poster vag.");
+
         String[] postersPopPathArray = getPostersPopPathArray(context);
 
         String[] postersTopPathArray = getPostersTopPathArray(context);
@@ -48,6 +50,8 @@ public class DeleteExternalFolderExtraPic {
     }
 
     public static void deleteExtraMovieThumbnailFilePic(Context context) {
+
+        Log.i(TAG, "Halloooooooooo, jag ar pa delete extra thumbnail vag.");
 
         String[] thumbnailsPopPathArray = getThumbnailsPopPathArray(context);
 

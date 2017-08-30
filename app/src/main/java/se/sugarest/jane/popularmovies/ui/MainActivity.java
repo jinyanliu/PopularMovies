@@ -38,11 +38,14 @@ import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedEntry
 import se.sugarest.jane.popularmovies.data.MovieContract.FavMovieEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.ReviewEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.TrailerEntry;
-import se.sugarest.jane.popularmovies.jobscheduler.FetchMovieService;
 import se.sugarest.jane.popularmovies.jobscheduler.PersistFavMovie;
 import se.sugarest.jane.popularmovies.jobscheduler.PersistPopMovieTask;
 import se.sugarest.jane.popularmovies.jobscheduler.PersistTopMovieTask;
-import se.sugarest.jane.popularmovies.jobscheduler.UpdateWidgetService;
+import se.sugarest.jane.popularmovies.jobscheduler.jobservice.DeleteExtraMoviePicService;
+import se.sugarest.jane.popularmovies.jobscheduler.jobservice.PersistFavService;
+import se.sugarest.jane.popularmovies.jobscheduler.jobservice.PersistPopService;
+import se.sugarest.jane.popularmovies.jobscheduler.jobservice.PersistTopService;
+import se.sugarest.jane.popularmovies.jobscheduler.jobservice.UpdateWidgetService;
 import se.sugarest.jane.popularmovies.movie.Movie;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter.MovieAdapterOnClickHandler;
@@ -105,6 +108,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
 
     /* Interval for the fetch movie periodic job, in milliseconds. */
     private static final long PERIOD_MILLIS_FETCH_MOVIE = 24 * 60 * 60 * 1000L;   // 24 * 60 minutes
+
+    private static final int JOB_ID_PERSIST_POP_MOVIE = 111;
+    private static final int JOB_ID_PERSIST_TOP_MOVIE = 222;
+    private static final int JOB_ID_PERSIST_FAV_MOVIE = 333;
+    private static final int JOB_ID_DELETE_EXTRA_PIC = 444;
+    private static final int JOB_ID_UPDATE_WIDGET = 555;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -225,11 +234,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
             DeleteExternalFolderExtraPic.deleteExtraMoviePosterFilePic(this);
             DeleteExternalFolderExtraPic.deleteExtraMovieThumbnailFilePic(this);
 
-            // API 24 Android 7.0 Nougat
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                scheduleFetchMovieJob();
-            }
-
         } else {
             Boolean enableOffline = getEnableOfflinePreference();
             if (enableOffline) {
@@ -243,9 +247,76 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         }
 
         // API 24 Android 7.0 Nougat
-        // No internet activity involved
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            scheduleUpdatePopMovieJob();
+            scheduleUpdateTopMovieJob();
+            scheduleUpdateFavMovieJob();
+            scheduleDeleteExtraPic();
             scheduleUpdateWidgetJob();
+        }
+    }
+
+    // N == api 24
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void scheduleUpdatePopMovieJob() {
+        Log.i(TAG, "Scheduling fetch pop movie job.");
+        ComponentName serviceName = new ComponentName(this, PersistPopService.class);
+        JobInfo jobInfo = new JobInfo.Builder(JOB_ID_PERSIST_POP_MOVIE, serviceName)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setPeriodic(JobInfo.getMinPeriodMillis(), JobInfo.getMinFlexMillis())
+                .build();
+        JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        int result = scheduler.schedule(jobInfo);
+        if (result == JobScheduler.RESULT_SUCCESS) {
+            Log.i(TAG, "Fetch pop movie job scheduled successfully!");
+        }
+    }
+
+
+    // N == api 24
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void scheduleUpdateTopMovieJob() {
+        Log.i(TAG, "Scheduling fetch top movie job.");
+        ComponentName serviceName = new ComponentName(this, PersistTopService.class);
+        JobInfo jobInfo = new JobInfo.Builder(JOB_ID_PERSIST_TOP_MOVIE, serviceName)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setPeriodic(JobInfo.getMinPeriodMillis(), JobInfo.getMinFlexMillis())
+                .build();
+        JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        int result = scheduler.schedule(jobInfo);
+        if (result == JobScheduler.RESULT_SUCCESS) {
+            Log.i(TAG, "Fetch top movie job scheduled successfully!");
+        }
+    }
+
+    // N == api 24
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void scheduleUpdateFavMovieJob() {
+        Log.i(TAG, "Scheduling fetch fav movie job.");
+        ComponentName serviceName = new ComponentName(this, PersistFavService.class);
+        JobInfo jobInfo = new JobInfo.Builder(JOB_ID_PERSIST_FAV_MOVIE, serviceName)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setPeriodic(JobInfo.getMinPeriodMillis(), JobInfo.getMinFlexMillis())
+                .build();
+        JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        int result = scheduler.schedule(jobInfo);
+        if (result == JobScheduler.RESULT_SUCCESS) {
+            Log.i(TAG, "Fetch fav movie job scheduled successfully!");
+        }
+    }
+
+    // N == api 24
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void scheduleDeleteExtraPic() {
+        Log.i(TAG, "Scheduling delete extra pic job.");
+        ComponentName serviceName = new ComponentName(this, DeleteExtraMoviePicService.class);
+        JobInfo jobInfo = new JobInfo.Builder(JOB_ID_DELETE_EXTRA_PIC, serviceName)
+                .setPeriodic(JobInfo.getMinPeriodMillis(), JobInfo.getMinFlexMillis())
+                .build();
+        JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        int result = scheduler.schedule(jobInfo);
+        if (result == JobScheduler.RESULT_SUCCESS) {
+            Log.i(TAG, "Scheduler delete extra pic job scheduled successfully!");
         }
     }
 
@@ -254,29 +325,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     private void scheduleUpdateWidgetJob() {
         Log.i(TAG, "Scheduling update widget job.");
         ComponentName serviceName = new ComponentName(this, UpdateWidgetService.class);
-        JobInfo jobInfo = new JobInfo.Builder(555, serviceName)
-                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                .setPeriodic(PERIOD_MILLIS_UPDATE_WIDGET, JobInfo.getMinFlexMillis())
+        JobInfo jobInfo = new JobInfo.Builder(JOB_ID_UPDATE_WIDGET, serviceName)
+                .setPeriodic(JobInfo.getMinPeriodMillis(), JobInfo.getMinFlexMillis())
                 .build();
         JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         int result = scheduler.schedule(jobInfo);
         if (result == JobScheduler.RESULT_SUCCESS) {
             Log.i(TAG, "Scheduler update widget job scheduled successfully!");
-        }
-    }
-
-    // N == api 24
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private void scheduleFetchMovieJob() {
-        Log.i(TAG, "Scheduling fetch movie job.");
-        ComponentName serviceName = new ComponentName(this, FetchMovieService.class);
-        JobInfo jobInfo = new JobInfo.Builder(444, serviceName)
-                .setPeriodic(PERIOD_MILLIS_FETCH_MOVIE, JobInfo.getMinFlexMillis())
-                .build();
-        JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        int result = scheduler.schedule(jobInfo);
-        if (result == JobScheduler.RESULT_SUCCESS) {
-            Log.i(TAG, "Fetch movie job scheduled successfully!");
         }
     }
 

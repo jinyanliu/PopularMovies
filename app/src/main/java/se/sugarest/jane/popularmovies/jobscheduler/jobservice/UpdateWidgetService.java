@@ -1,4 +1,4 @@
-package se.sugarest.jane.popularmovies.jobscheduler;
+package se.sugarest.jane.popularmovies.jobscheduler.jobservice;
 
 import android.app.job.JobParameters;
 import android.app.job.JobService;
@@ -18,6 +18,11 @@ public class UpdateWidgetService extends JobService {
 
     final static String TAG = UpdateWidgetService.class.getSimpleName();
 
+    /**
+     * @return false because the job in onStartJob is really short. Send the broadcast the job is
+     * done. We should let the system know that the job is done. And after the periodic intervals,
+     * the onStartJob() will be fired up again.
+     */
     @Override
     public boolean onStartJob(JobParameters params) {
 
@@ -25,12 +30,18 @@ public class UpdateWidgetService extends JobService {
 
         Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED);
         this.sendBroadcast(dataUpdatedIntent);
-        return true;
+        return false;
     }
 
+    /**
+     * Because the task in onStartJob() is very short, so this method probably won't be called.
+     * And we can do nothing in it.
+     *
+     * @return true so if something happens, and the job stops in the middle, it will reschedule.
+     */
     @Override
     public boolean onStopJob(JobParameters params) {
-        Log.i(TAG, "Stop update widget service.");
+        Log.i(TAG, "Halloooooooooo, jag ar pa stop job update widget vag.");
         return true;
     }
 }

@@ -37,21 +37,40 @@
                 android:value=".ui.MainActivity" />
         </activity>
 
+        <!-- Database -->
         <provider
             android:name=".data.MovieProvider"
             android:authorities="se.sugarest.jane.popularmovies"
             android:exported="true"
             android:grantUriPermissions="true" />
 
+        <!-- Job Scheduler -->
         <service
-            android:name=".jobscheduler.FetchMovieService"
+            android:name=".jobscheduler.jobservice.PersistPopService"
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
-        <service android:name=".jobscheduler.UpdateWidgetService"
+        <service
+            android:name=".jobscheduler.jobservice.PersistTopService"
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
+        <service
+            android:name=".jobscheduler.jobservice.PersistFavService"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <service
+            android:name=".jobscheduler.jobservice.DeleteExtraMoviePicService"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <service
+            android:name=".jobscheduler.jobservice.UpdateWidgetService"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <!-- Widget -->
         <receiver
             android:name=".widget.DetailWidgetProvider"
             android:enabled="true"

@@ -20,7 +20,7 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 import se.sugarest.jane.popularmovies.R;
-import se.sugarest.jane.popularmovies.jobscheduler.UpdateWidgetService;
+import se.sugarest.jane.popularmovies.jobscheduler.jobservice.UpdateWidgetService;
 import se.sugarest.jane.popularmovies.ui.DetailActivity;
 import se.sugarest.jane.popularmovies.ui.MainActivity;
 
@@ -110,7 +110,7 @@ public class DetailWidgetProvider extends AppWidgetProvider {
                 manager.updateAppWidget(thisWidget, views);
             } else {
                 Log.i(TAG, "jag : widget provider on receive without titleCoder, not from initCursorLoader" +
-                        ", from JobSchedular.");
+                        ", from JobSchedular or delete All Movies.");
             }
         }
     }
