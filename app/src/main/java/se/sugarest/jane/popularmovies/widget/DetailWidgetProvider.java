@@ -12,7 +12,9 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -36,6 +38,19 @@ public class DetailWidgetProvider extends AppWidgetProvider {
         // Perform this loop procedure for each App Widget that belongs to this provider
         for (int appWidgetId : appWidgetIds) {
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_detail);
+
+            // Because there is no title pic for R.layout.widget_detail resource file, we need to
+            // give it one from the beginning (first time). So check the preference, that's for that
+            // when user click the title, it goes to the right page. fav to fav, pop to pop, top to
+            // top. (Consistency with the main app).
+            String orderBy = getOrderByPreference(context);
+            if ("popular".equals(orderBy)) {
+                views.setImageViewResource(R.id.im_widget_title, R.drawable.widgettitle_popular);
+            } else if ("top_rated".equals(orderBy)) {
+                views.setImageViewResource(R.id.im_widget_title, R.drawable.widgettitle_toprated);
+            } else {
+                views.setImageViewResource(R.id.im_widget_title, R.drawable.widgettitle_favorite);
+            }
 
             // Create an Intent to launch MainActivity
             Intent intent = new Intent(context, MainActivity.class);
@@ -116,5 +131,13 @@ public class DetailWidgetProvider extends AppWidgetProvider {
     private void setRemoteAdapterV11(Context context, @NonNull final RemoteViews views) {
         views.setRemoteAdapter(0, R.id.widget_list,
                 new Intent(context, DetailWidgetRemoteViewsService.class));
+    }
+
+    @NonNull
+    public String getOrderByPreference(Context context) {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPrefs.getString(
+                context.getString(R.string.settings_order_by_key),
+                context.getString(R.string.settings_order_by_default));
     }
 }
