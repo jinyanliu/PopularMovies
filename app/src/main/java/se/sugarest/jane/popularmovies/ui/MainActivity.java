@@ -118,6 +118,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     private static final int JOB_ID_UPDATE_WIDGET = 555;
 
     @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
