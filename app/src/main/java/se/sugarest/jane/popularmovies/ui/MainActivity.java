@@ -96,8 +96,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         this.mToast = mToast;
     }
 
+    /************************************************************************************************
+     * Keep in mind ! For test or for real, job scheduler minimum periodic interval is 15 minutes ! *
+     ************************************************************************************************/
+
     /* Interval for the update widget periodic job, in milliseconds. */
-    private static final long PERIOD_MILLIS_UPDATE_WIDGET = 1 * 60 * 1000L;   // 1 minute for test
+    private static final long PERIOD_MILLIS_UPDATE_WIDGET = 12 * 60 * 60 * 1000L;   // 12 * 60 minutes
 
     /* Interval for the fetch movie periodic job, in milliseconds. */
     private static final long PERIOD_MILLIS_FETCH_MOVIE = 24 * 60 * 60 * 1000L;   // 24 * 60 minutes
@@ -252,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         ComponentName serviceName = new ComponentName(this, UpdateWidgetService.class);
         JobInfo jobInfo = new JobInfo.Builder(555, serviceName)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                .setPeriodic(JobInfo.getMinPeriodMillis(), JobInfo.getMinFlexMillis())
+                .setPeriodic(PERIOD_MILLIS_UPDATE_WIDGET, JobInfo.getMinFlexMillis())
                 .build();
         JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         int result = scheduler.schedule(jobInfo);
@@ -267,7 +271,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         Log.i(TAG, "Scheduling fetch movie job.");
         ComponentName serviceName = new ComponentName(this, FetchMovieService.class);
         JobInfo jobInfo = new JobInfo.Builder(444, serviceName)
-                .setPeriodic(JobInfo.getMinPeriodMillis(), JobInfo.getMinFlexMillis())
+                .setPeriodic(PERIOD_MILLIS_FETCH_MOVIE, JobInfo.getMinFlexMillis())
                 .build();
         JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         int result = scheduler.schedule(jobInfo);
@@ -322,6 +326,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         }
         dataUpdatedIntent.putExtra("title_code", titleCode);
         this.sendBroadcast(dataUpdatedIntent);
+        Log.i(TAG, "jag ! jag init loader !");
         getLoaderManager().initLoader(MOVIE_LOADER, null, this);
     }
 
