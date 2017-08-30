@@ -3,6 +3,8 @@ package se.sugarest.jane.popularmovies.utilities;
 import org.junit.Assert;
 import org.junit.Test;
 
+import se.sugarest.jane.popularmovies.utilities.JsonUtils.ReviewJsonUtils;
+
 /**
  * Created by jane on 17-8-15.
  */

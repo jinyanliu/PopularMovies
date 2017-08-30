@@ -1,4 +1,4 @@
-package se.sugarest.jane.popularmovies.utilities;
+package se.sugarest.jane.popularmovies.utilities.JsonUtils;
 
 import android.text.TextUtils;
 
