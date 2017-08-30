@@ -1,5 +1,6 @@
 package se.sugarest.jane.popularmovies.ui;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -23,6 +24,13 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_activity_main);
+    }
+
+    // on Back Button pressed, restart mainActivity, back button acting like the up/home button.
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
+        startActivity(intent);
     }
 
     public static class MoviePreferenceFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
