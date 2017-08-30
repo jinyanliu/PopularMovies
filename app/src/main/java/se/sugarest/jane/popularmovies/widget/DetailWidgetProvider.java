@@ -24,6 +24,10 @@ import se.sugarest.jane.popularmovies.jobscheduler.UpdateWidgetService;
 import se.sugarest.jane.popularmovies.ui.DetailActivity;
 import se.sugarest.jane.popularmovies.ui.MainActivity;
 
+import static se.sugarest.jane.popularmovies.widget.WidgetConstraints.IntentExtraWidgetTileCode.FAVORITE_PIC_TITLE_CODE;
+import static se.sugarest.jane.popularmovies.widget.WidgetConstraints.IntentExtraWidgetTileCode.POPULAR_PIC_TITLE_CODE;
+import static se.sugarest.jane.popularmovies.widget.WidgetConstraints.IntentExtraWidgetTileCode.TOPRATED_PIC_TITLE_CODE;
+
 /**
  * Provider for a scrollable movie detail widget
  */
@@ -92,13 +96,13 @@ public class DetailWidgetProvider extends AppWidgetProvider {
             if (intent.hasExtra("title_code")) {
                 titleCode = intent.getExtras().getInt("title_code");
                 RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_detail);
-                if (titleCode == 1) {
+                if (titleCode == POPULAR_PIC_TITLE_CODE) {
                     views.setImageViewResource(R.id.im_widget_title, R.drawable.widgettitle_popular);
 
-                } else if (titleCode == 2) {
+                } else if (titleCode == TOPRATED_PIC_TITLE_CODE) {
                     views.setImageViewResource(R.id.im_widget_title, R.drawable.widgettitle_toprated);
 
-                } else if (titleCode == 3) {
+                } else if (titleCode == FAVORITE_PIC_TITLE_CODE) {
                     views.setImageViewResource(R.id.im_widget_title, R.drawable.widgettitle_favorite);
                 }
                 ComponentName thisWidget = new ComponentName(context, DetailWidgetProvider.class);

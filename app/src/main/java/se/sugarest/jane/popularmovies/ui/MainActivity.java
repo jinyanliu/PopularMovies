@@ -49,6 +49,10 @@ import se.sugarest.jane.popularmovies.movie.MovieAdapter.MovieAdapterOnClickHand
 import se.sugarest.jane.popularmovies.tasks.FetchMoviePostersTask;
 import se.sugarest.jane.popularmovies.utilities.DeleteExternalFolderExtraPic;
 
+import static se.sugarest.jane.popularmovies.widget.WidgetConstraints.IntentExtraWidgetTileCode.FAVORITE_PIC_TITLE_CODE;
+import static se.sugarest.jane.popularmovies.widget.WidgetConstraints.IntentExtraWidgetTileCode.POPULAR_PIC_TITLE_CODE;
+import static se.sugarest.jane.popularmovies.widget.WidgetConstraints.IntentExtraWidgetTileCode.TOPRATED_PIC_TITLE_CODE;
+
 public class MainActivity extends AppCompatActivity implements MovieAdapterOnClickHandler
         , android.app.LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -310,11 +314,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         int titleCode;
         String orderBy = getOrderByPreference();
         if ("popular".equals(orderBy)) {
-            titleCode = 1;
+            titleCode = POPULAR_PIC_TITLE_CODE;
         } else if ("top_rated".equals(orderBy)) {
-            titleCode = 2;
+            titleCode = TOPRATED_PIC_TITLE_CODE;
         } else {
-            titleCode = 3;
+            titleCode = FAVORITE_PIC_TITLE_CODE;
         }
         dataUpdatedIntent.putExtra("title_code", titleCode);
         this.sendBroadcast(dataUpdatedIntent);
