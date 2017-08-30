@@ -304,7 +304,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         ComponentName serviceName = new ComponentName(this, PersistFavService.class);
         JobInfo jobInfo = new JobInfo.Builder(JOB_ID_PERSIST_FAV_MOVIE, serviceName)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                .setPeriodic(PERIOD_MILLIS_FETCH_TOP_MOVIE, JobInfo.getMinFlexMillis())
+                .setPeriodic(PERIOD_MILLIS_FETCH_FAV_MOVIE, JobInfo.getMinFlexMillis())
                 .build();
         JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         int result = scheduler.schedule(jobInfo);
