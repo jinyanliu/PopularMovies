@@ -448,6 +448,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
             }
         }
         cursor.close();
+
+        // After user deleted/unliked all movies, they won't trigger initLoader, but the widget
+        // should change, so we need to send a broadcase here after deleting all.
+        Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED);
+        this.sendBroadcast(dataUpdatedIntent);
     }
 
     @Override
