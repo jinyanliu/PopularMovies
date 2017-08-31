@@ -51,6 +51,7 @@ import se.sugarest.jane.popularmovies.jobscheduler.jobservice.UpdateWidgetServic
 import se.sugarest.jane.popularmovies.movie.Movie;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter;
 import se.sugarest.jane.popularmovies.movie.MovieAdapter.MovieAdapterOnClickHandler;
+import se.sugarest.jane.popularmovies.notification.lowerversion.ScheduleNotificationLowerVersion;
 import se.sugarest.jane.popularmovies.tasks.FetchMoviePostersTask;
 import se.sugarest.jane.popularmovies.utilities.DeleteExternalFolderExtraPic;
 
@@ -246,7 +247,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
             scheduleDeleteExtraPic();
             scheduleUpdateWidgetJob();
             scheduleNotificationJob();
+        } else {
+            ScheduleNotificationLowerVersion.scheduleNotification(this);
         }
+
+        // Just for test
+        // NotificationTasks.executeTask(this, NotificationTasks.ACTION_NOTIFY);
     }
 
     // N == api 24
@@ -334,7 +340,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         Log.i(TAG, "Scheduling notification job.");
         ComponentName serviceName = new ComponentName(this, NotificationService.class);
         JobInfo jobInfo = new JobInfo.Builder(JobSchedulersConstraints.JOB_ID_NOTIFICATION, serviceName)
-                .setPeriodic(JobInfo.getMinPeriodMillis(), JobInfo.getMinFlexMillis())
+                .setPeriodic(JobSchedulersConstraints.PERIOD_MILLIS_NOTIFICATION, JobInfo.getMinFlexMillis())
                 .build();
         JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         int result = scheduler.schedule(jobInfo);

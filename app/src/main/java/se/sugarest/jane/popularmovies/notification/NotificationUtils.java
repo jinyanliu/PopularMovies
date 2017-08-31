@@ -46,6 +46,7 @@ public class NotificationUtils {
     public static void clearAllNotifications(Context context) {
         NotificationManager notificationManager = (NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(HIGHEST_RATE_POP_MOVIE_NOTIFICATION_ID);
         notificationManager.cancelAll();
     }
 
@@ -133,28 +134,34 @@ public class NotificationUtils {
     }
 
     private static Action openDetailActivityAction(Context context, Movie movie) {
+
         Intent startActivityIntent = new Intent(context, DetailActivity.class);
         startActivityIntent.putExtra("movie", movie);
-        PendingIntent pendingIntent = TaskStackBuilder.create(context)
+
+        PendingIntent openDetailActivityPendingIntent = TaskStackBuilder.create(context)
                 .addNextIntentWithParentStack(startActivityIntent)
                 .getPendingIntent(ACTION_GO_TO_PAGE_PENDING_INTENT_ID, PendingIntent.FLAG_UPDATE_CURRENT);
+
         Action openDetailActivityAction = new Action(R.drawable.ic_notification_large_icon,
                 context.getString(R.string.detail_page_notification_action),
-                pendingIntent);
+                openDetailActivityPendingIntent);
         return openDetailActivityAction;
     }
 
     private static Action ignoreNotificationAction(Context context) {
+
         Intent ignoreNotificationIntent = new Intent(context, NotificationIntentService.class);
         ignoreNotificationIntent.setAction(NotificationTasks.ACTION_DISMISS_NOTIFICATION);
-        PendingIntent pendingIntent = PendingIntent.getService(
+
+        PendingIntent ignoreNotificationPendingIntent = PendingIntent.getService(
                 context,
                 ACTION_IGNORE_PENDING_INTENT_ID,
                 ignoreNotificationIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
+
         Action ignoreNotificationAction = new Action(R.drawable.ic_cancel_black_24dp,
                 context.getString(R.string.ignore_notification_action),
-                pendingIntent);
+                ignoreNotificationPendingIntent);
         return ignoreNotificationAction;
     }
 }

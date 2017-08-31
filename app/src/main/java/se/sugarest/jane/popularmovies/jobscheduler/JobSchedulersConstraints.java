@@ -17,7 +17,7 @@ public class JobSchedulersConstraints {
     /* Interval for the update widget periodic job, in milliseconds. */
     public static final long PERIOD_MILLIS_UPDATE_WIDGET = 12 * 60 * 60 * 1000L; // 12 * 60 minutes
     /* Interval for the notification periodic job, in milliseconds. */
-    private static final long PERIOD_MILLIS_NOTIFICATION = 24 * 60 * 60 * 1000L; // 24 * 60 minutes
+    public static final long PERIOD_MILLIS_NOTIFICATION = 24 * 60 * 60 * 1000L; // 24 * 60 minutes
     public static final int JOB_ID_PERSIST_POP_MOVIE = 111;
     public static final int JOB_ID_PERSIST_TOP_MOVIE = 222;
     public static final int JOB_ID_PERSIST_FAV_MOVIE = 333;

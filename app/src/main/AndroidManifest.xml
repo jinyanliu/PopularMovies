@@ -74,7 +74,20 @@
             android:name=".jobscheduler.jobservice.NotificationService"
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
-        
+
+        <service
+            android:name=".notification.NotificationIntentService"
+            android:exported="false" />
+
+        <!-- FirebaseJobDispatcher -->
+        <service
+            android:name=".notification.lowerversion.NotificationFirebaseJobService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
+            </intent-filter>
+        </service>
+
         <!-- Widget -->
         <receiver
             android:name=".widget.DetailWidgetProvider"
