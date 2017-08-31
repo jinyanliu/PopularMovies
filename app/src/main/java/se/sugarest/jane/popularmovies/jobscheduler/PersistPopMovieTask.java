@@ -27,7 +27,7 @@ import se.sugarest.jane.popularmovies.tasks.FetchExternalStoragePopMovieImageThu
 import se.sugarest.jane.popularmovies.tasks.FetchExternalStoragePopMoviePosterImagesTask;
 import se.sugarest.jane.popularmovies.ui.MainActivity;
 import se.sugarest.jane.popularmovies.utilities.ExternalPathUtils;
-import se.sugarest.jane.popularmovies.utilities.JsonUtils.MovieJsonUtils;
+import se.sugarest.jane.popularmovies.utilities.jsonutils.MovieJsonUtils;
 import se.sugarest.jane.popularmovies.utilities.NetworkUtils;
 
 /**

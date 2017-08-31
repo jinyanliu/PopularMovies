@@ -15,7 +15,7 @@ import se.sugarest.jane.popularmovies.ui.DetailActivity;
 import se.sugarest.jane.popularmovies.R;
 import se.sugarest.jane.popularmovies.review.Review;
 import se.sugarest.jane.popularmovies.utilities.NetworkUtils;
-import se.sugarest.jane.popularmovies.utilities.JsonUtils.ReviewJsonUtils;
+import se.sugarest.jane.popularmovies.utilities.jsonutils.ReviewJsonUtils;
 
 /**
  * Created by jane on 17-4-20.

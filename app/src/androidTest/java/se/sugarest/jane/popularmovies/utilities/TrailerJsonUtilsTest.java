@@ -3,7 +3,7 @@ package se.sugarest.jane.popularmovies.utilities;
 import org.junit.Assert;
 import org.junit.Test;
 
-import se.sugarest.jane.popularmovies.utilities.JsonUtils.TrailerJsonUtils;
+import se.sugarest.jane.popularmovies.utilities.jsonutils.TrailerJsonUtils;
 
 /**
  * Created by jane on 17-8-15.
