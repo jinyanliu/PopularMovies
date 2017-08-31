@@ -366,7 +366,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         Log.i(TAG, "Scheduling notification job.");
         ComponentName serviceName = new ComponentName(this, NotificationService.class);
         JobInfo jobInfo = new JobInfo.Builder(JobSchedulersConstraints.JOB_ID_NOTIFICATION, serviceName)
-                .setPeriodic(JobInfo.getMinPeriodMillis(), JobInfo.getMinFlexMillis())
+                .setPeriodic(JobSchedulersConstraints.PERIOD_MILLIS_NOTIFICATION, JobInfo.getMinFlexMillis())
                 .build();
         JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         int result = scheduler.schedule(jobInfo);

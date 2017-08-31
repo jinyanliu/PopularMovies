@@ -34,9 +34,9 @@ public class ScheduleNotificationLowerVersion {
      * Interval to notify. Use TimeUnit for convenience, rather
      * than writing out a bunch of multiplication ourselves and risk making a silly mistake.
      */
-    private static final int NOTIFICATION_INTERVAL_MINUTES = 15;
+    private static final int NOTIFICATION_INTERVAL_MINUTES = 24 * 60;
     private static final int NOTIFICATION_INTERVAL_SECONDS
-            = (int) (TimeUnit.MINUTES.toSeconds(NOTIFICATION_INTERVAL_MINUTES)); // 900 seconds
+            = (int) (TimeUnit.MINUTES.toSeconds(NOTIFICATION_INTERVAL_MINUTES)); // one day
     private static final int NOTIFICATION_FLEXTIME_SECONDS = 10; // 10 seconds
 
     synchronized public static void scheduleNotification(@NonNull final Context context) {
