@@ -235,14 +235,19 @@
     <string name="empty_movie_list">No Movie Information Available</string>
     <string name="title_widget_detail">Movie Details</string>
 
-    <!-- Notification Title String -->
+    <!-- Pop Best Movie Notification Title String -->
     <string name="highest_rate_pop_movie_notification_title">High rate popular movie today!</string>
-    <!-- Notification Body Format -->
-    <string name="format_notification">Title: <xliff:g id="movie_title">%1$s</xliff:g> User Rate: <xliff:g id="user_rate">%2$s</xliff:g></string>
-    <!-- Notification Open Detail Activity action String -->
+    <!-- Pop Best Movie Notification Body Format -->
+    <string name="format_pop_best_movie_notification">Title: <xliff:g id="movie_title">%1$s</xliff:g> User Rate: <xliff:g id="user_rate">%2$s</xliff:g></string>
+    <!-- Pop Best Movie Notification Open Detail Activity action String -->
     <string name="detail_page_notification_action">Let me see!</string>
-    <!-- Notification ignore action String -->
+    <!-- Pop Best Movie Notification ignore action String -->
     <string name="ignore_notification_action">I don\'t think so.</string>
+
+    <!-- Alarm Watch Movie Notification Title String -->
+    <string name="watch_movie_notification_title">Turn on TV!</string>
+    <!-- Alarm Watch Movie Notification Body Format -->
+    <string name="format_watch_movie_notification">Watch <xliff:g id="movie_title">%1$s</xliff:g> on <xliff:g id="tv_channel">%2$s</xliff:g> !</string>
 
 </resources>
 

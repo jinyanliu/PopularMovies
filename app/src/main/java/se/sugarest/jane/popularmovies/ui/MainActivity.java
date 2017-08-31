@@ -1,5 +1,7 @@
 package se.sugarest.jane.popularmovies.ui;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
@@ -32,7 +34,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Calendar;
+
 import se.sugarest.jane.popularmovies.R;
+import se.sugarest.jane.popularmovies.alarm.AlarmReceiver;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.FavMovieEntry;
@@ -101,6 +106,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     public void setmToast(Toast mToast) {
         this.mToast = mToast;
     }
+
+    private static PendingIntent alarmIntent;
+
+    private static AlarmManager alarmManager;
 
     @Override
     public void onBackPressed() {
@@ -251,8 +260,25 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
             ScheduleNotificationLowerVersion.scheduleNotification(this);
         }
 
-        // Just for test
-        // NotificationTasks.executeTask(this, NotificationTasks.ACTION_NOTIFY);
+        setUpAlarm();
+    }
+
+    private void setUpAlarm() {
+        Log.i(TAG, "Alarm: set up alarm!");
+
+        alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlarmReceiver.class);
+        alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+
+        Calendar scheduledCalendar = Calendar.getInstance();
+        scheduledCalendar.set(Calendar.HOUR_OF_DAY, 23);
+        scheduledCalendar.set(Calendar.MINUTE, 39);
+        scheduledCalendar.set(Calendar.SECOND, 15);
+
+        Calendar current = Calendar.getInstance();
+        if (!scheduledCalendar.before(current)) {
+            alarmManager.set(AlarmManager.RTC_WAKEUP, scheduledCalendar.getTimeInMillis(), alarmIntent);
+        }
     }
 
     // N == api 24
@@ -340,7 +366,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         Log.i(TAG, "Scheduling notification job.");
         ComponentName serviceName = new ComponentName(this, NotificationService.class);
         JobInfo jobInfo = new JobInfo.Builder(JobSchedulersConstraints.JOB_ID_NOTIFICATION, serviceName)
-                .setPeriodic(JobSchedulersConstraints.PERIOD_MILLIS_NOTIFICATION, JobInfo.getMinFlexMillis())
+                .setPeriodic(JobInfo.getMinPeriodMillis(), JobInfo.getMinFlexMillis())
                 .build();
         JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         int result = scheduler.schedule(jobInfo);

@@ -108,6 +108,13 @@
             android:enabled="true"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <!-- Alarm -->
+        <receiver android:name=".alarm.AlarmReceiver">
+            <intent-filter>
+                <action android:name="se.sugarest.jane.popularmovies.alarm" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
