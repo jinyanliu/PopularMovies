@@ -12,15 +12,15 @@ import android.support.annotation.Nullable;
  * An {@link IntentService} subclass for handling asynchronous task requests in
  * a service on a separate handler thread.
  */
-public class IgnoreNotificationIntentService extends IntentService {
+public class NotificationIntentService extends IntentService {
 
-    public IgnoreNotificationIntentService() {
-        super("IgnoreNotificationIntentService");
+    public NotificationIntentService() {
+        super("NotificationIntentService");
     }
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         String action = intent.getAction();
-        IgnoreNotificationTask.executeTask(this, action);
+        NotificationTasks.executeTask(this, action);
     }
 }

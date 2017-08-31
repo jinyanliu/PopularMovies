@@ -11,6 +11,7 @@ import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
@@ -19,6 +20,7 @@ import android.support.v4.app.NotificationCompat.Action;
 import android.support.v4.content.ContextCompat;
 
 import se.sugarest.jane.popularmovies.R;
+import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieMostPopularEntry;
 import se.sugarest.jane.popularmovies.movie.Movie;
 import se.sugarest.jane.popularmovies.ui.DetailActivity;
 import se.sugarest.jane.popularmovies.ui.MainActivity;
@@ -47,7 +49,10 @@ public class NotificationUtils {
         notificationManager.cancelAll();
     }
 
-    public static void notifyUserHighestRatePopularMovie(Context context, Movie movie) {
+    public static void notifyUserHighestRatePopularMovie(Context context) {
+
+        Movie movie = getHighestRatePopMovie(context);
+
         String movie_title = movie.getOriginalTitle();
         String movie_rate = movie.getUserRating();
 
@@ -75,6 +80,41 @@ public class NotificationUtils {
 
         /* HIGHEST_RATE_POP_MOVIE_NOTIFICATION_ID allows you to update or cancel the notification later on */
         notificationManager.notify(HIGHEST_RATE_POP_MOVIE_NOTIFICATION_ID, notificationBuilder.build());
+    }
+
+    private static Movie getHighestRatePopMovie(Context context) {
+
+        Movie movie = null;
+
+        String sortOrder = CacheMovieMostPopularEntry.COLUMN_USER_RATING + " DESC";
+
+        Cursor cursor = context.getContentResolver().query(
+                CacheMovieMostPopularEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                sortOrder);
+
+        if (cursor != null && cursor.getCount() > 0) {
+            // I only want the first cursor, which is the highest rate pop movie.
+            cursor.moveToFirst();
+
+            String poster_path = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_POSTER_PATH));
+            String original_title = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE));
+            String movie_poster_image_thumbnail =
+                    cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_MOVIE_POSTER_IMAGE_THUMBNAIL));
+            String a_plot_synopsis = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_A_PLOT_SYNOPSIS));
+            String user_rating = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_USER_RATING));
+            String release_date = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_RELEASE_DATE));
+            String id = cursor.getString(cursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_MOVIE_ID));
+
+            movie = new Movie(poster_path, original_title, movie_poster_image_thumbnail
+                    , a_plot_synopsis, user_rating, release_date, id);
+
+            cursor.close();
+        }
+
+        return movie;
     }
 
     private static Bitmap largeIcon(Context context) {
@@ -105,8 +145,8 @@ public class NotificationUtils {
     }
 
     private static Action ignoreNotificationAction(Context context) {
-        Intent ignoreNotificationIntent = new Intent(context, IgnoreNotificationIntentService.class);
-        ignoreNotificationIntent.setAction(IgnoreNotificationTask.ACTION_DISMISS_NOTIFICATION);
+        Intent ignoreNotificationIntent = new Intent(context, NotificationIntentService.class);
+        ignoreNotificationIntent.setAction(NotificationTasks.ACTION_DISMISS_NOTIFICATION);
         PendingIntent pendingIntent = PendingIntent.getService(
                 context,
                 ACTION_IGNORE_PENDING_INTENT_ID,

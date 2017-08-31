@@ -236,7 +236,7 @@
     <string name="title_widget_detail">Movie Details</string>
 
     <!-- Notification Title String -->
-    <string name="highest_rate_pop_movie_notification_title">Check out the high rate popular movie today!</string>
+    <string name="highest_rate_pop_movie_notification_title">High rate popular movie today!</string>
     <!-- Notification Body Format -->
     <string name="format_notification">Title: <xliff:g id="movie_title">%1$s</xliff:g> User Rate: <xliff:g id="user_rate">%2$s</xliff:g></string>
     <!-- Notification Open Detail Activity action String -->
