@@ -70,6 +70,11 @@
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
+        <service
+            android:name=".jobscheduler.jobservice.NotificationService"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        
         <!-- Widget -->
         <receiver
             android:name=".widget.DetailWidgetProvider"
