@@ -3,225 +3,225 @@
 
     <!-- The text for Log error message when you cut off the internet when the pop or top or fav movie list is still downloading in MainActivity.
      (open for the first time or refresh time) -->
-    <string name="log_error_message_offline_before_download_pics_finish">Offline before downloading is finished.</string>
+    <string name="log_error_message_offline_before_download_pics_finish" translatable="false">Offline before downloading is finished.</string>
     <!-- The text for Log error message when you cut off the internet when the mainActivity is still fetching movie posters http data. -->
-    <string name="log_error_message_offline_before_fetch_movie_data_finish">Offline before fetching movie date is finished.</string>
+    <string name="log_error_message_offline_before_fetch_movie_data_finish" translatable="false">Offline before fetching movie date is finished.</string>
 
     <!-- The text for Log error message when you cut off the internet when the detailActivity is still fetching reviews data. -->
-    <string name="log_error_message_offline_before_fetch_review_finish">Offline before fetching reviews is finished.</string>
+    <string name="log_error_message_offline_before_fetch_review_finish" translatable="false">Offline before fetching reviews is finished.</string>
     <!-- The text for Log error message when you cut off the internet when the detailActivity is still fetching trailers data. -->
-    <string name="log_error_message_offline_before_fetch_trailer_finish">Offline before fetching trailers is finished.</string>
+    <string name="log_error_message_offline_before_fetch_trailer_finish" translatable="false">Offline before fetching trailers is finished.</string>
 
     <!-- The text for Log information message (display file name) when downloading the picture and put it into SD card storage. -->
-    <string name="log_information_message_download_filename">Local filename: </string>
+    <string name="log_information_message_download_filename" translatable="false">Local filename: </string>
     <!-- The text for Log information message (display downloadedSize) when downloading the picture and put it into SD card storage. -->
-    <string name="log_information_message_download_downloadedSize">Progress: downloadedSize: </string>
+    <string name="log_information_message_download_downloadedSize" translatable="false">Progress: downloadedSize: </string>
     <!-- The text for Log information message (display totalSize) when downloading the picture and put it into SD card storage. -->
-    <string name="log_information_message_download_totalSize">totalSize: </string>
+    <string name="log_information_message_download_totalSize" translatable="false">totalSize: </string>
     <!-- The text for Log information message (display filepath) when downloading the picture and put it into SD card storage. -->
-    <string name="log_information_message_download_filepath">filepath: </string>
+    <string name="log_information_message_download_filepath" translatable="false">filepath: </string>
 
     <!-- Toast message for refresh when there is no internet connection in MainActivity and DetailActivity. -->
-    <string name="toast_message_refresh_no_internet">Cannot refresh without internet connection.</string>
+    <string name="toast_message_refresh_no_internet" translatable="true">Cannot refresh without internet connection.</string>
     <!-- Toast message for refresh Pop movies when the external folder already has all the images. List up to date. -->
-    <string name="toast_message_refresh_pop_up_to_date">Your Most Popular Movies list is up-to-date.</string>
+    <string name="toast_message_refresh_pop_up_to_date" translatable="true">Your Most Popular Movies list is up-to-date.</string>
     <!-- Toast message for refresh Top movies when the external folder already has all the images. List up to date. -->
-    <string name="toast_message_refresh_top_up_to_date">Your Top Rated Movies list is up-to-date.</string>
+    <string name="toast_message_refresh_top_up_to_date" translatable="true">Your Top Rated Movies list is up-to-date.</string>
     <!-- Toast message for refresh Fav movies when the external folder already has all the images. List up to date. -->
-    <string name="toast_message_refresh_fav_up_to_date">Your Favorite Movies list is up-to-date.</string>
+    <string name="toast_message_refresh_fav_up_to_date" translatable="true">Your Favorite Movies list is up-to-date.</string>
 
     <!-- Toast message when you want to save the movie to favDatabase but the movie's reviews and trailers haven't loaded yet. -->
-    <string name="toast_message_review_and_trailer_not_loaded_yet">Please wait :p Reviews and trailers not loaded yet.</string>
+    <string name="toast_message_review_and_trailer_not_loaded_yet" translatable="true">Please wait :p Reviews and trailers not loaded yet.</string>
     <!-- Toast message when you want to share the first trailer but the movie's trailers haven't loaded yet. -->
-    <string name="toast_message_trailer_not_loaded_yet">Please wait :P Trailers not loaded yet.</string>
+    <string name="toast_message_trailer_not_loaded_yet" translatable="true">Please wait :P Trailers not loaded yet.</string>
     <!-- Toast message when you want to share the first trailer but the movie has no trailers to share. -->
-    <string name="toast_message_no_trailer_to_share">Sorry. This movie doesn\'t have a trailer to share.</string>
+    <string name="toast_message_no_trailer_to_share" translatable="true">Sorry. This movie doesn\'t have a trailer to share.</string>
 
     <!-- Toast message when you cut off the internet when the pop or top or fav movie list is still downloading.
     (open for the first time or refresh time) -->
-    <string name="toast_message_offline_before_download_finish">Download is interrupted without internet connection.</string>
+    <string name="toast_message_offline_before_download_finish" translatable="true">Download is interrupted without internet connection.</string>
     <!-- Toast message when you cut off the internet when the mainActivity is still fetching movie posters http data. -->
-    <string name="toast_message_offline_before_fetch_movie_data_finish">Fetch movie data is interrupted without internet connection.</string>
+    <string name="toast_message_offline_before_fetch_movie_data_finish" translatable="true">Fetch movie data is interrupted without internet connection.</string>
 
     <!-- Toast message when you cut off the internet when the detailActivity is still fetching reviews data. -->
-    <string name="toast_message_offline_before_fetch_review_finish">Fetch review data is interrupted without internet connection.</string>
+    <string name="toast_message_offline_before_fetch_review_finish" translatable="true">Fetch review data is interrupted without internet connection.</string>
     <!-- Toast message when you cut off the internet when the detailActivity is still fetching trailers data. -->
-    <string name="toast_message_offline_before_fetch_trailer_finish">Fetch trailer data is interrupted without internet connection.</string>
+    <string name="toast_message_offline_before_fetch_trailer_finish" translatable="true">Fetch trailer data is interrupted without internet connection.</string>
 
     <!-- Toast message when you want to click a single movie item but the movies haven't loaded yet. (mCursor in Movie Adapter null) -->
-    <string name="toast_message_movies_not_load_yet">Please wait :p Movies not loaded yet.</string>
+    <string name="toast_message_movies_not_load_yet" translatable="true">Please wait :p Movies not loaded yet.</string>
 
     <!-- The text for query method to throw an IllegalArgumentException message. -->
-    <string name="query_default_illegal_argument_exception_message">Cannot query unknown URI </string>
+    <string name="query_default_illegal_argument_exception_message" translatable="false">Cannot query unknown URI </string>
     <!-- The text for insert method to throw an IllegalArgumentException message. -->
-    <string name="insert_default_illegal_argument_exception_message">Cannot insert unknown URI </string>
+    <string name="insert_default_illegal_argument_exception_message" translatable="false">Cannot insert unknown URI </string>
     <!-- The log message when the insertion to database is failed. -->
-    <string name="insert_fail_log_message">Failed to insert row for </string>
+    <string name="insert_fail_log_message" translatable="false">Failed to insert row for </string>
     <!-- The text for getType to throw an IllegalArgumentException message, part one. -->
-    <string name="get_type_default_illegal_argument_exception_message_part_one">Unknown URI </string>
+    <string name="get_type_default_illegal_argument_exception_message_part_one" translatable="false">Unknown URI </string>
     <!-- The text for getType to throw an IllegalArgumentException message, part two. -->
-    <string name="get_type_default_illegal_argument_exception_message_part_two"> with match </string>
+    <string name="get_type_default_illegal_argument_exception_message_part_two" translatable="false"> with match </string>
     <!-- The text for delete method to throw an IllegalArgumentException message. -->
-    <string name="unknown_uri_for_deletion">Deletion is not supported for </string>
+    <string name="unknown_uri_for_deletion" translatable="false">Deletion is not supported for </string>
     <!-- The text for update method to throw an IllegalArgumentException message. -->
-    <string name="unknown_uri_for_update">Update is not supported for </string>
+    <string name="unknown_uri_for_update" translatable="false">Update is not supported for </string>
 
     <!-- Toast message for saving success when inserting a movie. [CHAR LIMIT=20] -->
-    <string name="insert_movie_successful">Movie saved</string>
+    <string name="insert_movie_successful" translatable="true">Movie saved</string>
     <!-- Toast message for saving success when inserting a movie offline. -->
-    <string name="insert_movie_successful_reviews_trailers_later">Trailers and Reviews will be saved later while online.</string>
+    <string name="insert_movie_successful_reviews_trailers_later" translatable="true">Trailers and Reviews will be saved later while online.</string>
     <!-- Toast message for saving error when inserting a movie. [CHAR LIMIT=20] -->
-    <string name="insert_movie_failed">Error with saving movie</string>
+    <string name="insert_movie_failed" translatable="true">Error with saving movie</string>
     <!-- Toast message for deleting success when deleting a movie. [CHAR LIMIT=20] -->
-    <string name="delete_movie_successful">Movie unliked</string>
+    <string name="delete_movie_successful" translatable="true">Movie unliked</string>
     <!-- Toast message for deleting error when deleting a movie. [CHAR LIMIT=20] -->
-    <string name="delete_movie_failed">Error with deleting movie</string>
+    <string name="delete_movie_failed" translatable="true">Error with deleting movie</string>
 
     <!-- Toast message for deleting success when deleting all movies from fav list. -->
-    <string name="delete_all_movie_successful">All Movies unliked.</string>
+    <string name="delete_all_movie_successful" translatable="true">All Movies unliked.</string>
     <!-- Toast message for deleting error when deleting all movies from fav list. -->
-    <string name="delete_all_movie_failed">Error with unliking all movies.</string>
+    <string name="delete_all_movie_failed" translatable="true">Error with unliking all movies.</string>
     <!-- Toast message for deleting error when there are no movies to delete. -->
-    <string name="delete_all_movie_no_movies_to_delete">No movies to unlike.</string>
+    <string name="delete_all_movie_no_movies_to_delete" translatable="true">No movies to unlike.</string>
 
     <!-- Log message for saving success when inserting a movie object. [CHAR LIMIT=20] -->
-    <string name="insert_movie_movie_successful">Movie movie saved</string>
+    <string name="insert_movie_movie_successful" translatable="false">Movie movie saved</string>
     <!-- Log message for saving error when inserting a movie object. [CHAR LIMIT=20] -->
-    <string name="insert_movie_movie_failed">Error with saving movie movie</string>
+    <string name="insert_movie_movie_failed" translatable="false">Error with saving movie movie</string>
     <!-- Log message for saving success when inserting a review. [CHAR LIMIT=20] -->
-    <string name="insert_review_successful">Review saved</string>
+    <string name="insert_review_successful" translatable="false">Review saved</string>
     <!-- Log message for saving error when inserting a review. [CHAR LIMIT=20] -->
-    <string name="insert_review_failed">Error with saving review</string>
+    <string name="insert_review_failed" translatable="false">Error with saving review</string>
     <!-- Log message for saving success when inserting a trailer. [CHAR LIMIT=20] -->
-    <string name="insert_trailer_successful">Traielr saved</string>
+    <string name="insert_trailer_successful" translatable="false">Traielr saved</string>
     <!-- Log message for saving error when inserting a trailer. [CHAR LIMIT=20] -->
-    <string name="insert_trailer_failed">Error with saving trailer</string>
+    <string name="insert_trailer_failed" translatable="false">Error with saving trailer</string>
 
     <!-- Log message for deleting success when deleting a movie. [CHAR LIMIT=20] -->
-    <string name="delete_movie_movie_successful">Movie movie deleted</string>
+    <string name="delete_movie_movie_successful" translatable="false">Movie movie deleted</string>
     <!-- Log message for deleting error when deleting a movie. [CHAR LIMIT=20] -->
-    <string name="delete_movie_movie_failed">Error with deleting movie movie</string>
+    <string name="delete_movie_movie_failed" translatable="false">Error with deleting movie movie</string>
     <!-- Log message for deleting success when deleting a review. [CHAR LIMIT=20] -->
-    <string name="delete_review_successful"> reviews deleted</string>
+    <string name="delete_review_successful" translatable="false"> reviews deleted</string>
     <!-- Log message for deleting error when deleting a review. [CHAR LIMIT=20] -->
-    <string name="delete_review_failed">Error with deleting review</string>
+    <string name="delete_review_failed" translatable="false">Error with deleting review</string>
     <!-- Log message for deleting success when deleting a trailer. [CHAR LIMIT=20] -->
-    <string name="delete_trailer_successful"> trailers deleted</string>
+    <string name="delete_trailer_successful" translatable="false"> trailers deleted</string>
     <!-- Log message for deleting error when deleting a trailer. [CHAR LIMIT=20] -->
-    <string name="delete_trailer_failed">Error with deleting trailer</string>
+    <string name="delete_trailer_failed" translatable="false">Error with deleting trailer</string>
 
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - -
     - Texts show on activity_main's error message textview.  -
     - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <!-- The text for the TextView to display error message. -->
-    <string name="error_message">An error has occurred.</string>
+    <string name="error_message" translatable="true">An error has occurred.</string>
     <!-- The text for the TextView to display error message when there is no favorite movies to display. -->
-    <string name="error_message_no_fav_movie">You don\'t have favorite movies !\nStart by pressing the STAR button on single movie\'s Page !</string>
+    <string name="error_message_no_fav_movie" translatable="true">You don\'t have favorite movies !\nStart by pressing the STAR button on single movie\'s Page !</string>
     <!-- The text for the TextView to display error message when there is no popular movies to display. -->
-    <string name="error_message_no_popular_movie">No popular movies! Please enable the internet and refresh! </string>
+    <string name="error_message_no_popular_movie" translatable="true">No popular movies! Please enable the internet and refresh! </string>
     <!-- The text for the TextView to display error message when there is no top rated movies to display. -->
-    <string name="error_message_no_top_rated_movie">No top rated movies! Please enable the internet and refresh! </string>
+    <string name="error_message_no_top_rated_movie" translatable="true">No top rated movies! Please enable the internet and refresh! </string>
     <!-- The text for the TextView to display error message when user disabled offline use and open the app when offline. -->
-    <string name="error_message_enable_offline_false">You have disabled offline use in the settings menu. Please reset and refresh! </string>
+    <string name="error_message_enable_offline_false" translatable="true">You have disabled offline use in the settings menu. Please reset and refresh! </string>
 
     <!-- - - - - - - - - -
     - SharedPreference.  -
     - - - - - - - - - - -->
     <!-- Strings For Order-By Preference [CHAR LIMIT=30] -->
-    <string name="settings_order_by_label">Order By</string>
+    <string name="settings_order_by_label" translatable="true">Order By</string>
     <string name="settings_order_by_key" translatable="false">order_by</string>
     <string name="settings_order_by_default" translatable="false">@string/settings_order_by_most_popular_value</string>
 
     <!-- Label for order-by most popular option [CHAR LIMIT=20] -->
-    <string name="settings_order_by_most_popular_label">Most Popular</string>
+    <string name="settings_order_by_most_popular_label" translatable="true">Most Popular</string>
     <string name="settings_order_by_most_popular_value" translatable="false">popular</string>
 
     <!-- Label for order-by top rated option [CHAR LIMIT=20] -->
-    <string name="settings_order_by_top_rated_label">Top Rated</string>
+    <string name="settings_order_by_top_rated_label" translatable="true">Top Rated</string>
     <string name="settings_order_by_top_rated_value" translatable="false">top_rated</string>
 
     <!-- Label for order-by favorite movie option [CHAR LIMIT=20] -->
-    <string name="settings_order_by_favorites_label">Favorite Movies</string>
+    <string name="settings_order_by_favorites_label" translatable="true">Favorite Movies</string>
     <string name="settings_order_by_favorites_value" translatable="false">favorites</string>
 
     <!-- Label for the enable offline checkbox preference -->
-    <string name="pref_enable_offline_label">Enable Offline Use</string>
+    <string name="pref_enable_offline_label" translatable="true">Enable Offline Use</string>
     <!-- Key name for enable offline in SharedPreferences -->
     <string name="pref_enable_offline_key" translatable="false">enable_offline</string>
 
     <!-- Summary for Checkboxes -->
-    <string name="pref_show_true">Enabled</string>
-    <string name="pref_show_false">Disabled</string>
+    <string name="pref_show_true" translatable="true">Enabled</string>
+    <string name="pref_show_false" translatable="true">Disabled</string>
 
     <!-- - - - - - - - - - - - - - - - - - - - -
     - Texts show on MainActivity's Page Title. -
     - - - - - - - - - - - - - - - - - - - - - -->
     <!-- Main Activity setTitle when the preference is most popular movies. -->
-    <string name="main_activity_title_most_popular">Most Popular Movies</string>
+    <string name="main_activity_title_most_popular" translatable="true">Most Popular Movies</string>
     <!-- Main Activity setTitle when the preference is top rated movies. -->
-    <string name="main_activity_title_top_rated">Top Rated Movies</string>
+    <string name="main_activity_title_top_rated" translatable="true">Top Rated Movies</string>
     <!-- Main Activity setTitle when the preference is favorite movies. -->
-    <string name="main_activity_title_favorite">Favorite Movies</string>
+    <string name="main_activity_title_favorite" translatable="true">Favorite Movies</string>
 
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - -
     - Texts show on AlertDialog when clicking "deleteAll". -
     - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <!-- Dialog message to ask the user to confirm deleting all movies [CHAR LIMIT=NONE] -->
-    <string name="delete_all_dialog_msg">Unlike all movies?</string>
+    <string name="delete_all_dialog_msg" translatable="true">Unlike all movies?</string>
     <!-- Dialog button text for the option to confirm deleting all pets [CHAR LIMIT=20] -->
-    <string name="delete">Unlike</string>
+    <string name="delete" translatable="true">Unlike</string>
     <!-- Dialog button text for the option to cancel deletion of all movies [CHAR LIMIT=20] -->
-    <string name="cancel">Cancel</string>
+    <string name="cancel" translatable="true">Cancel</string>
 
     <!-- - - - - - - - - - - - - - - -
     - MainActivity Menu Item texts.  -
     - - - - - - - - - - - - - - - - -->
     <!-- Refresh Menu Item -->
-    <string name="refresh_menu_item">Refresh</string>
+    <string name="refresh_menu_item" translatable="true">Refresh</string>
     <!-- Settings Menu Item -->
-    <string name="settings_menu_item">Settings</string>
+    <string name="settings_menu_item" translatable="true">Settings</string>
     <!-- Settings Activity Title -->
-    <string name="settings_title">Movie Settings</string>
+    <string name="settings_title" translatable="true">Movie Settings</string>
     <!-- Delete All Menu Item -->
-    <string name="delete_all_menu_item">Unlike All Movies</string>
+    <string name="delete_all_menu_item" translatable="true">Unlike All Movies</string>
 
     <!-- - - - - - - - - - - - - - - -
     - DetailActivity Menu Item texts.  -
     - - - - - - - - - - - - - - - - -->
     <!-- Used to share the first trailer’s YouTube URL on a given movie from the DetailActivity -->
-    <string name="action_share">Share</string>
+    <string name="action_share" translatable="true">Share</string>
     <!-- The title of the ShareCompat to build a share action. -->
-    <string name="title_share_url_string">Share the first Youtube Url</string>
+    <string name="title_share_url_string" translatable="true">Share the first Youtube Url</string>
 
     <!-- - - - - - - - -
     - UI design texts. -
     - - - - - - - - - -->
     <!-- Label of release data textview in detail activity. -->
-    <string name="detail_activity_release_date_label">Release Date:</string>
+    <string name="detail_activity_release_date_label" translatable="true">Release Date:</string>
     <!-- Label of user rating textview in detail activity. -->
-    <string name="detail_activity_user_rating_label">Average User Rating:</string>
+    <string name="detail_activity_user_rating_label" translatable="true">Average User Rating:</string>
     <!-- Label of user review textview in detail activity. -->
-    <string name="detail_activity_user_review_label">Total User Reviews:</string>
+    <string name="detail_activity_user_review_label" translatable="true">Total User Reviews:</string>
     <!-- Label of trailers textview in detail activity. -->
-    <string name="detail_activity_trailers_label">Trailers:</string>
+    <string name="detail_activity_trailers_label" translatable="true">Trailers:</string>
     <!-- Label of user review author in list_item_review layout. -->
-    <string name="list_item_user_review_author_label">Author:</string>
+    <string name="list_item_user_review_author_label" translatable="true">Author:</string>
     <!-- Text show besides Trailers and Reviews Title when offline. -->
     <!-- Toast Message show when click share menu item when offline.-->
     <!-- Toast Message show when click trailer fab button. -->
-    <string name="detail_activity_offline_reminder_text">Available while online.</string>
+    <string name="detail_activity_offline_reminder_text" translatable="true">Available while online.</string>
 
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - -
     - Fake texts show on detail activity for design reason.  -
     - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-    <string name="fake_detail_movie_name">Sing</string>
-    <string name="fake_detail_movie_rate">6.7</string>
-    <string name="fake_detail_movie_date">2016-11-23</string>
-    <string name="fake_datail_movie_plot">A koala named Buster recruits his best friend to help him drum up business for
+    <string name="fake_detail_movie_name" translatable="false">Sing</string>
+    <string name="fake_detail_movie_rate" translatable="false">6.7</string>
+    <string name="fake_detail_movie_date" translatable="false">2016-11-23</string>
+    <string name="fake_datail_movie_plot" translatable="false">A koala named Buster recruits his best friend to help him drum up business for
     his theater by hosting a singing competition.</string>
-    <string name="fake_detail_movie_number_of_review">4</string>
-    <string name="fake_detail_movie_number_of_trailer">3</string>
-    <string name="fake_detail_movie_review_author_name">TopKek</string>
+    <string name="fake_detail_movie_number_of_review" translatable="false">4</string>
+    <string name="fake_detail_movie_number_of_trailer" translatable="false">3</string>
+    <string name="fake_detail_movie_review_author_name" translatable="false">TopKek</string>
     <string name="fake_detail_movie_review">Featuring appealing covers of hit songs and an all-star cast,
         this cute animated comedy capitalizes on the craze for both talking-animal adventures and talent competitions.
         The movie may not have the substance of Inside Out or the overt messages of Zootopia, but, like Trolls, it\'s simple,
@@ -232,22 +232,22 @@
 
     <!-- Strings related to Widgets -->
     <!-- Empty Movie List -->
-    <string name="empty_movie_list">No Movie Information Available</string>
-    <string name="title_widget_detail">Movie Details</string>
+    <string name="empty_movie_list" translatable="true">No Movie Information Available</string>
+    <string name="title_widget_detail" translatable="true">Movie Details</string>
 
     <!-- Pop Best Movie Notification Title String -->
-    <string name="highest_rate_pop_movie_notification_title">High rate popular movie today!</string>
+    <string name="highest_rate_pop_movie_notification_title" translatable="true">High rate popular movie today!</string>
     <!-- Pop Best Movie Notification Body Format -->
-    <string name="format_pop_best_movie_notification">Title: <xliff:g id="movie_title">%1$s</xliff:g> User Rate: <xliff:g id="user_rate">%2$s</xliff:g></string>
+    <string name="format_pop_best_movie_notification" translatable="true">Title: <xliff:g id="movie_title">%1$s</xliff:g> User Rate: <xliff:g id="user_rate">%2$s</xliff:g></string>
     <!-- Pop Best Movie Notification Open Detail Activity action String -->
-    <string name="detail_page_notification_action">Let me see!</string>
+    <string name="detail_page_notification_action" translatable="true">Let me see!</string>
     <!-- Pop Best Movie Notification ignore action String -->
-    <string name="ignore_notification_action">I don\'t think so.</string>
+    <string name="ignore_notification_action" translatable="true">I don\'t think so.</string>
 
     <!-- Alarm Watch Movie Notification Title String -->
-    <string name="watch_movie_notification_title">Turn on TV!</string>
+    <string name="watch_movie_notification_title" translatable="true">Turn on TV!</string>
     <!-- Alarm Watch Movie Notification Body Format -->
-    <string name="format_watch_movie_notification">Watch <xliff:g id="movie_title">%1$s</xliff:g> on <xliff:g id="tv_channel">%2$s</xliff:g> !</string>
+    <string name="format_watch_movie_notification" translatable="true">Watch <xliff:g id="movie_title">%1$s</xliff:g> on <xliff:g id="tv_channel">%2$s</xliff:g> !</string>
 
 </resources>
 
