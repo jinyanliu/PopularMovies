@@ -119,6 +119,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         } else {
             setMoviePostersOffline(movieAdapterViewHolder, position);
         }
+
+        if (mCursor != null) {
+            // set ContentDescription for every poster image.
+            String original_title = mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE));
+            movieAdapterViewHolder.mMoviePosterImageView.setContentDescription(original_title);
+        }
     }
 
     private void setMoviePostersOffline(final MovieAdapterViewHolder movieAdapterViewHolder, final int position) {

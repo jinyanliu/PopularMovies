@@ -50,10 +50,13 @@ public class DetailWidgetProvider extends AppWidgetProvider {
             String orderBy = getOrderByPreference(context);
             if ("popular".equals(orderBy)) {
                 views.setImageViewResource(R.id.im_widget_title, R.drawable.widgettitle_popular);
+                views.setContentDescription(R.id.im_widget_title, context.getString(R.string.a11y_widget_title_pop));
             } else if ("top_rated".equals(orderBy)) {
                 views.setImageViewResource(R.id.im_widget_title, R.drawable.widgettitle_toprated);
+                views.setContentDescription(R.id.im_widget_title, context.getString(R.string.a11y_widget_title_top));
             } else {
                 views.setImageViewResource(R.id.im_widget_title, R.drawable.widgettitle_favorite);
+                views.setContentDescription(R.id.im_widget_title, context.getString(R.string.a11y_widget_title_fav));
             }
 
             // Create an Intent to launch MainActivity
@@ -99,12 +102,13 @@ public class DetailWidgetProvider extends AppWidgetProvider {
                 RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_detail);
                 if (titleCode == POPULAR_PIC_TITLE_CODE) {
                     views.setImageViewResource(R.id.im_widget_title, R.drawable.widgettitle_popular);
-
+                    views.setContentDescription(R.id.im_widget_title, context.getString(R.string.a11y_widget_title_pop));
                 } else if (titleCode == TOPRATED_PIC_TITLE_CODE) {
                     views.setImageViewResource(R.id.im_widget_title, R.drawable.widgettitle_toprated);
-
+                    views.setContentDescription(R.id.im_widget_title, context.getString(R.string.a11y_widget_title_top));
                 } else if (titleCode == FAVORITE_PIC_TITLE_CODE) {
                     views.setImageViewResource(R.id.im_widget_title, R.drawable.widgettitle_favorite);
+                    views.setContentDescription(R.id.im_widget_title, context.getString(R.string.a11y_widget_title_fav));
                 }
                 ComponentName thisWidget = new ComponentName(context, DetailWidgetProvider.class);
                 AppWidgetManager manager = AppWidgetManager.getInstance(context);

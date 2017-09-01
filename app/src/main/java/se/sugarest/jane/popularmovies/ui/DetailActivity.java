@@ -294,17 +294,29 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
          */
         loadTrailerData(mCurrentMovie.getId());
 
+        // set ContentDescription for every image thumbnail in detail activity
+        mDetailBinding.primaryInfo.ivMoviePosterImageThumbnail.setContentDescription(mCurrentMovie.getOriginalTitle());
+
         // Setup fab_favorite to add favorite movies into database and change FAB color to yellow
         View primaryLayout = findViewById(R.id.primary_info);
         mFabButton = (FloatingActionButton) primaryLayout.findViewById(R.id.fab_favorite);
 
         mFabButton.setColorFilter(ContextCompat.getColor(DetailActivity.this, setFabButtonStarColor()));
 
+        if (setFabButtonStarColor() == R.color.colorWhiteFavoriteStar) {
+            // set ContentDescription for fab button
+            mFabButton.setContentDescription(getString(R.string.a11y_detail_activity_save_floating_button));
+        } else {
+            // set ContentDescription for fab button
+            mFabButton.setContentDescription(getString(R.string.a11y_detail_activity_unsave_floating_button));
+        }
+
         mFabButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (setFabButtonStarColor() == R.color.colorWhiteFavoriteStar) {
                     mFabButton.setColorFilter(ContextCompat.getColor(DetailActivity.this, R.color.colorYellowFavoriteStar));
+                    mFabButton.setContentDescription(getString(R.string.a11y_detail_activity_unsave_floating_button));
                     try {
                         saveMovie();
                     } catch (IllegalArgumentException e) {
@@ -312,6 +324,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapterO
                     }
                 } else {
                     mFabButton.setColorFilter(ContextCompat.getColor(DetailActivity.this, R.color.colorWhiteFavoriteStar));
+                    mFabButton.setContentDescription(getString(R.string.a11y_detail_activity_save_floating_button));
                     deleteMovie();
                 }
             }

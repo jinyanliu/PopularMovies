@@ -78,6 +78,9 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
         int currentColor = getTrailerFabBackgroundColor(position);
         trailerAdapterViewHolder.mPlayTrailerFab.setBackgroundTintList(ColorStateList
                 .valueOf(currentColor));
+        // set ContentDescription for trailer fab button
+        int trailerNumber = position + 1;
+        trailerAdapterViewHolder.mPlayTrailerFab.setContentDescription(mContext.getString(R.string.a11y_trailer_fab_button) + trailerNumber);
     }
 
     /**
