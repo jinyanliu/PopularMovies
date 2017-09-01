@@ -121,6 +121,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         }
 
         if (mCursor != null) {
+            mCursor.moveToPosition(position);
             // set ContentDescription for every poster image.
             String original_title = mCursor.getString(mCursor.getColumnIndex(CacheMovieMostPopularEntry.COLUMN_ORIGINAL_TITLE));
             movieAdapterViewHolder.mMoviePosterImageView.setContentDescription(original_title);
