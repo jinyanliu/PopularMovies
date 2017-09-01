@@ -222,7 +222,7 @@
     <string name="fake_detail_movie_number_of_review" translatable="false">4</string>
     <string name="fake_detail_movie_number_of_trailer" translatable="false">3</string>
     <string name="fake_detail_movie_review_author_name" translatable="false">TopKek</string>
-    <string name="fake_detail_movie_review">Featuring appealing covers of hit songs and an all-star cast,
+    <string name="fake_detail_movie_review" translatable="false">Featuring appealing covers of hit songs and an all-star cast,
         this cute animated comedy capitalizes on the craze for both talking-animal adventures and talent competitions.
         The movie may not have the substance of Inside Out or the overt messages of Zootopia, but, like Trolls, it\'s simple,
         with catchy pop music and jokes that are likely to make kids laugh. (Unlike Trolls, its take-aways aren\'t quite as
