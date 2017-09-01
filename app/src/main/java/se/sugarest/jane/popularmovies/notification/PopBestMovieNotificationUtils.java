@@ -47,7 +47,6 @@ public class PopBestMovieNotificationUtils {
         NotificationManager notificationManager = (NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(HIGHEST_RATE_POP_MOVIE_NOTIFICATION_ID);
-        notificationManager.cancelAll();
     }
 
     public static void notifyUserHighestRatePopularMovie(Context context) {
