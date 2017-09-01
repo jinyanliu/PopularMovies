@@ -232,7 +232,7 @@
 
     <!-- Strings related to Widgets -->
     <!-- Empty Movie List -->
-    <string name="empty_movie_list" translatable="true">No Movie Information Available</string>
+    <string name="empty_movie_list" translatable="true">No Movie Information Available right now.</string>
     <string name="title_widget_detail" translatable="true">Movie Details</string>
 
     <!-- Pop Best Movie Notification Title String -->
