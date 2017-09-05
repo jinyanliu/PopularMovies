@@ -59,4 +59,10 @@
     <string name="refresh_menu_item">刷新</string>
     <string name="settings_menu_item">设置</string>
     <string name="settings_order_by_favorites_label">收藏</string>
+    <string name="a11y_detail_activity_save_floating_button">收藏此电影进入收藏电影目录。</string>
+    <string name="a11y_detail_activity_unsave_floating_button">从收藏电影目录中移除此电影。</string>
+    <string name="a11y_trailer_fab_button">电影预告片第</string>
+    <string name="a11y_widget_title_fav">收藏电影</string>
+    <string name="a11y_widget_title_pop">热门电影</string>
+    <string name="a11y_widget_title_top">高分电影</string>
 </resources>

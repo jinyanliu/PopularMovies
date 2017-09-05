@@ -1,5 +1,5 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name" translatable="false">Popular Movies</string>
+    <string name="app_name" translatable="true">Popular Movies</string>
 
     <!-- The text for Log error message when you cut off the internet when the pop or top or fav movie list is still downloading in MainActivity.
      (open for the first time or refresh time) -->
@@ -250,11 +250,11 @@
     <string name="format_watch_movie_notification" translatable="true">Watch <xliff:g id="movie_title">%1$s</xliff:g> on <xliff:g id="tv_channel">%2$s</xliff:g> !</string>
 
     <!-- a11y -->
-    <string name="a11y_detail_activity_save_floating_button">Save the movie to favorite movie list.</string>
-    <string name="a11y_detail_activity_unsave_floating_button">Unlike the movie from favorite movie list.</string>
-    <string name="a11y_trailer_fab_button">Movie Trailer Number</string>
-    <string name="a11y_widget_title_pop">@string/main_activity_title_most_popular</string>
-    <string name="a11y_widget_title_top">@string/main_activity_title_top_rated</string>
-    <string name="a11y_widget_title_fav">@string/main_activity_title_favorite</string>
+    <string name="a11y_detail_activity_save_floating_button" translatable="true">Save the movie to favorite movie list.</string>
+    <string name="a11y_detail_activity_unsave_floating_button" translatable="true">Unlike the movie from favorite movie list.</string>
+    <string name="a11y_trailer_fab_button" translatable="true">Movie Trailer Number</string>
+    <string name="a11y_widget_title_pop" translatable="true">@string/main_activity_title_most_popular</string>
+    <string name="a11y_widget_title_top" translatable="true">@string/main_activity_title_top_rated</string>
+    <string name="a11y_widget_title_fav" translatable="true">@string/main_activity_title_favorite</string>
 </resources>
 
