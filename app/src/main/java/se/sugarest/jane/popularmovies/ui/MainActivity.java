@@ -261,6 +261,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         }
 
         setUpAlarm();
+
+        // To get a notification right now.
+        // For test Only
+        // PopBestMovieNotificationUtils.notifyUserHighestRatePopularMovie(this);
     }
 
     private void setUpAlarm() {
