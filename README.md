@@ -45,5 +45,13 @@ Support accessibility for vision-limited users.
 Stored all the strings in string.xml. Stored all the dimens in dimens.xml. 
 
 # App ScreenShots
-<img src="screenshots/1.png" width="24%"/> <img src="screenshots/2.png" width="24%"/> <img src="screenshots/3.png" width="24%"/> <img src="screenshots/4.png" width="24%"/> <img src="screenshots/5.png" width="24%"/> <img src="screenshots/6.png" width="24%"/> <img src="screenshots/7.png" width="24%"/> <img src="screenshots/8.png" width="24%"/> <img src="screenshots/9.png" width="24%"/> <img src="screenshots/10.png" width="24%"/> <img src="screenshots/11.png" width="24%"/> <img src="screenshots/12.png" width="24%"/> <img src="screenshots/13.png" width="48.5%"/> <img src="screenshots/14.png" width="48.5%"/>
+<img src="screenshots/1oneEn.png" width="24%"/> <img src="screenshots/1oneZh.png" width="24%"/> <img src="screenshots/2twoEn.png" width="24%"/> <img src="screenshots/2twoZh.png" width="24%"/> <img src="screenshots/3.0threeEn.png" width="24%"/> <img src="screenshots/3.0threeZh.png" width="24%"/> <img src="screenshots/3.1tpoEn.png" width="24%"/> <img src="screenshots/3.1tpoZh.png" width="24%"/> <img src="screenshots/3.2tptEn.png" width="24%"/> <img src="screenshots/3.2tptZh.png" width="24%"/> <img src="screenshots/3.3tptEn.png" width="24%"/> <img src="screenshots/3.3tptZh.png" width="24%"/> <img src="screenshots/4fourEn.png" width="24%"/> <img src="screenshots/4fourZh.png" width="24%"/> <img src="screenshots/5fiveEn.png" width="24%"/> <img src="screenshots/5fiveZh.png" width="24%"/> <img src="screenshots/6sixEn.png" width="24%"/> <img src="screenshots/6sixZh.png" width="24%"/> <img src="screenshots/7sevenEn.png" width="24%"/> <img src="screenshots/7sevenZh.png" width="24%"/> <img src="screenshots/8eightEn.png" width="24%"/> <img src="screenshots/8eightZh.png" width="24%"/> <img src="screenshots/10tenEn.png" width="24%"/> <img src="screenshots/10tenZh.png" width="24%"/> <img src="screenshots/11elevenEn.png" width="24%"/> <img src="screenshots/11elevenZh.png" width="24%"/> <img src="screenshots/12twelveEn.png" width="24%"/> <img src="screenshots/12twelveZh.png" width="24%"/> <img src="screenshots/9nineEn.png" width="48.5%"/> <img src="screenshots/9nineZh.png" width="48.5%"/>
+
+
+
+
+
+
+
+
 
