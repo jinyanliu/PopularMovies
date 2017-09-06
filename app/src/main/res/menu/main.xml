@@ -20,5 +20,5 @@
         android:orderInCategory="3"
         android:title="@string/delete_all_menu_item"
         android:visible="false"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
 </menu>
