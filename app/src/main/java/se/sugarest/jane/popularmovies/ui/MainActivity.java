@@ -275,9 +275,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
         alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
 
         Calendar scheduledCalendar = Calendar.getInstance();
-        scheduledCalendar.set(Calendar.HOUR_OF_DAY, 23);
-        scheduledCalendar.set(Calendar.MINUTE, 39);
-        scheduledCalendar.set(Calendar.SECOND, 15);
+        scheduledCalendar.set(Calendar.YEAR, 2017);
+        // 0 is for January. So September is 8. Or use Calendar.SEPTEMBER, that's better.
+        scheduledCalendar.set(Calendar.MONTH, Calendar.SEPTEMBER);
+        scheduledCalendar.set(Calendar.DATE, 7);
+        scheduledCalendar.set(Calendar.HOUR_OF_DAY, 12);
+        scheduledCalendar.set(Calendar.MINUTE, 37);
+        scheduledCalendar.set(Calendar.SECOND, 0);
 
         Calendar current = Calendar.getInstance();
         if (!scheduledCalendar.before(current)) {
