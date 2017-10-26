@@ -4,7 +4,7 @@ package se.sugarest.jane.popularmovies.jobscheduler;
  * Created by jane on 17-8-31.
  */
 
-public class JobSchedulersConstraints {
+public class JobSchedulersConstants {
     /************************************************************************************************
      * Keep in mind ! For test or for real, job scheduler minimum periodic interval is 15 minutes ! *
      ************************************************************************************************/

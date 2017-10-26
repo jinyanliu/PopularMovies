@@ -43,7 +43,7 @@ import se.sugarest.jane.popularmovies.data.MovieContract.CacheMovieTopRatedEntry
 import se.sugarest.jane.popularmovies.data.MovieContract.FavMovieEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.ReviewEntry;
 import se.sugarest.jane.popularmovies.data.MovieContract.TrailerEntry;
-import se.sugarest.jane.popularmovies.jobscheduler.JobSchedulersConstraints;
+import se.sugarest.jane.popularmovies.jobscheduler.JobSchedulersConstants;
 import se.sugarest.jane.popularmovies.jobscheduler.PersistFavMovie;
 import se.sugarest.jane.popularmovies.jobscheduler.PersistPopMovieTask;
 import se.sugarest.jane.popularmovies.jobscheduler.PersistTopMovieTask;
@@ -294,9 +294,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     private void scheduleUpdatePopMovieJob() {
         Log.i(TAG, "Scheduling fetch pop movie job.");
         ComponentName serviceName = new ComponentName(this, PersistPopService.class);
-        JobInfo jobInfo = new JobInfo.Builder(JobSchedulersConstraints.JOB_ID_PERSIST_POP_MOVIE, serviceName)
+        JobInfo jobInfo = new JobInfo.Builder(JobSchedulersConstants.JOB_ID_PERSIST_POP_MOVIE, serviceName)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                .setPeriodic(JobSchedulersConstraints.PERIOD_MILLIS_FETCH_POP_MOVIE, JobInfo.getMinFlexMillis())
+                .setPeriodic(JobSchedulersConstants.PERIOD_MILLIS_FETCH_POP_MOVIE, JobInfo.getMinFlexMillis())
                 .build();
         JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         int result = scheduler.schedule(jobInfo);
@@ -311,9 +311,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     private void scheduleUpdateTopMovieJob() {
         Log.i(TAG, "Scheduling fetch top movie job.");
         ComponentName serviceName = new ComponentName(this, PersistTopService.class);
-        JobInfo jobInfo = new JobInfo.Builder(JobSchedulersConstraints.JOB_ID_PERSIST_TOP_MOVIE, serviceName)
+        JobInfo jobInfo = new JobInfo.Builder(JobSchedulersConstants.JOB_ID_PERSIST_TOP_MOVIE, serviceName)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                .setPeriodic(JobSchedulersConstraints.PERIOD_MILLIS_FETCH_TOP_MOVIE, JobInfo.getMinFlexMillis())
+                .setPeriodic(JobSchedulersConstants.PERIOD_MILLIS_FETCH_TOP_MOVIE, JobInfo.getMinFlexMillis())
                 .build();
         JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         int result = scheduler.schedule(jobInfo);
@@ -327,9 +327,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     private void scheduleUpdateFavMovieJob() {
         Log.i(TAG, "Scheduling fetch fav movie job.");
         ComponentName serviceName = new ComponentName(this, PersistFavService.class);
-        JobInfo jobInfo = new JobInfo.Builder(JobSchedulersConstraints.JOB_ID_PERSIST_FAV_MOVIE, serviceName)
+        JobInfo jobInfo = new JobInfo.Builder(JobSchedulersConstants.JOB_ID_PERSIST_FAV_MOVIE, serviceName)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                .setPeriodic(JobSchedulersConstraints.PERIOD_MILLIS_FETCH_FAV_MOVIE, JobInfo.getMinFlexMillis())
+                .setPeriodic(JobSchedulersConstants.PERIOD_MILLIS_FETCH_FAV_MOVIE, JobInfo.getMinFlexMillis())
                 .build();
         JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         int result = scheduler.schedule(jobInfo);
@@ -343,8 +343,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     private void scheduleDeleteExtraPic() {
         Log.i(TAG, "Scheduling delete extra pic job.");
         ComponentName serviceName = new ComponentName(this, DeleteExtraMoviePicService.class);
-        JobInfo jobInfo = new JobInfo.Builder(JobSchedulersConstraints.JOB_ID_DELETE_EXTRA_PIC, serviceName)
-                .setPeriodic(JobSchedulersConstraints.PERIOD_MILLIS_DELETE_EXTRA_PIC, JobInfo.getMinFlexMillis())
+        JobInfo jobInfo = new JobInfo.Builder(JobSchedulersConstants.JOB_ID_DELETE_EXTRA_PIC, serviceName)
+                .setPeriodic(JobSchedulersConstants.PERIOD_MILLIS_DELETE_EXTRA_PIC, JobInfo.getMinFlexMillis())
                 .build();
         JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         int result = scheduler.schedule(jobInfo);
@@ -358,8 +358,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     private void scheduleUpdateWidgetJob() {
         Log.i(TAG, "Scheduling update widget job.");
         ComponentName serviceName = new ComponentName(this, UpdateWidgetService.class);
-        JobInfo jobInfo = new JobInfo.Builder(JobSchedulersConstraints.JOB_ID_UPDATE_WIDGET, serviceName)
-                .setPeriodic(JobSchedulersConstraints.PERIOD_MILLIS_UPDATE_WIDGET, JobInfo.getMinFlexMillis())
+        JobInfo jobInfo = new JobInfo.Builder(JobSchedulersConstants.JOB_ID_UPDATE_WIDGET, serviceName)
+                .setPeriodic(JobSchedulersConstants.PERIOD_MILLIS_UPDATE_WIDGET, JobInfo.getMinFlexMillis())
                 .build();
         JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         int result = scheduler.schedule(jobInfo);
@@ -373,8 +373,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapterOnCli
     private void scheduleNotificationJob() {
         Log.i(TAG, "Scheduling notification job.");
         ComponentName serviceName = new ComponentName(this, NotificationService.class);
-        JobInfo jobInfo = new JobInfo.Builder(JobSchedulersConstraints.JOB_ID_NOTIFICATION, serviceName)
-                .setPeriodic(JobSchedulersConstraints.PERIOD_MILLIS_NOTIFICATION, JobInfo.getMinFlexMillis())
+        JobInfo jobInfo = new JobInfo.Builder(JobSchedulersConstants.JOB_ID_NOTIFICATION, serviceName)
+                .setPeriodic(JobSchedulersConstants.PERIOD_MILLIS_NOTIFICATION, JobInfo.getMinFlexMillis())
                 .build();
         JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         int result = scheduler.schedule(jobInfo);
