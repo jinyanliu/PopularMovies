@@ -60,9 +60,9 @@ import se.sugarest.jane.popularmovies.notification.lowerversion.ScheduleNotifica
 import se.sugarest.jane.popularmovies.tasks.FetchMoviePostersTask;
 import se.sugarest.jane.popularmovies.utilities.DeleteExternalFolderExtraPic;
 
-import static se.sugarest.jane.popularmovies.widget.WidgetConstraints.IntentExtraWidgetTileCode.FAVORITE_PIC_TITLE_CODE;
-import static se.sugarest.jane.popularmovies.widget.WidgetConstraints.IntentExtraWidgetTileCode.POPULAR_PIC_TITLE_CODE;
-import static se.sugarest.jane.popularmovies.widget.WidgetConstraints.IntentExtraWidgetTileCode.TOPRATED_PIC_TITLE_CODE;
+import static se.sugarest.jane.popularmovies.widget.WidgetConstants.IntentExtraWidgetTileCode.FAVORITE_PIC_TITLE_CODE;
+import static se.sugarest.jane.popularmovies.widget.WidgetConstants.IntentExtraWidgetTileCode.POPULAR_PIC_TITLE_CODE;
+import static se.sugarest.jane.popularmovies.widget.WidgetConstants.IntentExtraWidgetTileCode.TOPRATED_PIC_TITLE_CODE;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapterOnClickHandler
         , android.app.LoaderManager.LoaderCallbacks<Cursor> {

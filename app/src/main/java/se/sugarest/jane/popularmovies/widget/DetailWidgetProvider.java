@@ -24,9 +24,9 @@ import se.sugarest.jane.popularmovies.jobscheduler.jobservice.UpdateWidgetServic
 import se.sugarest.jane.popularmovies.ui.DetailActivity;
 import se.sugarest.jane.popularmovies.ui.MainActivity;
 
-import static se.sugarest.jane.popularmovies.widget.WidgetConstraints.IntentExtraWidgetTileCode.FAVORITE_PIC_TITLE_CODE;
-import static se.sugarest.jane.popularmovies.widget.WidgetConstraints.IntentExtraWidgetTileCode.POPULAR_PIC_TITLE_CODE;
-import static se.sugarest.jane.popularmovies.widget.WidgetConstraints.IntentExtraWidgetTileCode.TOPRATED_PIC_TITLE_CODE;
+import static se.sugarest.jane.popularmovies.widget.WidgetConstants.IntentExtraWidgetTileCode.FAVORITE_PIC_TITLE_CODE;
+import static se.sugarest.jane.popularmovies.widget.WidgetConstants.IntentExtraWidgetTileCode.POPULAR_PIC_TITLE_CODE;
+import static se.sugarest.jane.popularmovies.widget.WidgetConstants.IntentExtraWidgetTileCode.TOPRATED_PIC_TITLE_CODE;
 
 /**
  * Provider for a scrollable movie detail widget

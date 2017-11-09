@@ -4,7 +4,7 @@ package se.sugarest.jane.popularmovies.widget;
  * Created by jane on 17-8-30.
  */
 
-public class WidgetConstraints {
+public class WidgetConstants {
 
     public static final class IntentExtraWidgetTileCode {
 
